@@ -1,1 +1,1 @@
-Servizio di ranking SWEET
+Servizio di ranking SWEEAT
