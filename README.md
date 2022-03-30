@@ -1,1 +1,1 @@
-Servizio di ranking SWEEAT
+Servizio di ranking del gruppo SWEEAT
