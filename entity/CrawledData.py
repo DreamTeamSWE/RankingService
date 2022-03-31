@@ -5,7 +5,13 @@ from entity.ScoreComprehend import ScoreComprehend
 
 
 class CrawledData:
-    def __init__(self, caption: str, image: List[str], restaurant: Restaurant):
+    # def __init__(self, caption: str, image: List[str], restaurant: Restaurant):
+    #     self.caption = caption
+    #     self.image = image
+    #     self.restaurant = restaurant
+    #     self.score = None
+
+    def __init__(self, caption: str, image, restaurant: Restaurant):
         self.caption = caption
         self.image = image
         self.restaurant = restaurant

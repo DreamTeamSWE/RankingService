@@ -1,10 +1,13 @@
 from analyzer import Analyzer
-from db.RepositoryInternal import RepositoryInternal
+from entity.CrawledData import CrawledData
 
 
-def refresh_ranking(crawler_tail, analyzer: Analyzer, repository: RepositoryInternal):
-    analyzer.analyze(crawler_tail)
-    repository.refresh_ranking(analyzer.getranking())
+# from db.RepositoryInternal import RepositoryInternal
+
+
+def refresh_ranking(post: CrawledData, analyzer: Analyzer, repository):
+    analyzer.analyze(post=post)
+    # repository.refresh_ranking(analyzer.getranking())
 
 
 class FacadeAnalyzePost:

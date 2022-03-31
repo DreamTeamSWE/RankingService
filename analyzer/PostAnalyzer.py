@@ -1,36 +1,27 @@
 from abc import ABC
-from entity import CrawledData
-from analyzer.Analyzer import Analyzer
-import json
-from entity.ScoreComprehend import ScoreComprehend
-import boto3
-import requests
 
-AWS_KEY = 'AKIARZPP2F6HY7YUZJ56'
-AWS_PSW = 'YhYNvCJYS8d3EkmsfzK04wQKcNZxw5kO/aJim60F'
+import boto3
+
+from analyzer.Analyzer import Analyzer
+from entity import CrawledData
+from entity.ScoreComprehend import ScoreComprehend
+
+AWS_KEY = 'AKIARZPP2F6H24B5GXVA'
+AWS_PSW = 'P61Tdsg5C4mg72PjhPULTFa9dqz0pt5hWRt+K815'
 AWS_REGION = 'eu-central-1'
 
 
 class PostAnalyzer(Analyzer, ABC):
-    @staticmethod
-    def post_analyzer(post: CrawledData):
+    def analyze(self, post: CrawledData):
         print("Hello from PostAnalyzer")
         comprehend = boto3.client(service_name='comprehend',
                                   region_name=AWS_REGION,
                                   aws_access_key_id=AWS_KEY,
                                   aws_secret_access_key=AWS_PSW)
-
-        rekognition = boto3.client(service_name='rekognition',
-                                   region_name=AWS_REGION,
-                                   aws_access_key_id=AWS_KEY,
-                                   aws_secret_access_key=AWS_PSW)
-
         # result of comprehend
-        raw_json = comprehend.detect_sentiment(Text=post.text, LanguageCode='it')
+        json_result = comprehend.detect_sentiment(Text=post.caption, LanguageCode='it')
 
-        json_result = json.loads(raw_json)
-
-        print(raw_json)
+        print(json_result)
 
         # get sentiment
         sentiment_score = json_result["Sentiment"]
@@ -47,13 +38,7 @@ class PostAnalyzer(Analyzer, ABC):
 
         print("\n" + str(score))
 
-
-        #
-        # source_bytes = requests.get(post.imgURL).content
-        # # result of rekognition
-        # jsonImgResult = json.dumps(
-        #     rekognition.detect_labels(
-        #         Image={'Bytes': source_bytes},
-        #         MaxLabels=100),
-        #     indent=4)
-        # print(jsonImgResult)
+        # rekognition = boto3.client(service_name='rekognition',
+        #                            region_name=AWS_REGION,
+        #                            aws_access_key_id=AWS_KEY,
+        #                            aws_secret_access_key=AWS_PSW)
