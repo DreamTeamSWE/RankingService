@@ -42,8 +42,7 @@ create table ristorante(
     longitudine varchar(50),
     punteggio_emoji integer,
     punteggio_foto integer,
-    punteggio_testo integer,
-    id_immagine integer references immagine(id_immagine)
+    punteggio_testo integer
 );
 
 drop table if exists tag;
