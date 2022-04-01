@@ -1,8 +1,10 @@
 from analyzer.PostAnalyzer import PostAnalyzer
 import FacadeAnalyzePost
+import json
 from entity.CrawledData import CrawledData
 from entity.Restaurant import Restaurant
 from entity.Filter import Filter
+from db.RepositoryExternal import RepositoryExternal
 
 if __name__ == '__main__':
     # str = (
@@ -23,3 +25,19 @@ if __name__ == '__main__':
     print(filter.make_query())
 
     print('Done')
+
+
+def lambda_handler(event, context):
+    repo_ext = RepositoryExternal()
+    ranking = repo_ext.get_ranking(filter)
+
+    return {
+        'statusCode': 200,
+        'headers': {
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Credentials': 'true',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
+        },
+        'body': json.dumps(ranking)
+    }

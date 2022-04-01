@@ -7,7 +7,7 @@ class Filter:
         self.pesi = pesi
 
     def make_query(self) -> str:
-        query = "SELECT * FROM Ristorante WHERE "
+        query = ""
         if self.zona != "":
             query += "zona = '" + self.zona + "' AND "
         if self.orario != "":

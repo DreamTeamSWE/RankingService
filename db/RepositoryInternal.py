@@ -68,6 +68,7 @@ class RepositoryInternal:
 
         return response
 
+    # !!! stesso codice di RepositoryExternal.py !!! #
     def get_restaurant_info_by_id(self, id_restaurant: int) -> Restaurant:
         query = "SELECT * FROM ristorante WHERE id=%s"
         values = id_restaurant
