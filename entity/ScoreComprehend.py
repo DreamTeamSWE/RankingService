@@ -27,3 +27,6 @@ class ScoreComprehend:
             self.principal_sentiment = Sentiment.NEGATIVE
         else:
             self.principal_sentiment = Sentiment.NEUTRAL
+
+    def calculate_score(self) -> int:
+        return self.negative + self.positive + self.neutral

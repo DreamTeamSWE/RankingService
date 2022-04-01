@@ -10,6 +10,10 @@ class CrawledData:
         self.punt_emoji = punt_emoji
         self.restaurant = restaurant
         self.score = None
+        self.punt_foto = None
 
     def set_point(self, score: ScoreComprehend):
         self.score = score
+
+    def set_punt_foto(self, punt_foto: int):
+        self.punt_foto = punt_foto
