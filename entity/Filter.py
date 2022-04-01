@@ -6,7 +6,6 @@ class Filter:
         self.punteggio = punteggio
         self.pesi = pesi
 
-
     def make_query(self) -> str:
         query = "SELECT * FROM Ristorante WHERE "
         if self.zona != "":
