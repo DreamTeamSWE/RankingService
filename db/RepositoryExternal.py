@@ -9,7 +9,6 @@ class RepositoryExternal:
     def get_ranking(self):
         pass
 
-
     # !!! stesso codice di RepositoryInternal.py !!! #
     def get_restaurant_info(self, name: str) -> Restaurant:
         query = "SELECT * FROM ristorante WHERE nome_ristorante=%s"
