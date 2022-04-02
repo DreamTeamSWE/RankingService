@@ -30,16 +30,17 @@ create table post(
 drop table if exists ristorante;
 create table ristorante(
     id_ristorante serial primary key,
-    nome_ristorante varchar(50),
-    indirizzo varchar(50),
-    citta varchar(50),
-    provincia varchar(50),
+    nome_ristorante varchar(50) not null,
+    indirizzo varchar(50) not null,
+    citta varchar(50) not null,
+    provincia varchar(50) not null,
     telefono varchar(50),
     sito_web varchar(50),
     orario_apertura varchar(50),
     orario_chiusura varchar(50),
-    latitudine varchar(50),
-    longitudine varchar(50),
+    latitudine decimal(7,4) not null,
+    longitudine decimal(7,4) not null,
+    categoria varchar(100) not null,
     punteggio_emoji integer,
     punteggio_foto integer,
     punteggio_testo integer

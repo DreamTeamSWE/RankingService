@@ -13,8 +13,8 @@ class Restaurant:
         self.sito = sito
         self.orario_aperture = orario_aper
         self.orario_chiusura = orario_chiu
-        self.lat = lat
-        self.lng = lng
+        self.lat = round(lat, 4)
+        self.lng = round(lng, 4)
         self.punt_emoji = punt_emoji
         self.punt_foto = punt_foto
         self.punt_testo = punt_testo
