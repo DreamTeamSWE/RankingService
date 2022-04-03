@@ -1,3 +1,5 @@
+ALTER DATABASE database_name CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
 drop table if exists emozioni;
 create table emozioni(
     nome_emozione varchar(50) primary key
@@ -25,7 +27,7 @@ create table post(
     negative_comprehend integer,
     positive_comprehend integer,
     neutral_comprehend integer
-);
+) DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 drop table if exists ristorante;
 create table ristorante(

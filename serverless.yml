@@ -1,0 +1,31 @@
+service: rankingservice
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.8
+
+functions:
+  refreshRanking:
+    handler: handler.refresh_ranking
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - rekognition:*
+          - comprehend:*
+        Resource: '*'
+    events:
+      - sqs:
+          arn: arn:aws:sqs:eu-central-1:123446374287:coda-crawler.fifo
+plugins:
+  - serverless-iam-roles-per-function
+  - serverless-python-requirements
+
+package:
+  exclude:
+    - venv/**
+
+custom:
+  pythonRequirements:
+    dockerizePip: false

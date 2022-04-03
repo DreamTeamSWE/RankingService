@@ -1,10 +1,8 @@
 from abc import ABC
-
-import boto3
-
 from analyzer.Analyzer import Analyzer
 from entity import CrawledData
 from entity.ScoreComprehend import ScoreComprehend
+import boto3
 
 AWS_KEY = 'AKIARZPP2F6H24B5GXVA'
 AWS_PSW = 'P61Tdsg5C4mg72PjhPULTFa9dqz0pt5hWRt+K815'
