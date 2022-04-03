@@ -4,8 +4,6 @@ from entity import CrawledData
 from entity.ScoreComprehend import ScoreComprehend
 import boto3
 
-AWS_KEY = 'AKIARZPP2F6H24B5GXVA'
-AWS_PSW = 'P61Tdsg5C4mg72PjhPULTFa9dqz0pt5hWRt+K815'
 AWS_REGION = 'eu-central-1'
 
 
@@ -13,9 +11,7 @@ class PostAnalyzer(Analyzer, ABC):
     def analyze(self, post: CrawledData):
         print("Hello from PostAnalyzer")
         comprehend = boto3.client(service_name='comprehend',
-                                  region_name=AWS_REGION,
-                                  aws_access_key_id=AWS_KEY,
-                                  aws_secret_access_key=AWS_PSW)
+                                  region_name=AWS_REGION)
         # result of comprehend
         json_result = comprehend.detect_sentiment(Text=post.caption, LanguageCode='it')
 
@@ -34,7 +30,7 @@ class PostAnalyzer(Analyzer, ABC):
         score = ScoreComprehend(negative, neutral, positive)
         score.set_sentiment(sentiment_score)
 
-        print("\n" + str(score))
+        print("\n" + str(score) + "\n-------------------\n")
 
         # rekognition = boto3.client(service_name='rekognition',
         #                            region_name=AWS_REGION,

@@ -1,12 +1,11 @@
 import json
 from entity.CrawledData import CrawledData
 from entity.Restaurant import Restaurant
+from analyzer.PostAnalyzer import PostAnalyzer
 
 
 def refresh_ranking(event, context):
     array_json_sqs_response = event['Records']
-
-    list_post = []
 
     for item in array_json_sqs_response:
         # print(item['body'])
@@ -38,9 +37,11 @@ def refresh_ranking(event, context):
         # print('--------------------\n')
 
         # print(post)
-        list_post.append(post)
 
         # print('--------------------\n')
+
+        analyzer = PostAnalyzer()
+        analyzer.analyze(post)
 
     body = {
         "message": "Go Serverless v1.0! Your function executed successfully!",
