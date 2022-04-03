@@ -1,4 +1,4 @@
-ALTER DATABASE database_name CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+ALTER DATABASE ranking_test CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 drop table if exists emozioni;
 create table emozioni(
@@ -9,11 +9,11 @@ drop table if exists emozioni_img;
 create table emozioni_img(
     id_immagine integer references immagine(id_immagine),
     nome_emozione varchar(50) references emozioni(nome_emozione),
-    qta integer
+    qta integer not null default 1
 );
 
-drop table if exists immagine;
-create table immagine(
+drop table if exists immagini;
+create table immagini(
     id_immagine serial primary key,
     id_post integer references post(id_post)
 );
@@ -21,6 +21,8 @@ create table immagine(
 drop table if exists post;
 create table post(
     id_post serial primary key,
+    nome_utente varchar(50) not null,
+    data_post datetime not null,
     id_ristorante integer references ristorante(id_ristorante),
     punteggio_emoji integer,
     sentiment_comprehend integer,
@@ -34,12 +36,8 @@ create table ristorante(
     id_ristorante serial primary key,
     nome_ristorante varchar(50) not null,
     indirizzo varchar(50) not null,
-    citta varchar(50) not null,
-    provincia varchar(50) not null,
-    telefono varchar(50),
-    sito_web varchar(50),
-    orario_apertura varchar(50),
-    orario_chiusura varchar(50),
+    telefono varchar(50) not null,
+    sito_web varchar(50) not null,
     latitudine decimal(7,4) not null,
     longitudine decimal(7,4) not null,
     categoria varchar(100) not null,

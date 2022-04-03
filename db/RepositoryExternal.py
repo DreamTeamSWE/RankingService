@@ -1,17 +1,17 @@
 from db.Database import Database
-from entity.Restaurant import Restaurant
 from entity.Filter import Filter
-import json
+from entity.Restaurant import Restaurant
 
 
 class RepositoryExternal:
     def __init__(self):
         self.database = Database('ranking_test')
 
-    def get_ranking(self, filter: Filter) -> list:
+    def get_ranking(self, filter_from_front: Filter) -> list:
         query = "SELECT * FROM ristorante WHERE %s"
-        values = (filter.make_query())
+        values = (filter_from_front.make_query())
         parsed_records = self.database.do_read_query(query, values)
+        return parsed_records
 
     # !!! stesso codice di RepositoryInternal.py !!! #
     def get_restaurant_info(self, name: str) -> Restaurant:

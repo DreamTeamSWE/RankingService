@@ -5,6 +5,8 @@ frameworkVersion: '3'
 provider:
   name: aws
   runtime: python3.8
+  region: eu-central-1
+  timeout: 60
 
 functions:
   refreshRanking:
@@ -18,13 +20,17 @@ functions:
     events:
       - sqs:
           arn: arn:aws:sqs:eu-central-1:123446374287:coda-crawler.fifo
+          batchSize: 5
+          # maximumBatchingWindow: 60
+          functionResponseType: ReportBatchItemFailures
+
 plugins:
   - serverless-iam-roles-per-function
   - serverless-python-requirements
 
 package:
-  exclude:
-    - venv/**
+  patterns:
+    -'!venv/**'
 
 custom:
   pythonRequirements:
