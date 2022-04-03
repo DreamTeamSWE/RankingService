@@ -33,6 +33,4 @@ class PostAnalyzer(Analyzer, ABC):
         print("\n" + str(score) + "\n-------------------\n")
 
         # rekognition = boto3.client(service_name='rekognition',
-        #                            region_name=AWS_REGION,
-        #                            aws_access_key_id=AWS_KEY,
-        #                            aws_secret_access_key=AWS_PSW)
+        #                            region_name=AWS_REGION)
