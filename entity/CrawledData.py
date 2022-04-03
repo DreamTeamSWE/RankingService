@@ -29,7 +29,7 @@ class CrawledData:
 
     def __str__(self):
         return "id_post: " + str(
-            self.id_post) + " utente: " + self.utente + " caption: " + self.caption + " list_image: " + str(
-            self.list_image) + " restaurant: " + str(self.restaurant) + " punt_emoji: " + str(
-            self.punt_emoji) + " score: " + str(
-            self.score) + " punt_foto: " + str(self.punt_foto)
+            self.id_post) + " \nutente: " + self.utente + " \ncaption: " + self.caption + " \nlist_image: " + str(
+            self.list_image) + " \nrestaurant: " + str(self.restaurant) + " \npunt_emoji: " + str(
+            self.punt_emoji) + " \nscore: " + str(
+            self.score) + " \npunt_foto: " + str(self.punt_foto)

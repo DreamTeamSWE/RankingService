@@ -20,3 +20,5 @@ class Filter:
         #     query += "pesi >= " + str(self.pesi) + " AND "
         query = query[:-5]
         return query
+
+

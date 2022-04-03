@@ -9,18 +9,20 @@ def refresh_ranking(event, context):
     list_post = []
 
     for item in array_json_sqs_response:
-        print(item['body'])
+        # print(item['body'])
         item_body = item['body']
+
+        restaurant_body = item_body['location']
         restaurant = Restaurant(
-            id_rist=item_body['db_id'],
-            nome=item_body['location_name'],
+            id_rist=restaurant_body['db_id'],
+            nome=restaurant_body['location_name'],
             # indirizzo=item_body['address'],
             indirizzo="",
-            telefono=item_body['phone'],
-            sito=item_body['website'],
-            lat=item_body['lat'],
-            lng=item_body['lng'],
-            categoria=item_body['category'])
+            telefono=restaurant_body['phone'],
+            sito=restaurant_body['website'],
+            lat=restaurant_body['lat'],
+            lng=restaurant_body['lng'],
+            categoria=restaurant_body['category'])
 
         list_img = []
         for img in item_body['img_url']:
@@ -33,12 +35,12 @@ def refresh_ranking(event, context):
             list_image=list_img,
             restaurant=restaurant)
 
-        print('--------------------\n')
+        # print('--------------------\n')
 
-        print(post)
+        # print(post)
         list_post.append(post)
 
-        print('--------------------\n')
+        # print('--------------------\n')
 
     body = {
         "message": "Go Serverless v1.0! Your function executed successfully!",
