@@ -24,6 +24,7 @@ create table post(
     nome_utente varchar(50) not null,
     data_post datetime not null,
     id_ristorante integer references ristorante(id_ristorante),
+    testo varchar(2000) not null,
     punteggio_emoji integer,
     sentiment_comprehend integer,
     negative_comprehend integer,

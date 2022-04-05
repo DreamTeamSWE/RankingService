@@ -18,7 +18,7 @@ class CrawledData:
         self.score = None
         self.punt_foto = None
 
-    def set_point(self, score: ScoreComprehend):
+    def set_score(self, score: ScoreComprehend):
         self.score = score
 
     def set_punt_foto(self, punt_foto: int):

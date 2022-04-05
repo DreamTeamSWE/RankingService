@@ -1,5 +1,6 @@
 from db.Database import Database
 from entity.Restaurant import Restaurant
+from entity.CrawledData import CrawledData
 
 
 class RepositoryInternal:
@@ -35,6 +36,19 @@ class RepositoryInternal:
         values = (restaurant.nome, restaurant.indirizzo, restaurant.telefono, restaurant.sito,
                   restaurant.lat, restaurant.lng, restaurant.categoria, restaurant.punt_emoji, restaurant.punt_foto,
                   restaurant.punt_testo, restaurant.id_rist)
+
+        database = Database('ranking_test')
+        response = database.do_write_query(query, values)
+        return response
+
+    def save_post(self, post: CrawledData) -> int:
+        query = "INSERT INTO post (nome_utente, data_post, id_ristorante, testo, punteggio_emoji, " \
+                "sentiment_comprehend, negative_comprehend, positive_comprehend, neutral_comprehend)" \
+                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+
+        values = (post.utente, post.data_post, post.restaurant.id_rist, post.caption, post.punt_emoji,
+                  post.score.sentiment_comprehend,
+                  post.score.negative_comprehend, post.score.positive_comprehend, post.score.neutral_comprehend)
 
         database = Database('ranking_test')
         response = database.do_write_query(query, values)

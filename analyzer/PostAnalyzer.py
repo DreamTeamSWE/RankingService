@@ -3,6 +3,7 @@ import boto3
 from analyzer.Analyzer import Analyzer
 from entity import CrawledData
 from entity.ScoreComprehend import ScoreComprehend
+from db.RepositoryInternal import RepositoryInternal
 
 AWS_REGION = 'eu-central-1'
 
@@ -82,6 +83,29 @@ def detect_sentiment_person(img_url: str, bucket: str):
     return emotion, emozioniEmpty
 
 
+def image_analyzer(list_image: list):
+    bucket = 'dream-team-img-test'
+    for name_image in list_image:
+        print("\n-------------------")
+        name_image = str(name_image) + ".jpg"
+        print(name_image)
+
+        labels, theresPerson = detect_labels(name_image, bucket)
+        print(labels)
+        if theresPerson:
+            print("There is a person")
+            emotion, emozioniEmpty = detect_sentiment_person(name_image, bucket)
+            if emozioniEmpty:
+                print("No emotion detected")
+            else:
+                print(emotion)
+                # setattr(post, "emotion_rekognition", emotion)
+        else:
+            print("There is no person")
+
+        print("-------------------\n")
+
+
 class PostAnalyzer(Analyzer, ABC):
     def analyze(self, post: CrawledData):
         print("Hello from PostAnalyzer")
@@ -90,30 +114,12 @@ class PostAnalyzer(Analyzer, ABC):
 
         print("\n" + str(score) + "\n-------------------\n")
 
-        list_image = post.list_image
+        post.set_score(score)
 
-        if list_image is not None:
+        repository = RepositoryInternal()
+        repository.save_post(post)
 
-            bucket = 'dream-team-img-test'
-            for name_image in list_image:
-                print("\n-------------------")
-                name_image = str(name_image) + ".jpg"
-                print(name_image)
-
-                labels, theresPerson = detect_labels(name_image, bucket)
-                print(labels)
-                if theresPerson:
-                    print("There is a person")
-                    emotion, emozioniEmpty = detect_sentiment_person(name_image, bucket)
-                    if emozioniEmpty:
-                        print("No emotion detected")
-                    else:
-                        print(emotion)
-                        setattr(post, "emotion_rekognition", emotion)
-                else:
-                    print("There is no person")
-
-                print("-------------------\n")
-
+        if post.list_image is not None:
+            image_analyzer(post.list_image)
         else:
             print("\nNo image in post\n")
