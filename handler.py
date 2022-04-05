@@ -8,10 +8,9 @@ def refresh_ranking(event, context):
     array_json_sqs_response = event['Records']
 
     for item in array_json_sqs_response:
-        # print(item['body'])
         item_body = item['body']
-
         restaurant_body = item_body['location']
+
         restaurant = Restaurant(
             id_rist=restaurant_body['db_id'],
             nome=restaurant_body['location_name'],
@@ -33,12 +32,6 @@ def refresh_ranking(event, context):
             caption=item_body['caption_text'],
             list_image=list_img,
             restaurant=restaurant)
-
-        # print('--------------------\n')
-
-        # print(post)
-
-        # print('--------------------\n')
 
         analyzer = PostAnalyzer()
         analyzer.analyze(post)

@@ -16,6 +16,7 @@ functions:
         Action:
           - rekognition:*
           - comprehend:*
+          - s3:*
         Resource: '*'
     events:
       - sqs:

@@ -9,10 +9,10 @@ class Sentiment(Enum):
 
 class ScoreComprehend:
     def __init__(self, negative, positive, neutral):
-        self.principal_sentiment = None
         self.negative = negative
         self.positive = positive
         self.neutral = neutral
+        self.principal_sentiment = None
 
     def __str__(self):
         return "Principal Sentiment: " + str(self.principal_sentiment) + "\n" + \
@@ -20,6 +20,7 @@ class ScoreComprehend:
                "Positive: " + str(self.positive) + "\n" + \
                "Neutral: " + str(self.neutral) + "\n"
 
+    # set principal sentiment
     def set_sentiment(self, sentiment: str):
         if sentiment == "positive":
             self.principal_sentiment = Sentiment.POSITIVE
