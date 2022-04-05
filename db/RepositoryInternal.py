@@ -1,5 +1,4 @@
 from db.Database import Database
-from entity.CrawledData import CrawledData
 from entity.Restaurant import Restaurant
 
 
@@ -8,89 +7,64 @@ class RepositoryInternal:
         pass
 
     def __save_new_restaurant(self, restaurant: Restaurant) -> int:
-        query = "INSERT INTO ristorante (" \
-                "nome_ristorante, " \
-                "indirizzo, " \
-                "citta, " \
-                "provincia, " \
-                "telefono, " \
-                "sito_web, " \
-                "orario_apertura, " \
-                "orario_chiusura, " \
-                "latitudine, " \
-                "longitudine, " \
-                "punteggio_emoji, " \
-                "punteggio_foto, " \
-                "punteggio_testo) " \
-                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        values = (restaurant.nome, restaurant.indirizzo, restaurant.citta, restaurant.provincia, restaurant.telefono,
-                  restaurant.sito, restaurant.orario_aperture, restaurant.orario_chiusura, restaurant.lat,
-                  restaurant.lng,
-                  restaurant.punt_emoji, restaurant.punt_foto, restaurant.punt_testo)
+        query = "INSERT INTO ristorante (nome_ristorante, indirizzo, telefono, sito_web, " \
+                "latitudine, longitudine, categoria,punteggio_emoji, punteggio_foto, " \
+                "punteggio_testo) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s %s)"
+
+        values = (restaurant.nome, restaurant.indirizzo, restaurant.telefono, restaurant.sito,
+                  restaurant.lat, restaurant.lng, restaurant.categoria, restaurant.punt_emoji, restaurant.punt_foto,
+                  restaurant.punt_testo)
 
         database = Database('ranking_test')
         response = database.do_write_query(query, values)
         return response
 
-    def update_restaurant_info(self, restaurant: Restaurant, post: CrawledData):
+    def update_restaurant_info(self, restaurant: Restaurant) -> int:
         query = "UPDATE ristorante SET " \
                 "nome_ristorante=%s, " \
                 "indirizzo=%s, " \
-                "citta=%s, " \
-                "provincia=%s, " \
                 "telefono=%s, " \
                 "sito_web=%s, " \
-                "orario_apertura=%s, " \
-                "orario_chiusura=%s, " \
                 "latitudine=%s, " \
                 "longitudine=%s, " \
+                "categoria=%s, " \
                 "punteggio_emoji=%s, " \
                 "punteggio_foto=%s, " \
                 "punteggio_testo=%s WHERE id=%s"
 
-        if post is None:
-            values = (
-                restaurant.nome, restaurant.indirizzo, restaurant.citta, restaurant.provincia, restaurant.telefono,
-                restaurant.sito, restaurant.orario_aperture, restaurant.orario_chiusura, restaurant.lat,
-                restaurant.lng, restaurant.punt_emoji, restaurant.punt_foto,
-                restaurant.punt_testo, restaurant.id_rist)
-        else:
-            values = (
-                restaurant.nome, restaurant.indirizzo, restaurant.citta, restaurant.provincia, restaurant.telefono,
-                restaurant.sito, restaurant.orario_aperture, restaurant.orario_chiusura, restaurant.lat,
-                restaurant.lng, restaurant.punt_emoji + post.punt_emoji, restaurant.punt_foto + post.punt_foto,
-                restaurant.punt_testo + post.score.calculate_score(), restaurant.id_rist)
+        values = (restaurant.nome, restaurant.indirizzo, restaurant.telefono, restaurant.sito,
+                  restaurant.lat, restaurant.lng, restaurant.categoria, restaurant.punt_emoji, restaurant.punt_foto,
+                  restaurant.punt_testo, restaurant.id_rist)
 
         database = Database('ranking_test')
         response = database.do_write_query(query, values)
-        if response is None:
-            response = self.__save_new_restaurant(restaurant)
-
         return response
 
     # !!! stesso codice di RepositoryExternal.py !!! #
     def get_restaurant_info_by_id(self, id_restaurant: int) -> Restaurant:
-        query = "SELECT * FROM ristorante WHERE id=%s"
+        query = "SELECT * FROM ristorante WHERE id_ristorante=%s"
         values = id_restaurant
         database = Database('ranking_test')
         response = database.do_read_query(query, values)
         if response is not None:
-            restaurant = Restaurant(response[0], response[1], response[2], response[3], response[4], response[5],
-                                    response[6], response[7], response[8], response[9], response[10], response[11],
-                                    response[12], response[13])
+            restaurant = Restaurant(id_rist=response[0], nome=response[1], indirizzo=response[2], telefono=response[3],
+                                    sito=response[4], lat=response[5], lng=response[6], categoria=response[7],
+                                    punt_emoji=response[8],
+                                    punt_foto=response[9], punt_testo=response[10])
             return restaurant
 
         return Restaurant()
 
     def get_restaurant_info_by_name(self, name: str) -> Restaurant:
-        query = "SELECT * FROM ristorante WHERE nome_ristorante LIKE %s%"
+        query = "SELECT * FROM ristorante WHERE nome_ristorante LIKE '%s%'"
         values = name
         database = Database('ranking_test')
         response = database.do_read_query(query, values)
         if response is not None:
-            restaurant = Restaurant(response[0], response[1], response[2], response[3], response[4], response[5],
-                                    response[6], response[7], response[8], response[9], response[10], response[11],
-                                    response[12], response[13])
+            restaurant = Restaurant(id_rist=response[0], nome=response[1], indirizzo=response[2], telefono=response[3],
+                                    sito=response[4], lat=response[5], lng=response[6], categoria=response[7],
+                                    punt_emoji=response[8],
+                                    punt_foto=response[9], punt_testo=response[10])
             return restaurant
 
         return Restaurant()

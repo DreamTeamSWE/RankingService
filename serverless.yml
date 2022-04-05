@@ -17,6 +17,7 @@ functions:
           - rekognition:*
           - comprehend:*
           - s3:*
+          - rds:*
         Resource: '*'
     events:
       - sqs:

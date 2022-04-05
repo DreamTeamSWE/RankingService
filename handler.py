@@ -14,8 +14,7 @@ def refresh_ranking(event, context):
         restaurant = Restaurant(
             id_rist=restaurant_body['db_id'],
             nome=restaurant_body['location_name'],
-            # indirizzo=item_body['address'],
-            indirizzo="",
+            indirizzo="",  # indirizzo=item_body['address'],
             telefono=restaurant_body['phone'],
             sito=restaurant_body['website'],
             lat=restaurant_body['lat'],

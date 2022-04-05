@@ -45,31 +45,41 @@ def detect_labels(photo, bucket):
             labels.append(label)
             if label['Name'] == 'Person':
                 theresPerson = True
+            # print("Label: " + label['Name'])
+            # print("Confidence: " + str(label['Confidence']))
+            # print("Instances:")
+            # for instance in label['Instances']:
+            #     print("  Confidence: " + str(instance['Confidence']))
+            #     print()
+            #
+            # print("Parents:")
+            # for parent in label['Parents']:
+            #     print("   " + parent['Name'])
+            # print("----------")
+            # print()
 
     return labels, theresPerson
 
-    #
-    #
-    #
-    #
-    #     print("Label: " + label['Name'])
-    #     print("Confidence: " + str(label['Confidence']))
-    #     print("Instances:")
-    #     for instance in label['Instances']:
-    #         print("  Bounding box")
-    #         print("    Top: " + str(instance['BoundingBox']['Top']))
-    #         print("    Left: " + str(instance['BoundingBox']['Left']))
-    #         print("    Width: " + str(instance['BoundingBox']['Width']))
-    #         print("    Height: " + str(instance['BoundingBox']['Height']))
-    #         print("  Confidence: " + str(instance['Confidence']))
-    #         print()
-    #
-    #     print("Parents:")
-    #     for parent in label['Parents']:
-    #         print("   " + parent['Name'])
-    #     print("----------")
-    #     print()
-    # return len(response['Labels'])
+
+def detect_sentiment_person(img_url: str, bucket: str):
+    reko = boto3.client('rekognition', region_name=AWS_REGION)
+    print(img_url)
+    response = reko.detect_faces(Image={'S3Object': {'Bucket': bucket, 'Name': img_url}},
+                                 Attributes=['ALL'])
+    count = 1
+    emozioniEmpty = True
+    emotion = ''
+    for y in response["FaceDetails"]:
+        emotion += f'persona {count}:\n'
+        for x in y["Emotions"]:
+            type_sent = x["Type"]
+            confidence = x["Confidence"]
+            if confidence > 75:
+                emozioniEmpty = False
+                emotion += f'emozione: {type_sent}, confidence: {confidence}\n'
+        count += 1
+
+    return emotion, emozioniEmpty
 
 
 class PostAnalyzer(Analyzer, ABC):
@@ -83,15 +93,23 @@ class PostAnalyzer(Analyzer, ABC):
         list_image = post.list_image
 
         if list_image is not None:
+
+            bucket = 'dream-team-img-test'
             for name_image in list_image:
                 print("\n-------------------")
                 name_image = str(name_image) + ".jpg"
                 print(name_image)
 
-                labels, theresPerson = detect_labels(name_image, 'dream-team-img-test')
+                labels, theresPerson = detect_labels(name_image, bucket)
                 print(labels)
                 if theresPerson:
                     print("There is a person")
+                    emotion, emozioniEmpty = detect_sentiment_person(name_image, bucket)
+                    if emozioniEmpty:
+                        print("No emotion detected")
+                    else:
+                        print(emotion)
+                        setattr(post, "emotion_rekognition", emotion)
                 else:
                     print("There is no person")
 
