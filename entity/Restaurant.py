@@ -26,6 +26,6 @@ class Restaurant:
 
     def __str__(self):
         return "Restaurant: " + str(
-            self.id_rist) + " \n" + self.nome + " \n" + self.indirizzo + " \n" + self.telefono + " \n" + self.sito + " \n" + str(
-            self.lat) + " \n" + str(self.lng) + " \n" + self.categoria + " \n" + str(self.punt_emoji) + " \n" + str(
-            self.punt_foto) + " \n" + str(self.punt_testo)
+            self.id_rist) + " \n" + self.nome + " \n" + self.indirizzo + " \n" + self.telefono + " \n" + self.sito + \
+               "\n" + str(self.lat) + " \n" + str(self.lng) + " \n" + self.categoria + " \n" + \
+               str(self.punt_emoji) + " \n" + str(self.punt_foto) + " \n" + str(self.punt_testo)

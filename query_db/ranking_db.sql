@@ -14,7 +14,7 @@ create table emozioni_img(
 
 drop table if exists immagini;
 create table immagini(
-    id_immagine serial primary key,
+    id_immagine integer primary key,
     id_post integer references post(id_post)
 );
 
