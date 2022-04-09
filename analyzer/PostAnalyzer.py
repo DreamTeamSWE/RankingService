@@ -43,23 +43,24 @@ def detect_labels(photo, bucket):
 
     for label in response['Labels']:
         if label['Confidence'] > 90:
-            labels.append(label)
             if label['Name'] == 'Person':
                 theresPerson = True
-            # print("Label: " + label['Name'])
-            # print("Confidence: " + str(label['Confidence']))
-            # print("Instances:")
-            # for instance in label['Instances']:
-            #     print("  Confidence: " + str(instance['Confidence']))
-            #     print()
-            #
-            # print("Parents:")
-            # for parent in label['Parents']:
-            #     print("   " + parent['Name'])
-            # print("----------")
-            # print()
+            elif label['Parents'] == 'Food':
+                labels.append(label['Name'])
 
     return labels, theresPerson
+    # print("Label: " + label['Name'])
+    # print("Confidence: " + str(label['Confidence']))
+    # print("Instances:")
+    # for instance in label['Instances']:
+    #     print("  Confidence: " + str(instance['Confidence']))
+    #     print()
+    #
+    # print("Parents:")
+    # for parent in label['Parents']:
+    #     print("   " + parent['Name'])
+    # print("----------")
+    # print()
 
 
 def detect_sentiment_person(img_url: str, bucket: str):
