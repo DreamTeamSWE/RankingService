@@ -85,25 +85,33 @@ def detect_sentiment_person(img_url: str, bucket: str):
 
 def image_analyzer(list_image: list):
     bucket = 'dream-team-img-test'
+    labels = []
+    emotions = []
     for name_image in list_image:
         print("\n-------------------")
         name_image = str(name_image) + ".jpg"
         print(name_image)
 
-        labels, theresPerson = detect_labels(name_image, bucket)
-        print(labels)
+        label_returned, theresPerson = detect_labels(name_image, bucket)
+        print(label_returned)
+        labels.append(label_returned)
         if theresPerson:
             print("There is a person")
-            emotion, emozioniEmpty = detect_sentiment_person(name_image, bucket)
+
+            emotion_returned, emozioniEmpty = detect_sentiment_person(name_image, bucket)
             if emozioniEmpty:
                 print("No emotion detected")
+
             else:
-                print(emotion)
+                print(emotion_returned)
+                emotions.append(emotion_returned)
                 # setattr(post, "emotion_rekognition", emotion)
         else:
             print("There is no person")
 
         print("-------------------\n")
+
+    return labels, emotions
 
 
 class PostAnalyzer(Analyzer, ABC):
@@ -111,15 +119,16 @@ class PostAnalyzer(Analyzer, ABC):
         print("Hello from PostAnalyzer")
 
         score = detect_sentiment_text(post)
+        post.set_score(score)
 
         print("\n" + str(score) + "\n-------------------\n")
 
-        post.set_score(score)
+        if post.list_image is not None:
+            labels, emotions = image_analyzer(post.list_image)
+            post.set_labels(labels)
+            post.set_emotions(emotions)
+        else:
+            print("\nNo image in post\n")
 
         repository = RepositoryInternal()
         repository.save_post(post)
-
-        if post.list_image is not None:
-            image_analyzer(post.list_image)
-        else:
-            print("\nNo image in post\n")
