@@ -30,9 +30,15 @@ plugins:
   - serverless-iam-roles-per-function
   - serverless-python-requirements
 
+#package:
+#  patterns:
+#    -'!venv/**'
+#    -'!node_modules/**'
 package:
-  patterns:
-    -'!venv/**'
+  individually: true
+  exclude:
+    - node_modules/**
+    - venv/**
 
 custom:
   pythonRequirements:

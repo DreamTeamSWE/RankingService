@@ -8,7 +8,7 @@ class Sentiment(Enum):
 
 
 class ScoreComprehend:
-    def __init__(self, negative, positive, neutral):
+    def __init__(self, negative: int, positive: int, neutral: int):
         self.negative = negative
         self.positive = positive
         self.neutral = neutral

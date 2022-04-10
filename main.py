@@ -1,5 +1,6 @@
 import handler
 import json
+import logging
 
 if __name__ == '__main__':
     # open json file
@@ -12,4 +13,5 @@ if __name__ == '__main__':
     #
     # f.close()
     #
-    print('Done')
+    logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
+    logging.info('Done')

@@ -9,6 +9,9 @@ AWS_REGION = 'eu-central-1'
 
 
 def detect_sentiment_text(post: CrawledData) -> ScoreComprehend:
+    print("\n-------------------")
+    print('detect_sentiment_text')
+
     comprehend = boto3.client(service_name='comprehend',
                               region_name=AWS_REGION)
     # result of comprehend
@@ -19,9 +22,9 @@ def detect_sentiment_text(post: CrawledData) -> ScoreComprehend:
     sentiment_score = json_result["Sentiment"]
 
     # get score
-    negative = array["Negative"] * 100
-    neutral = array["Neutral"] * 100
-    positive = array["Positive"] * 100
+    negative = int(array["Negative"] * 100)
+    neutral = int(array["Neutral"] * 100)
+    positive = int(array["Positive"] * 100)
 
     score = ScoreComprehend(negative, neutral, positive)
     score.set_sentiment(sentiment_score)
@@ -30,64 +33,62 @@ def detect_sentiment_text(post: CrawledData) -> ScoreComprehend:
 
 
 def detect_labels(photo, bucket):
+    print("\n-------------------")
+    print('detect_labels')
+
     client = boto3.client('rekognition', region_name=AWS_REGION)
 
     response = client.detect_labels(Image={'S3Object': {'Bucket': bucket, 'Name': photo}},
                                     MaxLabels=10)
 
     print('Detected labels for ' + photo)
-    print()
 
     labels = []
     theresPerson = False
 
     for label in response['Labels']:
-        if label['Confidence'] > 90:
+        if label['Confidence'] >= 90:
             if label['Name'] == 'Person':
                 theresPerson = True
-            elif label['Parents'] == 'Food':
-                labels.append(label['Name'])
+            else:
+                for parent in label['Parents']:
+                    if parent['Name'] == 'Food':
+                        labels.append(label['Name'])
 
     return labels, theresPerson
-    # print("Label: " + label['Name'])
-    # print("Confidence: " + str(label['Confidence']))
-    # print("Instances:")
-    # for instance in label['Instances']:
-    #     print("  Confidence: " + str(instance['Confidence']))
-    #     print()
-    #
-    # print("Parents:")
-    # for parent in label['Parents']:
-    #     print("   " + parent['Name'])
-    # print("----------")
-    # print()
 
 
 def detect_sentiment_person(img_url: str, bucket: str):
+    print("\n-------------------")
+    print('detect_sentiment_person')
+
     reko = boto3.client('rekognition', region_name=AWS_REGION)
     print(img_url)
     response = reko.detect_faces(Image={'S3Object': {'Bucket': bucket, 'Name': img_url}},
                                  Attributes=['ALL'])
-    count = 1
     emozioniEmpty = True
-    emotion = ''
-    for y in response["FaceDetails"]:
-        emotion += f'persona {count}:\n'
-        for x in y["Emotions"]:
-            type_sent = x["Type"]
-            confidence = x["Confidence"]
-            if confidence > 75:
-                emozioniEmpty = False
-                emotion += f'emozione: {type_sent}, confidence: {confidence}\n'
-        count += 1
+    emotions_dict = {}
 
-    return emotion, emozioniEmpty
+    for faceDetail in response['FaceDetails']:
+        emotions = faceDetail['Emotions']
+        for emotion in emotions:
+            if emotion['Confidence'] >= 90:
+                if emotion['Type'] in emotions_dict:
+                    emotions_dict[emotion['Type']] += 1
+                else:
+                    emotions_dict[emotion['Type']] = 1
+                emozioniEmpty = False
+
+    return emotions_dict, emozioniEmpty
 
 
 def image_analyzer(list_image: list):
+    print("\n-------------------")
+    print('image_analyzer')
+
     bucket = 'dream-team-img-test'
     labels = []
-    emotions = []
+    emotions = {}
     for name_image in list_image:
         print("\n-------------------")
         name_image = str(name_image) + ".jpg"
@@ -104,9 +105,8 @@ def image_analyzer(list_image: list):
                 print("No emotion detected")
 
             else:
-                print(emotion_returned)
-                emotions.append(emotion_returned)
-                # setattr(post, "emotion_rekognition", emotion)
+                print("Emotion detected")
+                emotions.update(emotion_returned)
         else:
             print("There is no person")
 
@@ -126,10 +126,13 @@ class PostAnalyzer(Analyzer, ABC):
 
         if post.list_image is not None:
             labels, emotions = image_analyzer(post.list_image)
+
+            print(emotions)
+
             post.set_labels(labels)
             post.set_emotions(emotions)
         else:
             print("\nNo image in post\n")
 
-        repository = RepositoryInternal()
-        repository.save_post(post)
+        # repository = RepositoryInternal()
+        # repository.save_post(post)

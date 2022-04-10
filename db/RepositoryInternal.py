@@ -1,6 +1,7 @@
 from db.Database import Database
 from entity.Restaurant import Restaurant
 from entity.CrawledData import CrawledData
+import logging
 
 
 class RepositoryInternal:
@@ -90,7 +91,7 @@ class RepositoryInternal:
                 "VALUES (:post_utente, :data_post, :id_ristorante, :testo, :punt_emoji, :score, :negative, " \
                 ":positive, :neutral)"
 
-        print(query)
+        logging.info(query)
 
         response = self.database.do_write_query(query, self.__set_param_crawled_data(post)) > 0
 
