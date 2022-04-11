@@ -26,7 +26,7 @@ create table post(
     id_ristorante integer references ristorante(id_ristorante),
     testo varchar(2000) not null,
     punteggio_emoji integer,
-    sentiment_comprehend integer,
+    score integer not null default 0,
     negative_comprehend integer,
     positive_comprehend integer,
     neutral_comprehend integer
@@ -47,14 +47,14 @@ create table ristorante(
     punteggio_testo integer
 );
 
-drop table if exists tag;
-create table tag(
-    nome_tag varchar(50) primary key
+drop table if exists labels;
+create table labels(
+    nome_label varchar(50) primary key
 );
 
-drop table if exists tag_img;
-create table tag_img(
+drop table if exists labels_img;
+create table labels_img(
     id_immagine integer references immagine(id_immagine),
-    nome_tag varchar(50) references tag(nome_tag),
+    nome_label varchar(50) references labels(nome_label),
     qta integer
 );

@@ -1,11 +1,21 @@
-from abc import ABC
 import boto3
-from analyzer.Analyzer import Analyzer
+import operator
+import functools
+import collections
+from abc import ABC
 from entity import CrawledData
+from analyzer.Analyzer import Analyzer
 from entity.ScoreComprehend import ScoreComprehend
 from db.RepositoryInternal import RepositoryInternal
 
 AWS_REGION = 'eu-central-1'
+
+
+def merge_and_sum(a: dict, b: dict) -> dict:
+    """
+    Merge two dictionaries and sum their values.
+    """
+    return {k: a.get(k, 0) + b.get(k, 0) for k in set(a) | set(b)}
 
 
 def detect_sentiment_text(post: CrawledData) -> ScoreComprehend:
@@ -41,9 +51,9 @@ def detect_labels(photo, bucket):
     response = client.detect_labels(Image={'S3Object': {'Bucket': bucket, 'Name': photo}},
                                     MaxLabels=10)
 
-    print('Detected labels for ' + photo)
+    print('Detecting labels for ' + photo)
 
-    labels = []
+    labels_dict = {}
     theresPerson = False
 
     for label in response['Labels']:
@@ -53,9 +63,12 @@ def detect_labels(photo, bucket):
             else:
                 for parent in label['Parents']:
                     if parent['Name'] == 'Food':
-                        labels.append(label['Name'])
+                        if label['Name'] in labels_dict:
+                            labels_dict[label['Name']] += 1
+                        else:
+                            labels_dict[label['Name']] = 1
 
-    return labels, theresPerson
+    return labels_dict, theresPerson
 
 
 def detect_sentiment_person(img_url: str, bucket: str):
@@ -82,36 +95,30 @@ def detect_sentiment_person(img_url: str, bucket: str):
     return emotions_dict, emozioniEmpty
 
 
-def image_analyzer(list_image: list):
+def image_analyzer(name_image: str):
     print("\n-------------------")
     print('image_analyzer')
 
     bucket = 'dream-team-img-test'
-    labels = []
     emotions = {}
-    for name_image in list_image:
-        print("\n-------------------")
-        name_image = str(name_image) + ".jpg"
-        print(name_image)
 
-        label_returned, theresPerson = detect_labels(name_image, bucket)
-        print(label_returned)
-        labels.append(label_returned)
-        if theresPerson:
-            print("There is a person")
+    print("\n-------------------")
+    name_image = str(name_image) + ".jpg"
+    print(name_image)
 
-            emotion_returned, emozioniEmpty = detect_sentiment_person(name_image, bucket)
-            if emozioniEmpty:
-                print("No emotion detected")
+    labels, theresPerson = detect_labels(name_image, bucket)
+    if theresPerson:
+        print("There is a person")
 
-            else:
-                print("Emotion detected")
-                emotions.update(emotion_returned)
+        emotions, emozioniEmpty = detect_sentiment_person(name_image, bucket)
+        if not emozioniEmpty:
+            print("Emotion detected")
         else:
-            print("There is no person")
+            print("No emotion detected")
+    else:
+        print("There is no person")
 
-        print("-------------------\n")
-
+    print("-------------------\n")
     return labels, emotions
 
 
@@ -124,15 +131,22 @@ class PostAnalyzer(Analyzer, ABC):
 
         print("\n" + str(score) + "\n-------------------\n")
 
+        labels_dict = {}
+        emotions_dict = {}
+
         if post.list_image is not None:
-            labels, emotions = image_analyzer(post.list_image)
+            for name_image in post.list_image:
+                labels, emotions = image_analyzer(name_image)
 
-            print(emotions)
+                if len(labels) > 0:
+                    labels_dict = merge_and_sum(labels_dict, labels)
+                if len(emotions) > 0:
+                    emotions_dict = merge_and_sum(emotions_dict, emotions)
 
-            post.set_labels(labels)
-            post.set_emotions(emotions)
+                post.set_labels(labels)
+                post.set_emotions(emotions)
         else:
             print("\nNo image in post\n")
 
-        # repository = RepositoryInternal()
-        # repository.save_post(post)
+        repository = RepositoryInternal()
+        repository.save_post(post)
