@@ -1,5 +1,3 @@
-from typing import List
-
 from db.DatabaseHandler import DatabaseHandler
 
 
@@ -46,7 +44,7 @@ class RepositoryFavorites:
         response = len(self.database.do_write_query(query, params)) > 0
         return response
 
-    def get_favorites(self, username: str) -> List[str]:
+    def get_favorites(self, username: str) -> dict:
         query = 'SELECT * FROM preferiti WHERE nome_utente = :nome_utente'
         response = self.database.do_read_query(
                 query, {'name': 'nome_utente', 'value': {'stringValue': username}}
