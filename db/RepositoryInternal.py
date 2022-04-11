@@ -133,7 +133,7 @@ class RepositoryInternal:
                 "punteggio_testo) VALUES ( :name, :indirizzo, :telefono, :sito_web, :latitudine, :longitudine, " \
                 ":categoria, :punteggio_emoji, :punteggio_foto, :punteggio_testo)"
 
-        response = (self.database.do_write_query(query, self.__set_param_restaurant(restaurant)) > 0)
+        response = len(self.database.do_write_query(query, self.__set_param_restaurant(restaurant))) > 0
         return response
 
     def __save_new_images(self, list_images: list, id_post: int) -> bool:
@@ -149,7 +149,7 @@ class RepositoryInternal:
 
         for img in list_images:
             values = (img, id_post)
-            response = response and (self.database.do_write_query(query, values) > 0)
+            response = response and len(self.database.do_write_query(query, values)) > 0
 
         return response
 
@@ -169,10 +169,10 @@ class RepositoryInternal:
         for img in list_images:
             for key, value in emotions.items():
                 param = self.__set_param_emotion(key)
-                response = response and (self.database.do_write_query(query_insert_emotions, param) > 0)
+                response = response and len(self.database.do_write_query(query_insert_emotions, param)) > 0
 
                 param = self.__set_param_emotion_img(key, list_images[0], value)
-                response = response and (self.database.do_write_query(query_insert_emotions_img, param) > 0)
+                response = response and len(self.database.do_write_query(query_insert_emotions_img, param)) > 0
 
         return response
 
@@ -185,7 +185,7 @@ class RepositoryInternal:
         :return: boolean if queries are executed correctly
         """
         query = "INSERT INTO labels VALUES :labels"
-        response = self.database.do_write_query(query, self.__set_param_label(labels)) > 0
+        response = len(self.database.do_write_query(query, self.__set_param_label(labels))) > 0
 
         return response
 
@@ -203,7 +203,7 @@ class RepositoryInternal:
                 "VALUES (:post_utente, :data_post, :id_ristorante, :testo, :punt_emoji, :score, :negative, " \
                 ":positive, :neutral)"
 
-        response = self.database.do_write_query(query, self.__set_param_crawled_data(post)) > 0
+        response = len(self.database.do_write_query(query, self.__set_param_crawled_data(post))) > 0
 
         # salvo immagini solo se presenti
         # if post.list_images is not None:
@@ -239,9 +239,9 @@ class RepositoryInternal:
                 "punteggio_testo=:punteggio_testo_param " \
                 "WHERE id=:id_rest_param"
 
-        response = self.database.do_write_query(query, self.__set_param_restaurant(restaurant))
+        response = len(self.database.do_write_query(query, self.__set_param_restaurant(restaurant))) > 0
 
-        if response is None or response <= 0:
+        if response is None or not response:
             response = self.__save_new_restaurant(restaurant)
 
         return response
