@@ -17,6 +17,13 @@ class DatabaseHandler:
 
     # chehck if db is turned on
     def __is_db_on(self, delay) -> bool:
+        """
+        Check if database is turned on.
+
+        :type delay: int
+        :param delay: delay between checks
+        :return: boolean if db is on
+        """
         try:
             self.__rdsData.execute_statement(resourceArn=self.__cluster_arn,
                                              secretArn=self.__secret_arn,
@@ -39,6 +46,9 @@ class DatabaseHandler:
 
     # for two minutes check if db is on
     def __wait_for_db_on(self):
+        """
+        Wait for database to be turned on.
+        """
         ok = False
         for i in range(20):
             ok = self.__is_db_on(10)
@@ -50,6 +60,14 @@ class DatabaseHandler:
 
     @staticmethod
     def __parse_result(results):
+        """
+        Parse result from RDS Data API.
+
+        :param results: result from RDS Data API
+
+        :rtype: list
+        :return: parsed result
+        """
         columns = [column['name'] for column in results['columnMetadata']]
         parsed_records = []
         for record in results['records']:
@@ -62,12 +80,23 @@ class DatabaseHandler:
         return parsed_records
 
     def begin_transaction(self):
+        """
+        Begin transaction.
+
+        :return: transaction id
+        """
         response = self.__rdsData.begin_transaction(resourceArn=self.__cluster_arn,
                                                     secretArn=self.__secret_arn,
                                                     database=self.__database)
         return response['transactionId']
 
     def commit_transaction(self, transaction_id):
+        """
+        Commit transaction.
+
+        :param transaction_id:
+        :return: response of query
+        """
         response = self.__rdsData.commit_transaction(resourceArn=self.__cluster_arn,
                                                      secretArn=self.__secret_arn,
                                                      transactionId=transaction_id)
@@ -76,6 +105,16 @@ class DatabaseHandler:
     # param_set format: https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/rds-data.html
     # #RDSDataService.Client.execute_statement
     def do_write_query(self, query: str, param_set=None, transaction_id=None):
+        """
+        Execute write query.
+
+        :param query: query to execute
+        :param param_set: parameters for query
+        :param transaction_id: transaction id
+
+        :rtype: dict
+        :return: response of query
+        """
         if param_set is None:
             param_set = []
         if transaction_id is not None:
@@ -96,6 +135,16 @@ class DatabaseHandler:
     # param_set format: https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/rds-data.html
     # #RDSDataService.Client.execute_statement
     def do_read_query(self, query: str, param_set=None, transaction_id=None):
+        """
+        Execute read query.
+
+        :param query: query to execute
+        :param param_set: parameters for query
+        :param transaction_id: transaction id
+
+        :rtype: dict
+        :return:
+        """
         if param_set is None:
             param_set = []
         if transaction_id is not None:
