@@ -1,7 +1,4 @@
-import collections
-import functools
 import logging
-import operator
 
 
 def merge_and_sum(a: dict, b: dict) -> dict:

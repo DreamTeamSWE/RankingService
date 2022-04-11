@@ -1,15 +1,21 @@
-from db.Database import Database
-from entity.Restaurant import Restaurant
+from typing import Optional
+from db.DatabaseHandler import DatabaseHandler
 from entity.CrawledData import CrawledData
-import logging
+from entity.Restaurant import Restaurant
 
 
 class RepositoryInternal:
     def __init__(self, db_name: str = 'ranking_test') -> None:
-        self.database = Database(db_name)
+        self.database = DatabaseHandler(db_name)
 
     @staticmethod
     def __set_param_restaurant(restaurant: Restaurant) -> list:
+        """
+        Return a list of parameters for rds query
+
+        :param restaurant: Restaurant to refactor
+        :return: list of parameters
+        """
         nome_param = {"name": "nome_ristorante", "value": {"stringValue": restaurant.nome}}
         indirizzo_param = {"name": "indirizzo", "value": {"stringValue": restaurant.indirizzo}}
         telefono_param = {"name": "telefono", "value": {"stringValue": restaurant.telefono}}
@@ -40,6 +46,12 @@ class RepositoryInternal:
 
     @staticmethod
     def __set_param_crawled_data(post: CrawledData) -> list:
+        """
+        Return a list of parameters for rds query
+
+        :param post: Post if IG to refactor
+        :return: list of parameters
+        """
         post_utente_param = {"name": "post_utente", "value": {"stringValue": post.utente}}
         data_post_param = {"name": "data_post", "value": {"stringValue": str(post.data_post)}, "typeHint": "TIMESTAMP"}
         restaurant_param = {"name": "id_ristorante", "value": {"longValue": post.restaurant.id_rist}}
@@ -60,6 +72,12 @@ class RepositoryInternal:
 
     @staticmethod
     def __set_param_emotion(emotions: str) -> list:
+        """
+        Return a list of parameters for rds query
+
+        :param emotions: Rekognition Emotions to refactor
+        :return: list of parameters
+        """
         param_list = []
         param = {"name": "nome_emozione", "value": {"stringValue": emotions}}
         param_list.append(param)
@@ -67,6 +85,14 @@ class RepositoryInternal:
 
     @staticmethod
     def __set_param_emotion_img(emotions: str, id_img: int, qta: int) -> list:
+        """
+        Return a list of parameters for rds query
+
+        :param emotions: Rekognition Emotions to refactor
+        :param id_img: id of image to refactor
+        :param qta: quantity of emotions to refactor
+        :return: list of parameters
+        """
         param_list = RepositoryInternal.__set_param_emotion(emotions)
         param = {"name": "id_immagine", "value": {"longValue": id_img}}
         param_list.append(param)
@@ -76,6 +102,12 @@ class RepositoryInternal:
 
     @staticmethod
     def __set_param_label(label: str) -> list:
+        """
+        Return a list of parameters for rds query
+
+        :param label: Rekognition Label to refactor
+        :return: list of parameters
+        """
         param_list = []
         param = {"name": "nome_label", "value": {"stringValue": label}}
         param_list.append(param)
@@ -91,16 +123,27 @@ class RepositoryInternal:
         return param_list
 
     def __save_new_restaurant(self, restaurant: Restaurant) -> int:
-
+        """
+        Save a new restaurant in rds
+        :param restaurant: Restaurant to save
+        :return: boolean if the restaurant is saved
+        """
         query = "INSERT INTO ristorante (nome_ristorante, indirizzo, telefono, sito_web, " \
                 "latitudine, longitudine, categoria,punteggio_emoji, punteggio_foto, " \
                 "punteggio_testo) VALUES ( :name, :indirizzo, :telefono, :sito_web, :latitudine, :longitudine, " \
                 ":categoria, :punteggio_emoji, :punteggio_foto, :punteggio_testo)"
 
-        response = self.database.do_write_query(query, self.__set_param_restaurant(restaurant))
+        response = (self.database.do_write_query(query, self.__set_param_restaurant(restaurant)) > 0)
         return response
 
     def __save_new_images(self, list_images: list, id_post: int) -> bool:
+        """
+        Save a new images in rds
+
+        :param list_images: list of images to save
+        :param id_post: id of post to save
+        :return: boolean if queries are executed correctly
+        """
         query = "INSERT INTO immaigini (id_immagine, id_post) VALUES (%s, %s)"
         response = True
 
@@ -111,6 +154,13 @@ class RepositoryInternal:
         return response
 
     def __save_emotions(self, emotions: dict, list_images: list) -> bool:
+        """
+        Save new emotions in rds and save the relation between images and emotions
+
+        :param emotions: emotions to save
+        :param list_images: list of images to save
+        :return: boolean if queries are executed correctly
+        """
         query_insert_emotions = "INSERT INTO emozioni VALUES :nome_emozione"
         query_insert_emotions_img = "INSERT INTO emozioni_img VALUES :id_immagine, :nome_emozione, :qta"
 
@@ -127,13 +177,25 @@ class RepositoryInternal:
         return response
 
     def __save_labels(self, labels: dict, list_images: list) -> bool:
+        """
+        Save new labels in rds and save the relation between images and labels
+
+        :param labels: labels to save
+        :param list_images: list of images to save
+        :return: boolean if queries are executed correctly
+        """
         query = "INSERT INTO labels VALUES :labels"
         response = self.database.do_write_query(query, self.__set_param_label(labels)) > 0
 
         return response
 
     def save_post(self, post: CrawledData) -> bool:
+        """
+        Save a new post in rds and save all the relations between images, emotions, labels and post
 
+        :param post: post to save
+        :return: boolean if queries are executed correctly
+        """
         # salvo post nella tabella corrispondete
         print("save post in table post")
         query = "INSERT INTO post (nome_utente, data_post, id_ristorante, testo, punteggio_emoji, " \
@@ -144,19 +206,25 @@ class RepositoryInternal:
         response = self.database.do_write_query(query, self.__set_param_crawled_data(post)) > 0
 
         # salvo immagini solo se presenti
-        if post.list_image is not None:
-            print("save images in table immagini")
-            response = response and self.__save_new_images(post.list_image, post.id_post)
-
-            # salvare emozioni trovate con comprehend
-            response = response and self.__save_emotions(post.emotions, post.list_image)
-
-            # salvare labels trovati con rekognition
-            response = response and self.__save_labels(post.labels, post.list_image)
+        # if post.list_images is not None:
+        #     print("save images in table immagini")
+        #     response = response and self.__save_new_images(post.list_images, post.id_post)
+        #
+        #     # salvare emozioni trovate con comprehend
+        #     response = response and self.__save_emotions(post.emotions, post.list_images)
+        #
+        #     # salvare labels trovati con rekognition
+        #     response = response and self.__save_labels(post.labels, post.list_images)
 
         return response
 
     def update_restaurant_info(self, restaurant: Restaurant) -> int:
+        """
+        Update restaurant info in rds, if restaurant is not present in rds it will be inserted
+
+        :param restaurant: Restaurant to update in rds
+        :return: id of restaurant inserted or updated
+        """
 
         query = "UPDATE ristorante SET " \
                 "nome_ristorante=:nome_param, " \
@@ -172,9 +240,19 @@ class RepositoryInternal:
                 "WHERE id=:id_rest_param"
 
         response = self.database.do_write_query(query, self.__set_param_restaurant(restaurant))
+
+        if response is None or response <= 0:
+            response = self.__save_new_restaurant(restaurant)
+
         return response
 
-    def get_restaurant_info_by_name(self, name: str) -> Restaurant:
+    def get_restaurant_info_by_name(self, name: str) -> Optional[Restaurant]:
+        """
+        Get restaurant info from rds by name
+
+        :param name: name of restaurant
+        :return: Restaurant found or None
+        """
         param = {"name": "nome_ristorante", "value": {"stringValue": '%' + name + '%'}}
 
         query = "SELECT * FROM ristorante WHERE nome_ristorante LIKE :name"
@@ -186,10 +264,16 @@ class RepositoryInternal:
                                     punt_foto=response[9], punt_testo=response[10])
             return restaurant
 
-        return Restaurant()
+        return None
 
     # !!! stesso codice di RepositoryExternal.py !!! #
-    def get_restaurant_info_by_id(self, id_restaurant: int) -> Restaurant:
+    def get_restaurant_info_by_id(self, id_restaurant: int) -> Optional[Restaurant]:
+        """
+        Get restaurant info from rds by id
+
+        :param id_restaurant: id of restaurant to get from rds
+        :return: Restaurant found or None
+        """
 
         param = {"name": "id_restaurant", "value": {"longValue": id_restaurant}}
 
@@ -203,4 +287,4 @@ class RepositoryInternal:
                                     punt_foto=response[9], punt_testo=response[10])
             return restaurant
 
-        return Restaurant()
+        return None

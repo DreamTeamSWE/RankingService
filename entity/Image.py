@@ -1,5 +1,5 @@
 class Image:
-    def __init__(self, image_name):
+    def __init__(self, image_name: str):
         self.image_name = image_name
         self.labels = {}
         self.emotions = {}

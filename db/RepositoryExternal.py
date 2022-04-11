@@ -1,11 +1,11 @@
-from db.Database import Database
+from db.DatabaseHandler import DatabaseHandler
 from entity.Filter import Filter
 from entity.Restaurant import Restaurant
 
 
 class RepositoryExternal:
     def __init__(self, db_name: str = 'ranking_test') -> None:
-        self.database = Database(db_name)
+        self.database = DatabaseHandler(db_name)
 
     def get_ranking(self, filter_from_front: Filter) -> list:
         query = "SELECT * FROM ristorante WHERE %s"

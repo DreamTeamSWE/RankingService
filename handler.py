@@ -1,7 +1,7 @@
-import json
-from entity.CrawledData import CrawledData
-from entity.Restaurant import Restaurant
 from analyzer.PostAnalyzer import PostAnalyzer
+from entity.CrawledData import CrawledData
+from entity.Image import Image
+from entity.Restaurant import Restaurant
 
 
 def refresh_ranking(event, context):
@@ -23,26 +23,21 @@ def refresh_ranking(event, context):
 
         list_img = []
         for img in item_body['img_url']:
-            list_img.append(img)
+            list_img.append(Image(img))
 
         post = CrawledData(
             id_post=item_body['post_id'],
             utente=item_body['username'],
             caption=item_body['caption_text'],
-            list_image=list_img,
+            list_images=list_img,
             restaurant=restaurant)
 
         analyzer = PostAnalyzer()
         analyzer.analyze(post)
 
-    body = {
-        "message": "Go Serverless v1.0! Your function executed successfully!",
-        "input": "Ciaone"
-    }
-
     response = {
         "statusCode": 200,
-        "body": json.dumps(body)
+        "body": "Done!"
     }
 
     return response

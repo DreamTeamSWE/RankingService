@@ -1,10 +1,8 @@
 import boto3
-import operator
-import functools
-import collections
 from abc import ABC
-from entity import CrawledData
 from analyzer.Analyzer import Analyzer
+from entity import CrawledData
+from entity import Image
 from entity.ScoreComprehend import ScoreComprehend
 from db.RepositoryInternal import RepositoryInternal
 
@@ -14,11 +12,25 @@ AWS_REGION = 'eu-central-1'
 def merge_and_sum(a: dict, b: dict) -> dict:
     """
     Merge two dictionaries and sum their values.
+
+    :param a: first dictionary
+    :param b: second dictionary
+
+    :rtype: dict
+    :return: merged dictionary
     """
     return {k: a.get(k, 0) + b.get(k, 0) for k in set(a) | set(b)}
 
 
 def detect_sentiment_text(post: CrawledData) -> ScoreComprehend:
+    """
+    Detect sentiment of a post with Comprehend.
+
+    :param post: post to analyze with Comprehend
+
+    :rtype: ScoreComprehend
+    :return: Comprehend confidence score
+    """
     print("\n-------------------")
     print('detect_sentiment_text')
 
@@ -42,7 +54,16 @@ def detect_sentiment_text(post: CrawledData) -> ScoreComprehend:
     return score
 
 
-def detect_labels(photo, bucket):
+def detect_labels(photo: Image, bucket: str):
+    """
+    Detect object of an image with Rekognition.
+
+    :param bucket: name of S3 bucket
+    :param photo: image to analyze with Rekognition
+
+    :rtype: dict, bool
+    :return: Dictionary of labels and boolean if there is a person
+    """
     print("\n-------------------")
     print('detect_labels')
 
@@ -71,13 +92,22 @@ def detect_labels(photo, bucket):
     return labels_dict, theresPerson
 
 
-def detect_sentiment_person(img_url: str, bucket: str):
+def detect_sentiment_person(name_image: str, bucket: str):
+    """
+    Detect sentiment of a person with Comprehend.
+
+    :param name_image: name of the image to analyze with Rekognition
+    :param bucket: name of S3 bucket
+
+    :rtype: dict, bool
+    :return: Dictionary of emotions and boolean if emotions were found
+    """
     print("\n-------------------")
     print('detect_sentiment_person')
 
     reko = boto3.client('rekognition', region_name=AWS_REGION)
-    print(img_url)
-    response = reko.detect_faces(Image={'S3Object': {'Bucket': bucket, 'Name': img_url}},
+    print(name_image)
+    response = reko.detect_faces(Image={'S3Object': {'Bucket': bucket, 'Name': name_image}},
                                  Attributes=['ALL'])
     emozioniEmpty = True
     emotions_dict = {}
@@ -96,6 +126,14 @@ def detect_sentiment_person(img_url: str, bucket: str):
 
 
 def image_analyzer(name_image: str):
+    """
+    Analyze an image with Rekognition.
+
+    :param name_image: name of the image to analyze
+
+    :rtype: dict, dict
+    :return: Dictionary of labels and dictionary of emotions
+    """
     print("\n-------------------")
     print('image_analyzer')
 
@@ -103,7 +141,8 @@ def image_analyzer(name_image: str):
     emotions = {}
 
     print("\n-------------------")
-    name_image = str(name_image) + ".jpg"
+    if not name_image.__contains__('.jpg'):
+        name_image = str(name_image) + ".jpg"
     print(name_image)
 
     labels, theresPerson = detect_labels(name_image, bucket)
@@ -124,29 +163,40 @@ def image_analyzer(name_image: str):
 
 class PostAnalyzer(Analyzer, ABC):
     def analyze(self, post: CrawledData):
-        print("Hello from PostAnalyzer")
+        """
+        Analyze a post with Rekognition and Comprehend.
+        After analyze, rds db is updated with the new data.
 
-        score = detect_sentiment_text(post)
-        post.set_score(score)
+        :param post: Post to analyze
+        """
+        print("\nHello from PostAnalyzer\n")
 
-        print("\n" + str(score) + "\n-------------------\n")
-
-        labels_dict = {}
-        emotions_dict = {}
-
-        if post.list_image is not None:
-            for name_image in post.list_image:
-                labels, emotions = image_analyzer(name_image)
-
-                if len(labels) > 0:
-                    labels_dict = merge_and_sum(labels_dict, labels)
-                if len(emotions) > 0:
-                    emotions_dict = merge_and_sum(emotions_dict, emotions)
-
-                post.set_labels(labels)
-                post.set_emotions(emotions)
-        else:
-            print("\nNo image in post\n")
+        # calcolo punteggio caption con comprehend
+        # score = detect_sentiment_text(post)
+        # post.set_score(score)
+        #
+        # print("\ncomprehend score: " + str(score) + "\n-------------------\n")
+        #
+        # labels_dict = {}
+        # emotions_dict = {}
+        #
+        # # calcolo punteggio per ogni immagine e salvo
+        # if post.list_images is not None:
+        #     for image_in_list in post.list_images:
+        #         labels, emotions = image_analyzer(image_in_list.image_name)
+        #
+        #         if len(labels) > 0:
+        #             labels_dict = merge_and_sum(labels_dict, labels)
+        #         if len(emotions) > 0:
+        #             emotions_dict = merge_and_sum(emotions_dict, emotions)
+        #
+        #         # post.set_labels(labels)
+        #         # post.set_emotions(emotions)
+        #
+        #         image_in_list.set_labels(labels)
+        #         image_in_list.set_emotions(emotions)
+        # else:
+        #     print("\nNo image in post\n")
 
         repository = RepositoryInternal()
         repository.save_post(post)
