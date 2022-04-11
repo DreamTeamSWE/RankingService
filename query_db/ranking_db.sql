@@ -58,3 +58,18 @@ create table labels_img(
     nome_label varchar(50) references labels(nome_label),
     qta integer
 );
+
+drop table if exists utente;
+create table utente(
+    nome_utente varchar(50) primary key,
+    email varchar(50) not null
+);
+
+drop table if exists preferiti;
+create table preferiti(
+    nome_utente varchar(50) not null,
+    id_ristorante integer not null,
+    primary key (nome_utente, id_ristorante),
+    foreign key (nome_utente) references utente(nome_utente),
+    foreign key (id_ristorante) references ristorante(id_ristorante)
+);
