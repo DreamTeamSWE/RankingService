@@ -1,45 +1,29 @@
 ALTER DATABASE ranking_test CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+drop table if exists preferito;
+drop table if exists emozione_img;
+drop table if exists label_img;
+drop table if exists immagine;
+drop table if exists post;
+drop table if exists emozione;
+drop table if exists utente;
+drop table if exists label;
+drop table if exists ristorante;
 
-drop table if exists emozioni;
-create table emozioni(
+
+
+create table emozione(
     nome_emozione varchar(50) not null primary key
 );
 
-drop table if exists emozioni_img;
-create table emozioni_img(
-    id_immagine int not null,
-    nome_emozione varchar(50) not null,
-    qta integer not null default 1,
-    primary key (id_immagine),
-    foreign key (id_immagine) references immagine(id_immagine) on delete cascade on update cascade,
-    foreign key (nome_emozione) references emozioni(nome_emozione) on delete cascade on update cascade
+
+create table utente(
+    nome_utente varchar(50) not null primary key
 );
 
-drop table if exists immagini;
-create table immagini(
-    id_immagine int not null,
-    id_post int not null,
-    primary key (id_immagine),
-    foreign key (id_post) references post(id_post) on delete cascade on update cascade
+create table label(
+    nome_label varchar(50) not null primary key
 );
 
-drop table if exists post;
-create table post(
-    id_post int not null,
-    nome_utente varchar(50) not null,
-    data_post datetime not null,
-    id_ristorante int not null,
-    testo varchar(2000) not null,
-    punteggio_emoji int null,
-    score integer not null default 0,
-    negative_comprehend int null,
-    positive_comprehend int null,
-    neutral_comprehend int null,
-    primary key (id_post),
-    foreign key (id_ristorante) references ristorante(id_ristorante) on delete cascade on update cascade
-) DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-drop table if exists ristorante;
 create table ristorante(
     id_ristorante int not null,
     nome_ristorante varchar(50) not null,
@@ -55,27 +39,47 @@ create table ristorante(
     primary key (id_ristorante)
 );
 
-drop table if exists labels;
-create table labels(
-    nome_label varchar(50) not null primary key
+create table post(
+    id_post int not null,
+    nome_utente varchar(50) not null,
+    data_post datetime not null,
+    id_ristorante int not null,
+    testo varchar(2000) not null,
+    punteggio_emoji int null,
+    score integer not null default 0,
+    negative_comprehend int null,
+    positive_comprehend int null,
+    neutral_comprehend int null,
+    primary key (id_post),
+    foreign key (id_ristorante) references ristorante(id_ristorante) on delete cascade on update cascade
+) DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+
+create table immagine(
+    id_immagine int not null,
+    id_post int not null,
+    primary key (id_immagine),
+    foreign key (id_post) references post(id_post) on delete cascade on update cascade
 );
 
-drop table if exists labels_img;
-create table labels_img(
+create table emozione_img(
+    id_immagine int not null,
+    nome_emozione varchar(50) not null,
+    qta int not null default 1,
+    primary key (id_immagine),
+    foreign key (id_immagine) references immagine(id_immagine) on delete cascade on update cascade,
+    foreign key (nome_emozione) references emozione(nome_emozione) on delete cascade on update cascade
+);
+
+create table label_img(
     id_immagine int not null,
     nome_label varchar(50) not null,
-     primary key(nome_label, id_immagine),
+    primary key(nome_label, id_immagine),
     foreign key (id_immagine) references immagine(id_immagine) on delete cascade on update cascade,
-    foreign key (nome_label) references labels(nome_label) on delete cascade on update cascade
+    foreign key (nome_label) references label(nome_label) on delete cascade on update cascade
 );
 
-drop table if exists utente;
-create table utente(
-    nome_utente varchar(50) not null primary key
-);
-
-drop table if exists preferiti;
-create table preferiti(
+create table preferito(
     nome_utente varchar(50) not null,
     id_ristorante int not null,
     primary key (nome_utente),
