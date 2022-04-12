@@ -15,7 +15,7 @@ class DatabaseHandler:
         self.__database = database
         self.__wait_for_db_on()
 
-    # chehck if db is turned on
+    # check if db is turned on
     def __is_db_on(self, delay) -> bool:
         """
         Check if database is turned on.
@@ -78,6 +78,15 @@ class DatabaseHandler:
                 parsed_record[key] = value
             parsed_records.append(parsed_record)
         return parsed_records
+
+    @staticmethod
+    def __add_null_values(param_list):
+        def __add_null_values(param_list):
+            key = [*param_list['value']][0]
+            if param_list['value'][key] is None:
+                del param_list['value'][key]
+                param_list['value']['isNull'] = True
+
 
     def begin_transaction(self):
         """
