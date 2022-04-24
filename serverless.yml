@@ -1,0 +1,71 @@
+service: ranking-service
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: eu-central-1
+
+functions:
+  getRanking:
+    handler: getRanking.get_ranking
+    timeout: 30
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - rds-data:*
+          - secretsmanager:*
+        Resource: '*'
+    events:
+      - http:
+          path: getRanking
+          method: GET
+          cors: true
+
+  getLabelAndPost:
+    handler: getLabelAndPost.get_label_and_post
+    timeout: 30
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - rds-data:*
+          - secretsmanager:*
+        Resource: '*'
+    events:
+      - http:
+          path: getLabelAndPost
+          method: POST
+          cors: true
+
+  refreshRanking:
+    handler: refreshRanking.refresh_ranking
+    timeout: 900
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - rekognition:*
+          - comprehend:*
+          - s3:*
+          - rds-data:*
+          - secretsmanager:*
+        Resource: '*'
+#    events:
+#      - sqs:
+#          arn: arn:aws:sqs:eu-central-1:123446374287:coda-crawler.fifo
+#          batchSize: 10
+#          functionResponseType: ReportBatchItemFailures
+
+package:
+  patterns:
+    - '!venv/**'
+    - '!node_modules/**'
+    - '!main.py'
+
+plugins:
+  - serverless-iam-roles-per-function
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: false

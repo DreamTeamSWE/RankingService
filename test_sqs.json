@@ -1,0 +1,38 @@
+{
+  "Records": [
+    {
+      "messageId": "19dd0b57-b21e-4ac1-bd88-01bbb068cb78",
+      "receiptHandle": "MessageReceiptHandle",
+      "body": {
+        "username": "lorenzolinguini",
+        "post_id": "2806725869999084478_241913061",
+        "date": "2022-04-01 10:10:18",
+        "img_url": [
+          44,
+          123
+        ],
+        "caption_text": "“Ask The Angels”👼\n#PattiSmith 🎼🎙\n:\nRiassunto langarolo (potenziato) in sfoglia d’agnolotti al sugo d’arrosto🥟🙌🏻🆙\nPoi Russa; Tonnato, Cruda & ogni sorta di beatitudine territoriale - confezionata al cesello - tra i capisaldi de @lapiolaalba 🥩🍴💯\nPerché la tradizione, realizzata a queste altezze ascetiche, non riserva mai ‘pesci d’Aprile’🙏🏻🎣🔝\nBuon Pranzo & Buon WeekEnd Splendori♥️",
+        "location": {
+          "location_name": "La Piola Alba",
+          "lat": 44.7005,
+          "lng": 8.036,
+          "category": "Piedmont Restaurant",
+          "phone": "0173442800",
+          "website": "http://www.lapiola-alba.it/",
+          "db_id": 8
+        }
+      },
+      "attributes": {
+        "ApproximateReceiveCount": "1",
+        "SentTimestamp": "1523232000000",
+        "SenderId": "123456789012",
+        "ApproximateFirstReceiveTimestamp": "1523232000001"
+      },
+      "messageAttributes": {},
+      "md5OfBody": "{{{md5_of_body}}}",
+      "eventSource": "aws:sqs",
+      "eventSourceARN": "arn:aws:sqs:us-east-1:123456789012:MyQueue",
+      "awsRegion": "us-east-1"
+    }
+  ]
+}
