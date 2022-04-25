@@ -1,8 +1,8 @@
 class Restaurant:
     def __init__(self, id_rist: int = None, nome: str = None, indirizzo: str = None, telefono: str = None,
                  sito: str = None, lat: float = None, lng: float = None, categoria: str = None,
-                 punt_emoji: int = None, punt_foto: int = None,
-                 punt_testo: int = None) -> None:
+                 punt_emoji: float = None, punt_foto: float = None,
+                 punt_testo: float = None) -> None:
         self.id_rist = id_rist
         self.nome = nome
         self.indirizzo = indirizzo

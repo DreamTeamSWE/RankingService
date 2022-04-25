@@ -30,7 +30,7 @@ class CrawledData:
                 if score is not None:
                     self.punt_foto = (self.punt_foto + score) if self.punt_foto is not None else score
 
-    def set_punt_emoji(self, punt_emoji: int):
+    def set_punt_emoji(self, punt_emoji: float):
         self.punt_emoji = punt_emoji
 
     def __str__(self):

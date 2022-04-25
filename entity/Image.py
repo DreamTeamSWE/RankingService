@@ -3,7 +3,7 @@ from typing import List
 from enum import Enum
 
 
-class Emotions(Enum):
+class Emotions(float, Enum):
     HAPPY = 1
     CALM = 0.4
     SAD = 0.2
@@ -32,8 +32,8 @@ class Image:
     def calculate_score(self):
         if self.emotions:
             partial_sum = 0.0
-            for emotion, num in self.emotions:
-                partial_sum += Emotions[emotion] * num
+            for emotion, num in self.emotions.items():
+                partial_sum += Emotions[emotion].value * num
             return partial_sum
         return None
 
