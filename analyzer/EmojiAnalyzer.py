@@ -1,5 +1,6 @@
 import csv
 from typing import List, Dict, Optional
+
 import emoji
 import boto3
 
@@ -22,11 +23,11 @@ class EmojiAnalyzer:
         s3 = boto3.client(service_name='s3')
         content_object = s3.get_object(Bucket='sweet-emoji-sentiment-scores', Key=filename)
         file_content = content_object['Body'].read().decode('utf-8')
-        csv_reader = csv.reader(file_content, delimiter=',')
-        next(csv_reader)  # skip header
-        count = 0
-        for line in csv_reader:
-            result[line[0]] = float(line[8])
+        lines = file_content.split("\n")
+        for line in lines:
+            values = line.split(",")
+            if len(values) == 12:
+                result[values[0]] = float(values[8])
         return result
 
     @staticmethod
