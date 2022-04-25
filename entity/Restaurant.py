@@ -31,7 +31,7 @@ class Restaurant:
                str(self.punt_emoji) + " \n" + str(self.punt_foto) + " \n" + str(self.punt_testo)
 
     @staticmethod
-    def parse_restuarant_from_sqs(item: dict):
+    def parse_restaurant_from_sqs(item: dict):
         """
         parse json from sqs to get restaurant object
 
@@ -39,7 +39,6 @@ class Restaurant:
         :return: restaurant object
         :rtype: Restaurant
         """
-
         json_restaurant = item['location']
 
         return Restaurant(
@@ -50,4 +49,5 @@ class Restaurant:
             sito=json_restaurant['website'],
             lat=json_restaurant['lat'],
             lng=json_restaurant['lng'],
-            categoria=json_restaurant['category'])
+            categoria=json_restaurant['category']
+        )

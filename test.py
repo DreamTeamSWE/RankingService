@@ -17,7 +17,7 @@ def main():
     # post = CrawledData.parse_post_from_sqs(event)
     # a.analyze(post)
     ea = EmojiAnalyzer()
-    print(ea.calculate_score('Nineties cyber ravers. Maximalist hair. Statement knitwear. Hyper reality. 🔥'))
+    print(ea.calculate_score('Oh Crispa! Un pezzo di Cina a Torino 🇨🇳 #brodo #hot #xiaolongbao #bao #chinesefood #torino #sansalvario'))
 
 
 if __name__ == '__main__':

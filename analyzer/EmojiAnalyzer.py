@@ -52,8 +52,11 @@ class EmojiAnalyzer:
         weigh_sum = 0.0
 
         extracted_emoji_list = emoji.emoji_list(post_text)
-        if len(extracted_emoji_list) > 0:
+        num_emoji_extracted = len(extracted_emoji_list)
+        print(f'extracted {num_emoji_extracted} emoji')
+        if num_emoji_extracted > 0:
             processed_emoji_list = EmojiAnalyzer.__group_repeated_emoji(extracted_emoji_list)
+            unsupported_emojis = 0
 
             for emoji_data in processed_emoji_list:
                 if emoji_data['emoji'] in self.__emoji_scores:
@@ -80,7 +83,14 @@ class EmojiAnalyzer:
                     elif emoji_data['count'] >= 4:
                         score_x_weight_sum += emoji_score * self.weights['MULTIPLE_EMOJI']
                         weigh_sum += self.weights['MULTIPLE_EMOJI']
-            return 100 * score_x_weight_sum / weigh_sum
+                else:
+                    print('found unsupported emoji')
+                    unsupported_emojis += 1
+            if unsupported_emojis < num_emoji_extracted:
+                return 100 * score_x_weight_sum / weigh_sum
+            else:
+                return None  # trovato solo emoji non supportate
         else:
-            return None
+            print('found no emoji')
+            return None  # non so state trovat emoji
 

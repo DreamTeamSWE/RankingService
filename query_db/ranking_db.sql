@@ -1,12 +1,12 @@
 ALTER DATABASE ranking_test CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+drop table if exists ristorante;
 drop table if exists preferito;
+drop table if exists post;
 drop table if exists emozione_img;
 drop table if exists label_img;
-drop table if exists immagine;
-drop table if exists post;
 drop table if exists utente;
 drop table if exists label;
-drop table if exists ristorante;
+drop table if exists immagine;
 drop table if exists confidenza_emozioni;
 drop table if exists analisi_testo;
 
@@ -60,7 +60,7 @@ create table ristorante(
 create table post(
     id_post varchar(50) not null,
     nome_utente varchar(50) not null,
-    data_post datetime not null,
+    data_post date null,
     id_ristorante int not null,
     testo varchar(3000) null,
     punteggio_emoji float null,
@@ -100,7 +100,6 @@ create table emozione_img(
 create table label_img(
     id_immagine int not null,
     nome_label varchar(50) not null,
-    /*confidenza double not null,*/
     primary key(nome_label, id_immagine),
     foreign key (id_immagine) references immagine(id_immagine) on delete cascade on update cascade,
     foreign key (nome_label) references label(nome_label) on delete cascade on update cascade

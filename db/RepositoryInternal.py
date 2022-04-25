@@ -44,7 +44,7 @@ class RepositoryInternal:
 
         id_post_param = {"name": "id_post", "value": {"stringValue": post.id_post}}
         post_utente_param = {"name": "post_utente", "value": {"stringValue": post.utente}}
-        data_post_param = {"name": "data_post", "value": {"stringValue": str(post.data_post)}, "typeHint": "TIMESTAMP"}
+        data_post_param = {"name": "data_post", "value": {"stringValue": str(post.data_post)}, "typeHint": "DATE"}
         restaurant_param = {"name": "id_ristorante", "value": {"longValue": post.restaurant.id_rist}}
         caption_param = {"name": "testo", "value": {"stringValue": post.caption}}
         emoji_param = {"name": "punteggio_emoji", "value": {"doubleValue": post.punt_emoji}}
@@ -158,28 +158,26 @@ class RepositoryInternal:
 
         for label in labels:
             param = self.__set_param_label(label)
-            response = response and \
-                       self.database.do_write_query(query_insert_label, param)['numberOfRecordsUpdated'] > 0
+            response = self.database.do_write_query(query_insert_label, param)['numberOfRecordsUpdated'] > 0 and response
 
             param = self.__set_param_label_img(label, id_img)
-            response = response and \
-                       self.database.do_write_query(query_insert_label_img, param)['numberOfRecordsUpdated'] > 0
+            response = self.database.do_write_query(query_insert_label_img, param)['numberOfRecordsUpdated'] > 0 and response
 
         return response
 
     def __save_emotions_confidence(self, emotions_confid: List[dict], id_img: int):
-        query = 'INSERT INTO confidenza_emozioni(happy, calm, sad, angry, surprised, confused, disgusted, ' \
-                'num_persona, id_immagine) VALUES (:happy, :calm, :sad, :angry, :surprised, ' \
-                ':confused, :disgusted, :num_persona, :id_immagine) '
-        response = True
-        count = 0  # per generare l'indice della faccia
-        for face in emotions_confid:
-            response = response and \
-                       self.database.do_write_query(query,
-                                                    self.__set_param_emotions_confidence(face, id_img, count)
-                                                    )['numberOfRecordsUpdated'] > 0
-            count += 1
-        return response
+        if emotions_confid:
+            query = 'INSERT INTO confidenza_emozioni(happy, calm, sad, angry, surprised, confused, disgusted, ' \
+                    'num_persona, id_immagine) VALUES (:happy, :calm, :sad, :angry, :surprised, ' \
+                    ':confused, :disgusted, :num_persona, :id_immagine) '
+            response = True
+            count = 0  # per generare l'indice della faccia
+            for face in emotions_confid:
+                response = self.database.do_write_query(query,
+                                                        self.__set_param_emotions_confidence(face, id_img, count)
+                                                        )['numberOfRecordsUpdated'] > 0 and response
+                count += 1
+            return response
 
     # check
     # da testare
@@ -191,7 +189,7 @@ class RepositoryInternal:
         :param id_img: id of images to save
         :return: boolean if queries are executed correctly
         """
-        # query_insert_emotion = "INSERT INTO emozione VALUES (:nome_emozione)"
+
         query_insert_emotion_img = "INSERT INTO emozione_img VALUES (:id_immagine, :nome_emozione, :qta)"
 
         response = True
@@ -200,15 +198,8 @@ class RepositoryInternal:
 
         for emotion in emotions:
             print(emotion)
-            print(emotions[emotion])
-            # param = self.__set_param_emotion(emotion)
-            # response = response and self.database.do_write_query(query_insert_emotion, param)[
-            #     'numberOfRecordsUpdated'] > 0
-
             param = self.__set_param_emotion_img(emotion=emotion, id_img=id_img, qta=emotions[emotion])
-            response = response and self.database.do_write_query(query_insert_emotion_img, param)[
-                'numberOfRecordsUpdated'] > 0
-
+            response = self.database.do_write_query(query_insert_emotion_img, param)['numberOfRecordsUpdated'] > 0 and response
         return response
 
     # check
@@ -225,20 +216,17 @@ class RepositoryInternal:
         response = True
 
         for img in list_images:
-            print("saving image " + img.image_name + " in table immagine")
-
             # remove extension from image name and convert to int
             id_img = int(img.image_name.split('.')[0])
 
             param = self.__set_param_img(id_img, id_post)
-            response = response and self.database.do_write_query(query, param)['numberOfRecordsUpdated'] > 0
-
+            response = (self.database.do_write_query(query, param))['numberOfRecordsUpdated'] > 0 and response
+            print("saved image " + img.image_name + " in table immagine, response:", response)
             if img.labels is not None and len(img.labels) > 0:
-                response = response and self.__save_labels(img.labels, id_img)
-
+                response = self.__save_labels(img.labels, id_img) and response
             if img.emotions is not None and len(img.emotions) > 0:
-                response = self.__save_emotions_confidence(img.emotions_confidence, id_img) and \
-                           self.__save_emotions(img.emotions, id_img)
+                response = self.__save_emotions(img.emotions, id_img) and response
+            response = self.__save_emotions_confidence(img.emotions_confidence, id_img) and response
 
         return response
 
@@ -264,22 +252,21 @@ class RepositoryInternal:
 
         response = True
 
-        response = response and self.update_restaurant_info(post.restaurant)
+        response = self.update_restaurant_info(post.restaurant) and response
 
         query = "INSERT INTO post (id_post,nome_utente, data_post, id_ristorante, testo, " \
                 "punteggio_emoji, punteggio_testo, punteggio_foto) VALUES " \
                 "(:id_post, :post_utente, :data_post, :id_ristorante, :testo, " \
                 ":punteggio_emoji, :punteggio_testo, :punteggio_foto)"
 
-        response = \
-            response and \
-            self.database.do_write_query(query, self.__set_param_crawled_data(post))['numberOfRecordsUpdated'] > 0
+        response = self.database.do_write_query(query,
+                                                self.__set_param_crawled_data(post))['numberOfRecordsUpdated'] > 0 and response
 
-        response = response and self.__save_comprehend_score(post.punt_testo, post.id_post)
+        response =  self.__save_comprehend_score(post.punt_testo, post.id_post) and response
 
         # salvo immagini solo se presenti
-        if post.list_images is not None:
-            response = response and self.__save_new_images(post.list_images, post.id_post)
+        if post.list_images:
+            response = self.__save_new_images(post.list_images, post.id_post) and response
 
         return response
 
@@ -407,7 +394,7 @@ class RepositoryInternal:
         param = [{"name": "id_post", "value": {"stringValue": id_post}}]
         query = "SELECT * FROM post WHERE id_post = :id_post"
         response = self.database.do_read_query(query, param)
-        return response is None
+        return len(response) > 0
 
     def _check_if_restaurant_already_exists(self, restaurant):
         param = [{"name": "id_rest", "value": {"longValue": restaurant.id_rist}}]

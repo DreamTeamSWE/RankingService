@@ -46,8 +46,7 @@ class CrawledData:
 
     @staticmethod
     def parse_post_from_sqs(item_body: dict):
-
-        restaurant = Restaurant.parse_restuarant_from_sqs(item_body)
+        restaurant = Restaurant.parse_restaurant_from_sqs(item_body)
 
         list_img = []
         for img in item_body['img_url']:
