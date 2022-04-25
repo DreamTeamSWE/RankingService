@@ -68,7 +68,7 @@ functions:
     events:
       - http:
           path: searchByName
-          method: GET
+          method: POST
           cors: true
 
 

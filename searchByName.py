@@ -4,7 +4,10 @@ from db.RepositoryExternal import RepositoryExternal
 
 
 def search_by_name(event, context):
-    name = event['queryStringParameters']['name']
+
+    body = event['body']
+    body_json = json.loads(body)
+    name = body_json['name']
 
     repo_ext = RepositoryExternal()
     list_restaurants = repo_ext.search_restaurants_by_name(name)

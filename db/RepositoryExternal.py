@@ -1,5 +1,4 @@
 from db.DatabaseHandler import DatabaseHandler
-from entity.Restaurant import Restaurant
 
 
 class RepositoryExternal:
@@ -45,18 +44,7 @@ class RepositoryExternal:
 
         return self.database.do_read_query(query, param)
 
-    @staticmethod
-    def __parse_restuarnt(response: list) -> Restaurant:
-        """
-        parse rds row of restaurant
-        :param response: response from rds
-        :return: Restaurant object
-        """
-        return Restaurant(id_rist=response[0], nome=response[1], indirizzo=response[2], telefono=response[3],
-                          sito=response[4], lat=response[5], lng=response[6], categoria=response[7],
-                          punt_emoji=response[8], punt_foto=response[9], punt_testo=response[10])
-
-    def search_restaurants_by_name(self, name: str) -> list:
+    def search_restaurants_by_name(self, name: str) -> dict:
         """
         get all restaurant which name LIKE :param name
 
@@ -66,12 +54,9 @@ class RepositoryExternal:
         query = "SELECT * FROM ristorante WHERE nome_ristorante LIKE :nome_ristorante"
         param = [{"name": "nome_ristorante", "value": {"stringValue": "%" + name + "%"}}]
         response = self.database.do_read_query(query, param)
-        restaurants = []
-        if response is not None:
-            for row in response:
-                restaurants.append(RepositoryExternal.__parse_restuarnt(row))
+        print(response)
 
-        if restaurants.__sizeof__() <= 0:
+        if len(response) == 0:
             name_parts = name.split(" ")
             if name_parts.__sizeof__() > 0:
                 query = "SELECT * FROM ristorante WHERE "
@@ -80,12 +65,10 @@ class RepositoryExternal:
                 for part in name_parts:
                     query += "nome_ristorante LIKE :nome_ristorante" + str(i) + " OR "
                     param.append({"name": "nome_ristorante" + str(i), "value": {"stringValue": "%" + part + "%"}})
+                    i += 1
 
                 query = query[:-4]
                 print(query)
                 response = self.database.do_read_query(query, param)
-                if response is not None:
-                    for row in response:
-                        restaurants.append(RepositoryExternal.__parse_restuarnt(row))
 
-        return restaurants
+        return response
