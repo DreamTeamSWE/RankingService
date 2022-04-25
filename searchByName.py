@@ -3,14 +3,11 @@ import json
 from db.RepositoryExternal import RepositoryExternal
 
 
-def get_label_and_post(event, context):
+def search_by_name(event, context):
+    name = event['queryStringParameters']['name']
+
     repo_ext = RepositoryExternal()
-
-    body = event['body']
-    body_json = json.loads(body)
-    id_rist = int(body_json['id_rist'])
-
-    list_restaurant = repo_ext.get_post_and_tag_by_restaurant(id_rist)
+    list_restaurants = repo_ext.search_restaurants_by_name(name)
 
     response = {
         'statusCode': 200,
@@ -20,7 +17,7 @@ def get_label_and_post(event, context):
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
         },
-        "body": json.dumps(list_restaurant)
+        "body": json.dumps(list_restaurants)
     }
 
     return response

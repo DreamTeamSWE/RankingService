@@ -20,11 +20,17 @@ def get_ranking(event, context):
         int_size = 10
 
     repo_ext = RepositoryExternal()
-    list_restaurant = repo_ext.get_ranking(int_position, int_size)
+    list_restaurants = repo_ext.get_ranking(int_position, int_size)
 
     response = {
-        "statusCode": 200,
-        "body": json.dumps(list_restaurant)
+        'statusCode': 200,
+        'headers': {
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Credentials': 'true',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
+        },
+        "body": json.dumps(list_restaurants)
     }
 
     return response

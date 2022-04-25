@@ -1,5 +1,4 @@
 from db.DatabaseHandler import DatabaseHandler
-from entity.Filter import Filter
 from entity.Restaurant import Restaurant
 
 
@@ -46,11 +45,47 @@ class RepositoryExternal:
 
         return self.database.do_read_query(query, param)
 
-        # # !!! stesso codice di RepositoryInternal.py !!! # def get_restaurant_info_by_id(self, id_restaurant: int) ->
-    # Restaurant: query = "SELECT * FROM ristorante WHERE id_ristorante=%s" values = id_restaurant response =
-    # self.database.do_read_query(query, values) if response is not None: restaurant = Restaurant(id_rist=response[
-    # 0], nome=response[1], indirizzo=response[2], telefono=response[3], sito=response[4], lat=response[5],
-    # lng=response[6], categoria=response[7], punt_emoji=response[8], punt_foto=response[9], punt_testo=response[10])
-    # return restaurant
-    #
-    #     return Restaurant()
+    @staticmethod
+    def __parse_restuarnt(response: list) -> Restaurant:
+        """
+        parse rds row of restaurant
+        :param response: response from rds
+        :return: Restaurant object
+        """
+        return Restaurant(id_rist=response[0], nome=response[1], indirizzo=response[2], telefono=response[3],
+                          sito=response[4], lat=response[5], lng=response[6], categoria=response[7],
+                          punt_emoji=response[8], punt_foto=response[9], punt_testo=response[10])
+
+    def search_restaurants_by_name(self, name: str) -> list:
+        """
+        get all restaurant which name LIKE :param name
+
+        :param name: name to search
+        :return: list of restaurants
+        """
+        query = "SELECT * FROM ristorante WHERE nome_ristorante LIKE :nome_ristorante"
+        param = [{"name": "nome_ristorante", "value": {"stringValue": "%" + name + "%"}}]
+        response = self.database.do_read_query(query, param)
+        restaurants = []
+        if response is not None:
+            for row in response:
+                restaurants.append(RepositoryExternal.__parse_restuarnt(row))
+
+        if restaurants.__sizeof__() <= 0:
+            name_parts = name.split(" ")
+            if name_parts.__sizeof__() > 0:
+                query = "SELECT * FROM ristorante WHERE "
+                i = 0
+                param = []
+                for part in name_parts:
+                    query += "nome_ristorante LIKE :nome_ristorante" + str(i) + " OR "
+                    param.append({"name": "nome_ristorante" + str(i), "value": {"stringValue": "%" + part + "%"}})
+
+                query = query[:-4]
+                print(query)
+                response = self.database.do_read_query(query, param)
+                if response is not None:
+                    for row in response:
+                        restaurants.append(RepositoryExternal.__parse_restuarnt(row))
+
+        return restaurants
