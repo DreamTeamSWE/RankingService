@@ -121,6 +121,7 @@ create table confidenza_emozioni(
     surprised float not null,
     confused float not null,
     disgusted float not null,
+    fear float not null,
     num_persona int not null,
     id_immagine int not null,
     primary key (num_persona, id_immagine),

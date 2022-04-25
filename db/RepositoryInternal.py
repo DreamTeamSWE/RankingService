@@ -67,7 +67,7 @@ class RepositoryInternal:
     @staticmethod
     def __set_param_emotions_confidence(emotion_confid: dict, id_img: int, num_pers: int):
         param_list = []
-        names = ['happy', 'calm', 'sad', 'angry', 'surprised', 'confused', 'disgusted']
+        names = ['happy', 'calm', 'sad', 'angry', 'surprised', 'confused', 'disgusted', 'fear']
 
         for name in names:
             param_list.append({"name": name, "value": {"doubleValue": emotion_confid[name.upper()]}})
@@ -167,9 +167,9 @@ class RepositoryInternal:
 
     def __save_emotions_confidence(self, emotions_confid: List[dict], id_img: int):
         if emotions_confid:
-            query = 'INSERT INTO confidenza_emozioni(happy, calm, sad, angry, surprised, confused, disgusted, ' \
+            query = 'INSERT INTO confidenza_emozioni(happy, calm, sad, angry, surprised, confused, disgusted, fear,' \
                     'num_persona, id_immagine) VALUES (:happy, :calm, :sad, :angry, :surprised, ' \
-                    ':confused, :disgusted, :num_persona, :id_immagine) '
+                    ':confused, :disgusted,:fear, :num_persona, :id_immagine) '
             response = True
             count = 0  # per generare l'indice della faccia
             for face in emotions_confid:

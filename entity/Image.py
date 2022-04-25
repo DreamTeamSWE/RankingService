@@ -11,6 +11,7 @@ class Emotions(float, Enum):
     SURPRISED = 0.6
     CONFUSED = 0.15
     DISGUSTED = 0
+    FEAR = 0
 
 
 class Image:

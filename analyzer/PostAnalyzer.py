@@ -134,15 +134,15 @@ def detect_sentiment_person(name_image: str, bucket: str):
         for emotion in emotions:
             emotion_name = emotion['Type']
             emotion_confid_value = emotion['Confidence']
+            if emotion_name != 'UNKNOWN':
+                confid_single_face[emotion_name] = emotion_confid_value
 
-            confid_single_face[emotion_name] = emotion_confid_value
-
-            if emotion_confid_value >= 90:
-                if emotion_name in emotions_dict:
-                    emotions_dict[emotion_name] += 1
-                else:
-                    emotions_dict[emotion_name] = 1
-                contain_emotion = False
+                if emotion_confid_value >= 90:
+                    if emotion_name in emotions_dict:
+                        emotions_dict[emotion_name] += 1
+                    else:
+                        emotions_dict[emotion_name] = 1
+                    contain_emotion = False
         emotions_confid.append(confid_single_face)
     return emotions_dict, contain_emotion, emotions_confid
 
