@@ -50,11 +50,11 @@ functions:
           - rds-data:*
           - secretsmanager:*
         Resource: '*'
-#    events:
-#      - sqs:
-#          arn: arn:aws:sqs:eu-central-1:123446374287:coda-crawler.fifo
-#          batchSize: 10
-#          functionResponseType: ReportBatchItemFailures
+    events:
+     - sqs:
+          arn: arn:aws:sqs:eu-central-1:123446374287:coda-crawler.fifo
+          batchSize: 10
+          functionResponseType: ReportBatchItemFailures
 
   searchByName:
     handler: searchByName.search_by_name

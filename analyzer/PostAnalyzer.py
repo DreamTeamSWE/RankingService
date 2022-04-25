@@ -94,7 +94,7 @@ def detect_labels(photo: Image, bucket: str):
     contain_person = False
 
     for label in response['Labels']:
-        if label['Confidence'] > 90:
+        if label['Confidence'] >= 90:
             if label['Name'] == 'Person':
                 contain_person = True
             else:
@@ -104,7 +104,6 @@ def detect_labels(photo: Image, bucket: str):
                             labels_dict[label['Name']] += 1
                         else:
                             labels_dict[label['Name']] = 1
-                        break
     return labels_dict, contain_person
 
 
