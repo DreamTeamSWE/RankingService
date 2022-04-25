@@ -17,7 +17,7 @@ def main():
     # post = CrawledData.parse_post_from_sqs(event)
     # a.analyze(post)
     ea = EmojiAnalyzer()
-    print(ea.calculate_score('Oh Crispa! Un pezzo di Cina a Torino 🇨🇳 #brodo #hot #xiaolongbao #bao #chinesefood #torino #sansalvario'))
+    print(ea.calculate_score('Espetacular a qualidade dos peixes 👏🏻👏🏻👏🏻 com uma gastronomia asiática maravilhosa RECOMENDO !!!@kazuoharada @kazuo.restaurante @estiloramy'))
 
 
 if __name__ == '__main__':

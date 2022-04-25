@@ -1,12 +1,12 @@
 ALTER DATABASE ranking_test CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 drop table if exists ristorante;
-drop table if exists preferito;
 drop table if exists post;
-drop table if exists emozione_img;
-drop table if exists label_img;
 drop table if exists utente;
 drop table if exists label;
+drop table if exists preferito;
 drop table if exists immagine;
+drop table if exists emozione_img;
+drop table if exists label_img;
 drop table if exists confidenza_emozioni;
 drop table if exists analisi_testo;
 
@@ -44,10 +44,10 @@ create table label(
 
 create table ristorante(
     id_ristorante int not null,
-    nome_ristorante varchar(50) not null,
+    nome_ristorante varchar(100) not null,
     indirizzo varchar(50) null,
     telefono varchar(50) null,
-    sito_web varchar(50) null,
+    sito_web varchar(2048) null,
     latitudine decimal(7,4) not null,
     longitudine decimal(7,4) not null,
     categoria varchar(100) not null,

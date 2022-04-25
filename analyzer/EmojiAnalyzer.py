@@ -86,7 +86,7 @@ class EmojiAnalyzer:
                 else:
                     print('found unsupported emoji')
                     unsupported_emojis += 1
-            if unsupported_emojis < num_emoji_extracted:
+            if weigh_sum > 0.5:  # il minimo può essere 1, 0 significa che non ha trovato niente
                 return 100 * score_x_weight_sum / weigh_sum
             else:
                 return None  # trovato solo emoji non supportate
