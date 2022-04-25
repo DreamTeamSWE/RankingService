@@ -32,8 +32,8 @@ class EmojiAnalyzer:
 
     @staticmethod
     def __group_repeated_emoji(emoji_list: List[Dict]) -> List[Dict]:
-        last_seen_emoji = ''
-        last_seen_emoji_counter = 1
+        last_seen_emoji = emoji_list[0]['emoji']
+        last_seen_emoji_counter = 0
         result = []
         for emoji_data in emoji_list:
             if last_seen_emoji != emoji_data['emoji']:
@@ -51,7 +51,7 @@ class EmojiAnalyzer:
         score_x_weight_sum = 0.0
         weigh_sum = 0.0
 
-        extracted_emoji_list = emoji.emoji_lis(post_text)
+        extracted_emoji_list = emoji.emoji_list(post_text)
         if len(extracted_emoji_list) > 0:
             processed_emoji_list = EmojiAnalyzer.__group_repeated_emoji(extracted_emoji_list)
 
