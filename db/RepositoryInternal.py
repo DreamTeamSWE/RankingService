@@ -26,9 +26,9 @@ class RepositoryInternal:
         latitudine_param = {"name": "latitudine", "value": {"doubleValue": restaurant.lat}}
         longitudine_param = {"name": "longitudine", "value": {"doubleValue": restaurant.lng}}
         categoria_param = {"name": "categoria", "value": {"stringValue": restaurant.categoria}}
-        punteggio_emoji_param = {"name": "punteggio_emoji", "value": {"longValue": restaurant.punt_emoji}}
-        punteggio_foto_param = {"name": "punteggio_foto", "value": {"longValue": restaurant.punt_foto}}
-        punteggio_testo_param = {"name": "punteggio_testo", "value": {"longValue": restaurant.punt_testo}}
+        punteggio_emoji_param = {"name": "punteggio_emoji", "value": {"doubleValue": restaurant.punt_emoji}}
+        punteggio_foto_param = {"name": "punteggio_foto", "value": {"doubleValue": restaurant.punt_foto}}
+        punteggio_testo_param = {"name": "punteggio_testo", "value": {"doubleValue": restaurant.punt_testo}}
 
         return [id_ristorante_param, nome_param, indirizzo_param, telefono_param, sito_param, latitudine_param,
                 longitudine_param, categoria_param, punteggio_emoji_param, punteggio_foto_param, punteggio_testo_param]
@@ -47,9 +47,9 @@ class RepositoryInternal:
         data_post_param = {"name": "data_post", "value": {"stringValue": str(post.data_post)}, "typeHint": "TIMESTAMP"}
         restaurant_param = {"name": "id_ristorante", "value": {"longValue": post.restaurant.id_rist}}
         caption_param = {"name": "testo", "value": {"stringValue": post.caption}}
-        emoji_param = {"name": "punteggio_emoji", "value": {"longValue": post.punt_emoji}}
-        punt_testo_param = {"name": "punteggio_testo", "value": {"longValue": post.punt_testo.calculate_score()}}
-        punt_foto_param = {"name": "punteggio_foto", "value": {"longValue": post.punt_foto}}
+        emoji_param = {"name": "punteggio_emoji", "value": {"doubleValue": post.punt_emoji}}
+        punt_testo_param = {"name": "punteggio_testo", "value": {"doubleValue": post.punt_testo.calculate_score()}}
+        punt_foto_param = {"name": "punteggio_foto", "value": {"doubleValue": post.punt_foto}}
         param_list = [id_post_param, post_utente_param, data_post_param, restaurant_param, caption_param, emoji_param,
                       punt_testo_param, punt_foto_param]
 
@@ -311,34 +311,36 @@ class RepositoryInternal:
         """
         print("updating restaurant in table ristorante")
 
-        # aggiorno il ristorante
-        param_id = [{"name": "id", "value": {"longValue": restaurant.id_rist}}]
-        new_scores = self._recalculate_scores(param_id)
+        if self._check_if_restaurant_already_exists(restaurant):
+            # aggiorno il ristorante
+            param_id = [{"name": "id", "value": {"longValue": restaurant.id_rist}}]
+            new_scores = self._recalculate_scores(param_id)
 
-        query = "UPDATE ristorante SET " \
-                "nome_ristorante=:nome_ristorante, " \
-                "indirizzo=:indirizzo, " \
-                "telefono=:telefono, " \
-                "sito_web=:sito_web, " \
-                "latitudine=:latitudine, " \
-                "longitudine=:longitudine, " \
-                "categoria=:categoria, " \
-                "punteggio_emoji=:punteggio_emoji, " \
-                "punteggio_foto=:punteggio_foto, " \
-                "punteggio_testo=:punteggio_testo " \
-                "WHERE id_ristorante =:id_ristorante"
+            query = "UPDATE ristorante SET " \
+                    "nome_ristorante=:nome_ristorante, " \
+                    "indirizzo=:indirizzo, " \
+                    "telefono=:telefono, " \
+                    "sito_web=:sito_web, " \
+                    "latitudine=:latitudine, " \
+                    "longitudine=:longitudine, " \
+                    "categoria=:categoria, " \
+                    "punteggio_emoji=:punteggio_emoji, " \
+                    "punteggio_foto=:punteggio_foto, " \
+                    "punteggio_testo=:punteggio_testo " \
+                    "WHERE id_ristorante =:id_ristorante"
 
-        restaurant.set_punt_foto(new_scores['punt_foto'])
-        restaurant.set_punt_emoji(new_scores['punt_emoji'])
-        restaurant.set_punt_testo(new_scores['punt_testo'])
+            restaurant.set_punt_foto(new_scores['punt_foto'])
+            restaurant.set_punt_emoji(new_scores['punt_emoji'])
+            restaurant.set_punt_testo(new_scores['punt_testo'])
 
-        response = \
-            self.database.do_write_query(query, self.__set_param_restaurant(restaurant))['numberOfRecordsUpdated'] > 0
+            response = \
+                self.database.do_write_query(query, self.__set_param_restaurant(restaurant))['numberOfRecordsUpdated'] > 0
 
-        print("response update restaurant: ", response)
+            print("restaurant already exists, response update restaurant: ", response)
 
-        if response is False:
+        else:
             response = self.__save_new_restaurant(restaurant)
+            print('new restaurant inserted, response: ', response)
 
         return response
 
@@ -393,7 +395,7 @@ class RepositoryInternal:
                 'ristorante.id_ristorante = post.id_ristorante where ristorante.id_ristorante = :id '
 
         response = self.database.do_read_query(query, param_id)
-        return response
+        return response[0]
 
     def check_if_post_already_exist(self, id_post: str) -> bool:
         """
@@ -406,3 +408,9 @@ class RepositoryInternal:
         query = "SELECT * FROM post WHERE id_post = :id_post"
         response = self.database.do_read_query(query, param)
         return response is None
+
+    def _check_if_restaurant_already_exists(self, restaurant):
+        param = [{"name": "id_rest", "value": {"longValue": restaurant.id_rist}}]
+        query = 'SELECT * FROM ristorante WHERE id_ristorante = :id_rest'
+        response = self.database.do_read_query(query, param)
+        return len(response) > 0
