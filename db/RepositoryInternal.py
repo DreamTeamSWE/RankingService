@@ -48,7 +48,7 @@ class RepositoryInternal:
         restaurant_param = {"name": "id_ristorante", "value": {"longValue": post.restaurant.id_rist}}
         caption_param = {"name": "testo", "value": {"stringValue": post.caption}}
         emoji_param = {"name": "punteggio_emoji", "value": {"doubleValue": post.punt_emoji}}
-        punt_testo_param = {"name": "punteggio_testo", "value": {"doubleValue": post.punt_testo.calculate_score()}}
+        punt_testo_param = {"name": "punteggio_testo", "value": {"doubleValue": post.punt_testo}}
         punt_foto_param = {"name": "punteggio_foto", "value": {"doubleValue": post.punt_foto}}
         param_list = [id_post_param, post_utente_param, data_post_param, restaurant_param, caption_param, emoji_param,
                       punt_testo_param, punt_foto_param]
@@ -220,7 +220,8 @@ class RepositoryInternal:
             id_img = int(img.image_name.split('.')[0])
 
             param = self.__set_param_img(id_img, id_post)
-            response = (self.database.do_write_query(query, param))['numberOfRecordsUpdated'] > 0 and response
+            response1 = self.database.do_write_query(query, param)
+            response = (response1['numberOfRecordsUpdated'] > 0) and response
             print("saved image " + img.image_name + " in table immagine, response:", response)
             if img.labels is not None and len(img.labels) > 0:
                 response = self.__save_labels(img.labels, id_img) and response
@@ -261,8 +262,8 @@ class RepositoryInternal:
 
         response = self.database.do_write_query(query,
                                                 self.__set_param_crawled_data(post))['numberOfRecordsUpdated'] > 0 and response
-
-        response = self.__save_comprehend_score(post.punt_testo, post.id_post) and response
+        if post.comprehend_score:
+            response = self.__save_comprehend_score(post.comprehend_score, post.id_post) and response
 
         # salvo immagini solo se presenti
         if post.list_images:
@@ -321,7 +322,7 @@ class RepositoryInternal:
 
             response = self.database.do_write_query(query, self.__set_param_restaurant(restaurant))
             print(f"restaurant scores updated: emoji: {new_scores['punt_emoji']}, "
-                  f"text: {new_scores['punt_foto']}, images:{new_scores['punt_testo']}")
+                  f"foto: {new_scores['punt_foto']}, testo:{new_scores['punt_testo']}")
 
             return response['numberOfRecordsUpdated'] > 0
 

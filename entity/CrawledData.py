@@ -19,9 +19,11 @@ class CrawledData:
         self.punt_emoji = None
         self.punt_foto = None
         self.punt_testo = None
+        self.comprehend_score = None
 
-    def set_punt_testo(self, score: ScoreComprehend):
-        self.punt_testo = score
+    def set_punt_testo(self):
+        if self.comprehend_score:
+            self.punt_testo = self.comprehend_score.calculate_score()
 
     def calculate_and_set_punt_foto(self):
         if self.list_images:
@@ -32,6 +34,9 @@ class CrawledData:
 
     def set_punt_emoji(self, punt_emoji: float):
         self.punt_emoji = punt_emoji
+
+    def set_comprehend_score(self, score: ScoreComprehend):
+        self.comprehend_score = score
 
     def __str__(self):
         return "id_post: " + str(self.id_post) + "\n" + \

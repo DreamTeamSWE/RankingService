@@ -204,9 +204,10 @@ class PostAnalyzer(Analyzer, ABC):
 
         # calcolo punteggio caption con comprehend
         score = detect_sentiment_text(post)
-        post.set_punt_testo(score)
+        post.set_comprehend_score(score)
+        post.set_punt_testo()
 
-        print("\ncomprehend score: " + str(score) + "\n-------------------\n")
+        print("\ncomprehend score: " + str(score) if score else 'no text found' + "\n-------------------\n")
 
         # calcolo punteggio emoji
         emoji_score = emoji_analyzer(post.caption)
