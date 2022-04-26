@@ -13,6 +13,7 @@ def refresh_ranking(event, context):
 
     for item in array_json_sqs_response:
         item_body = json.loads(item['body'])
+
         post = CrawledData.parse_post_from_sqs(item_body)
 
         print("check if post " + post.id_post + " is already in db")
@@ -32,10 +33,10 @@ def refresh_ranking(event, context):
     return response
 
 
-ev = {"username": "diariodibrodo", "post_id": "2759706439750529492_2059697415", "date": "2022-01-26",
-      "img_url": [84, 85, 86, 87, 88, 89],
-      "caption_text": "Oh Crispa! Un pezzo di Cina a Torino #brodo #hot #xiaolongbao #bao #chinesefood #torino #sansalvario",
-      "location": {"location_name": "Oh Crispa", "lat": 45.058, "lng": 7.6798, "category": "Chinese Restaurant",
-                   "phone": "+393715854863", "website": "", "db_id": 73}}
-if __name__ == "__main__":
-    refresh_ranking(ev, None)
+# ev = {"username": "diariodibrodo", "post_id": "92759706439750529492_2059697415", "date": "2022-01-26",
+#       "img_url": [84, 85, 86, 87, 88, 89],
+#       "caption_text": "Oh Crispa! Un pezzo di Cina a Torino #brodo #hot #xiaolongbao #bao #chinesefood #torino #sansalvario",
+#       "location": {"location_name": "Oh Crispa", "lat": 45.058, "lng": 7.6798, "category": "Chinese Restaurant",
+#                    "phone": "+393715854863", "website": "", "db_id": 73}}
+# if __name__ == "__main__":
+#     refresh_ranking(ev, None)

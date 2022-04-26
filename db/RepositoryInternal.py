@@ -252,7 +252,7 @@ class RepositoryInternal:
 
         response = True
 
-        response = self.update_restaurant_info(post.restaurant) and response
+        response = self.insert_new_restaurant(post.restaurant) and response
 
         query = "INSERT INTO post (id_post,nome_utente, data_post, id_ristorante, testo, " \
                 "punteggio_emoji, punteggio_testo, punteggio_foto) VALUES " \
@@ -262,7 +262,7 @@ class RepositoryInternal:
         response = self.database.do_write_query(query,
                                                 self.__set_param_crawled_data(post))['numberOfRecordsUpdated'] > 0 and response
 
-        response =  self.__save_comprehend_score(post.punt_testo, post.id_post) and response
+        response = self.__save_comprehend_score(post.punt_testo, post.id_post) and response
 
         # salvo immagini solo se presenti
         if post.list_images:
@@ -284,52 +284,47 @@ class RepositoryInternal:
                 "punteggio_testo) VALUES (:id_ristorante, :nome_ristorante, :indirizzo, :telefono, :sito_web, " \
                 ":latitudine, :longitudine, :categoria, :punteggio_emoji, :punteggio_foto, :punteggio_testo)"
 
-        response = \
-            self.database.do_write_query(query, self.__set_param_restaurant(restaurant))['numberOfRecordsUpdated'] > 0
+        response = self.database.do_write_query(query, self.__set_param_restaurant(restaurant))
 
-        return response
+        return response['numberOfRecordsUpdated'] > 0
 
-    def update_restaurant_info(self, restaurant: Restaurant) -> bool:
+    def insert_new_restaurant(self, restaurant: Restaurant) -> bool:
         """
         Update restaurant info in rds, if restaurant is not present in rds it will be inserted
 
         :param restaurant: Restaurant to update in rds
         :return: id of restaurant inserted or updated
         """
-        print("updating restaurant in table ristorante")
 
-        if self._check_if_restaurant_already_exists(restaurant):
-            # aggiorno il ristorante
-            param_id = [{"name": "id", "value": {"longValue": restaurant.id_rist}}]
-            new_scores = self._recalculate_scores(param_id)
+        print("checking if restaurant already exixts in table ristorante...")
 
-            query = "UPDATE ristorante SET " \
-                    "nome_ristorante=:nome_ristorante, " \
-                    "indirizzo=:indirizzo, " \
-                    "telefono=:telefono, " \
-                    "sito_web=:sito_web, " \
-                    "latitudine=:latitudine, " \
-                    "longitudine=:longitudine, " \
-                    "categoria=:categoria, " \
-                    "punteggio_emoji=:punteggio_emoji, " \
-                    "punteggio_foto=:punteggio_foto, " \
-                    "punteggio_testo=:punteggio_testo " \
-                    "WHERE id_ristorante =:id_ristorante"
-
-            restaurant.set_punt_foto(new_scores['punt_foto'])
-            restaurant.set_punt_emoji(new_scores['punt_emoji'])
-            restaurant.set_punt_testo(new_scores['punt_testo'])
-
-            response = \
-                self.database.do_write_query(query, self.__set_param_restaurant(restaurant))['numberOfRecordsUpdated'] > 0
-
-            print("restaurant already exists, response update restaurant: ", response)
-
-        else:
+        if not self._check_if_restaurant_already_exists(restaurant):
             response = self.__save_new_restaurant(restaurant)
             print('new restaurant inserted, response: ', response)
+            return True
+        else:
+            print('restaurant already exists')
+            return False
 
-        return response
+    def update_restaurant_scores(self, restaurant: Restaurant):
+        param_id = [{"name": "id", "value": {"longValue": restaurant.id_rist}}]
+        new_scores = self._recalculate_scores(param_id)
+
+        query = "UPDATE ristorante SET " \
+                "punteggio_emoji=:punteggio_emoji, " \
+                "punteggio_foto=:punteggio_foto, " \
+                "punteggio_testo=:punteggio_testo " \
+                "WHERE id_ristorante =:id_ristorante"
+
+        restaurant.set_punt_foto(new_scores['punt_foto'])
+        restaurant.set_punt_emoji(new_scores['punt_emoji'])
+        restaurant.set_punt_testo(new_scores['punt_testo'])
+
+        response = self.database.do_write_query(query, self.__set_param_restaurant(restaurant))
+        print(f"restaurant scores updated: emoji: {new_scores['punt_emoji']}, "
+              f"text: {new_scores['punt_foto']}, images:{new_scores['punt_testo']}")
+
+        return response['numberOfRecordsUpdated'] > 0
 
     def get_restaurant_info_by_name(self, name: str) -> Optional[Restaurant]:
         """

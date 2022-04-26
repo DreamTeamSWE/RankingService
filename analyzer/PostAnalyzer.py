@@ -224,3 +224,4 @@ class PostAnalyzer(Analyzer, ABC):
         post.calculate_and_set_punt_foto()
         repository = RepositoryInternal()
         repository.save_post(post)
+        repository.update_restaurant_scores(post.restaurant)
