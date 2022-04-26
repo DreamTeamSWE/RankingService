@@ -1,3 +1,5 @@
+from typing import Optional
+
 import boto3
 from abc import ABC
 from analyzer.Analyzer import Analyzer
@@ -34,7 +36,7 @@ def detect_language_text(text: str) -> str:
     return language
 
 
-def detect_sentiment_text(post: CrawledData, language: str = 'it') -> ScoreComprehend:
+def detect_sentiment_text(post: CrawledData, language: str = 'it') -> Optional[ScoreComprehend]:
     """
     Detect sentiment of a post with Comprehend.
 
@@ -49,25 +51,29 @@ def detect_sentiment_text(post: CrawledData, language: str = 'it') -> ScoreCompr
 
     comprehend = boto3.client(service_name='comprehend',
                               region_name=__AWS_REGION)
-    # result of comprehend
-    json_result = comprehend.detect_sentiment(Text=post.caption, LanguageCode=language)
+    if post.caption:
+        # result of comprehend
+        json_result = comprehend.detect_sentiment(Text=post.caption, LanguageCode=language)
 
-    # get sentiment
-    array = json_result["SentimentScore"]
-    principal_sentiment = json_result["Sentiment"]
+        # get sentiment
+        array = json_result["SentimentScore"]
+        principal_sentiment = json_result["Sentiment"]
 
-    MULT_FACTOR = 100
+        MULT_FACTOR = 100
 
-    # get score
-    negative = int(array["Negative"] * MULT_FACTOR)
-    neutral = int(array["Neutral"] * MULT_FACTOR)
-    positive = int(array["Positive"] * MULT_FACTOR)
-    mixed = int(array["Mixed"] * MULT_FACTOR)
+        # get score
+        negative = int(array["Negative"] * MULT_FACTOR)
+        neutral = int(array["Neutral"] * MULT_FACTOR)
+        positive = int(array["Positive"] * MULT_FACTOR)
+        mixed = int(array["Mixed"] * MULT_FACTOR)
 
-    score = ScoreComprehend(negative, positive, neutral, mixed)
-    score.set_sentiment(principal_sentiment)
+        score = ScoreComprehend(negative, positive, neutral, mixed)
+        score.set_sentiment(principal_sentiment)
 
-    return score
+        return score
+    else:
+        # no text
+        return None
 
 
 def detect_labels(photo: Image, bucket: str):
