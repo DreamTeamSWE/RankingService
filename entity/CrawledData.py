@@ -53,17 +53,34 @@ class CrawledData:
     def parse_post_from_sqs(item_body: dict):
         restaurant = Restaurant.parse_restaurant_from_sqs(item_body)
 
+        # modifiche temporanee
         list_img = []
-        for img in item_body['img_url']:
-            img = str(img)
-            if not img.__contains__('.jpg'):
-                img = str(img) + ".jpg"
-            list_img.append(Image(img))
+        if item_body['s3_id']:
+            for img in item_body['s3_id']:
+                img = str(img)
+                if not img.__contains__('.jpg'):
+                    img = str(img) + ".jpg"
+                list_img.append(Image(img))
 
-        return CrawledData(
-            id_post=item_body['post_id'],
-            utente=item_body['username'],
-            data_post=item_body['date'],
-            caption=item_body['caption_text'],
-            restaurant=restaurant,
-            list_images=list_img)
+            return CrawledData(
+                id_post=item_body['post_id'],
+                utente=item_body['username'],
+                data_post=item_body['date'],
+                caption=item_body['caption_text'],
+                restaurant=restaurant,
+                list_images=list_img)
+
+        elif item_body['img_url']:
+            for img in item_body['img_url']:
+                img = str(img)
+                if not img.__contains__('.jpg'):
+                    img = str(img) + ".jpg"
+                list_img.append(Image(img))
+
+            return CrawledData(
+                id_post=item_body['post_id'],
+                utente=item_body['username'],
+                data_post=item_body['date'],
+                caption=item_body['caption_text'],
+                restaurant=restaurant,
+                list_images=list_img)

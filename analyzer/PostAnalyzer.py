@@ -2,6 +2,7 @@ from typing import Optional
 
 import boto3
 from abc import ABC
+
 from analyzer.Analyzer import Analyzer
 from analyzer.EmojiAnalyzer import EmojiAnalyzer
 from entity import CrawledData
@@ -90,9 +91,12 @@ def detect_labels(photo: Image, bucket: str):
     print('detect_labels')
 
     client = boto3.client('rekognition', region_name=__AWS_REGION)
-
-    response = client.detect_labels(Image={'S3Object': {'Bucket': bucket, 'Name': photo}},
-                                    MaxLabels=10)
+    try:
+        response = client.detect_labels(Image={'S3Object': {'Bucket': bucket, 'Name': photo}},
+                                        MaxLabels=10)
+    except Exception as ex:
+        if ex.response['Error']['Code'] == 'InvalidImageFormatException':
+            print(f'invalid format in image {photo}')
 
     print('Detecting labels for ' + photo)
 
@@ -128,8 +132,14 @@ def detect_sentiment_person(name_image: str, bucket: str):
 
     reko = boto3.client('rekognition', region_name=__AWS_REGION)
     print(name_image)
-    response = reko.detect_faces(Image={'S3Object': {'Bucket': bucket, 'Name': name_image}},
-                                 Attributes=['ALL'])
+
+    try:
+        response = reko.detect_faces(Image={'S3Object': {'Bucket': bucket, 'Name': name_image}},
+                                     Attributes=['ALL'])
+    except Exception as ex:
+        if ex.response['Error']['Code'] == 'InvalidImageFormatException':
+            print(f'invalid format in image {name_image}')
+
     contain_emotion = True
     emotions_dict = {}
     emotions_confid = []
@@ -191,6 +201,7 @@ def image_analyzer(name_image: str):
 def emoji_analyzer(post_text: str):
     ea = EmojiAnalyzer()
     return ea.calculate_score(post_text)
+
 
 class PostAnalyzer(Analyzer, ABC):
     def analyze(self, post: CrawledData):

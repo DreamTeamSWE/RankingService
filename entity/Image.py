@@ -40,4 +40,4 @@ class Image:
 
     # to string
     def __str__(self) -> str:
-        return "__str__ image name: " + self.image_name
+        return "image name: " + self.image_name
