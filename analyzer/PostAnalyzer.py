@@ -1,11 +1,12 @@
-from typing import Optional
+import json
 import boto3
 from abc import ABC
+from typing import Optional
 
+from entity import Image
+from entity import CrawledData
 from analyzer.Analyzer import Analyzer
 from analyzer.EmojiAnalyzer import EmojiAnalyzer
-from entity import CrawledData
-from entity import Image
 from entity.ScoreComprehend import ScoreComprehend
 from db.RepositoryInternal import RepositoryInternal
 
@@ -27,10 +28,10 @@ def detect_language_text(text: str) -> str:
     comprehend = boto3.client(service_name='comprehend', region_name=__AWS_REGION)
     # result of comprehend
     json_result = comprehend.detect_dominant_language(Text=text)
-    json = json_result.loads(json_result)
+    json_parsed = json.loads(json_result)
 
     # get first language
-    languages = json['Languages']
+    languages = json_parsed['Languages']
 
     # get language code
     language = languages['LanguageCode']

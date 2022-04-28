@@ -52,8 +52,8 @@ functions:
         Action:
           - 'rekognition:DetectFaces'
           - 'rekognition:DetectLabels'
-          - 'comprehend:DetectDominantLanguage'
           - 'comprehend:DetectSentiment'
+          - 'comprehend:DetectDominantLanguage'
           - 'rds-data:ExecuteStatement'
           - 'rds-data:BeginTransaction'
           - 'rds-data:CommitTransaction'
