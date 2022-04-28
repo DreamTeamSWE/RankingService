@@ -1,4 +1,4 @@
-service: ranking-service-2
+service: ranking-service
 
 frameworkVersion: '3'
 
@@ -14,7 +14,7 @@ functions:
     iamRoleStatements:
       - Effect: Allow
         Action:
-          - rds-data:*
+          - 'rds-data:ExecuteStatement'
         Resource: '*'
       - Effect: Allow
         Action:
@@ -32,7 +32,7 @@ functions:
     iamRoleStatements:
       - Effect: Allow
         Action:
-          - rds-data:*
+          - 'rds-data:ExecuteStatement'
         Resource: '*'
       - Effect: Allow
         Action:
@@ -54,7 +54,10 @@ functions:
           - 'rekognition:DetectLabels'
           - 'comprehend:DetectDominantLanguage'
           - 'comprehend:DetectSentiment'
-          - rds-data:*
+          - 'rds-data:ExecuteStatement'
+          - 'rds-data:BeginTransaction'
+          - 'rds-data:CommitTransaction'
+          - 'rds-data:BatchExecuteStatement'
         Resource: '*'
       - Effect: Allow
         Action:
@@ -69,7 +72,7 @@ functions:
           - 's3:getObject'
         Resource: "arn:aws:s3:::sweet-emoji-sentiment-scores/*"
     events:
-     - sqs:
+      - sqs:
           arn: arn:aws:sqs:eu-central-1:123446374287:coda-crawler.fifo
           batchSize: 10
           functionResponseType: ReportBatchItemFailures
@@ -80,7 +83,7 @@ functions:
     iamRoleStatements:
       - Effect: Allow
         Action:
-          - rds-data:*
+          - 'rds-data:ExecuteStatement'
         Resource: '*'
       - Effect: Allow
         Action:
