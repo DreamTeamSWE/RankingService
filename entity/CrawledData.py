@@ -65,7 +65,7 @@ class CrawledData:
             return CrawledData(
                 id_post=item_body['post_id'],
                 utente=item_body['username'],
-                data_post=item_body['date'],
+                data_post=item_body['date'][0:10],
                 caption=item_body['caption_text'],
                 restaurant=restaurant,
                 list_images=list_img)
@@ -80,7 +80,7 @@ class CrawledData:
             return CrawledData(
                 id_post=item_body['post_id'],
                 utente=item_body['username'],
-                data_post=item_body['date'],
+                data_post=item_body['date'][0:10],
                 caption=item_body['caption_text'],
                 restaurant=restaurant,
                 list_images=list_img)
