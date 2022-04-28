@@ -55,7 +55,7 @@ class CrawledData:
 
         # modifiche temporanee
         list_img = []
-        if item_body['s3_id']:
+        if 's3_id' in item_body:
             for img in item_body['s3_id']:
                 img = str(img)
                 if not img.__contains__('.jpg'):
@@ -70,7 +70,7 @@ class CrawledData:
                 restaurant=restaurant,
                 list_images=list_img)
 
-        elif item_body['img_url']:
+        elif 'img_url' in item_body:
             for img in item_body['img_url']:
                 img = str(img)
                 if not img.__contains__('.jpg'):
