@@ -4,20 +4,20 @@ from db.RepositoryExternal import RepositoryExternal
 
 
 def get_ranking(event, context):
-    query_string_parameters = event['queryStringParameters']
 
-    # check if key are presents
-    if 'from' in query_string_parameters:
-        position = query_string_parameters['from']
-        int_position = int(position)
-    else:
-        int_position = 0
+    int_position = 0
+    int_size = 10
+    if 'queryStringParameters' in event and event['queryStringParameters'] is not None:
+        query_string_parameters = event['queryStringParameters']
 
-    if 'size' in query_string_parameters:
-        size = query_string_parameters['size']
-        int_size = int(size)
-    else:
-        int_size = 10
+        # check if key are presents
+        if 'from' in query_string_parameters:
+            position = query_string_parameters['from']
+            int_position = int(position)
+
+        if 'size' in query_string_parameters:
+            size = query_string_parameters['size']
+            int_size = int(size)
 
     repo_ext = RepositoryExternal()
     list_restaurants = repo_ext.get_ranking(int_position, int_size)
