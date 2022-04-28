@@ -15,8 +15,11 @@ functions:
       - Effect: Allow
         Action:
           - rds-data:*
-          - secretsmanager:*
         Resource: '*'
+      - Effect: Allow
+        Action:
+          - 'secretsmanager:GetSecretValue'
+        Resource: 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei'
     events:
       - http:
           path: getRanking
@@ -30,8 +33,11 @@ functions:
       - Effect: Allow
         Action:
           - rds-data:*
-          - secretsmanager:*
         Resource: '*'
+      - Effect: Allow
+        Action:
+          - 'secretsmanager:GetSecretValue'
+        Resource: 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei'
     events:
       - http:
           path: getLabelAndPost
@@ -44,11 +50,16 @@ functions:
     iamRoleStatements:
       - Effect: Allow
         Action:
-          - rekognition:*
-          - comprehend:*
+          - 'rekognition:DetectFaces'
+          - 'rekognition:DetectLabels'
+          - 'comprehend:DetectDominantLanguage'
+          - 'comprehend:DetectSentiment'
           - rds-data:*
-          - secretsmanager:*
         Resource: '*'
+      - Effect: Allow
+        Action:
+          - 'secretsmanager:GetSecretValue'
+        Resource: 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei'
       - Effect: Allow
         Action:
           - 's3:getObject'
@@ -70,8 +81,11 @@ functions:
       - Effect: Allow
         Action:
           - rds-data:*
-          - secretsmanager:*
         Resource: '*'
+      - Effect: Allow
+        Action:
+          - 'secretsmanager:GetSecretValue'
+        Resource: 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei'
     events:
       - http:
           path: searchByName

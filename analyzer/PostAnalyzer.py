@@ -14,7 +14,6 @@ __AWS_REGION = 'eu-central-1'
 
 
 def detect_language_text(text: str) -> str:
-    # TODO: testare perché fatto in automatico con copilot
     """
     Detect language of a text with Translate.
 
@@ -26,13 +25,13 @@ def detect_language_text(text: str) -> str:
     print("\n-------------------")
     print('detect_language_text')
 
-    translate = boto3.client(service_name='translate',
-                             region_name=__AWS_REGION)
-    # result of translate
-    json_result = translate.detect_language(Text=text)
+    comprehend = boto3.client(service_name='comprehend', region_name=__AWS_REGION)
+    # result of comprehend
+    json_result = comprehend.detect_dominant_language(Text=text)
+    languages = json_result['Languages']
 
     # get language
-    language = json_result["LanguageCode"]
+    language = languages['LanguageCode']
 
     return language
 
@@ -60,13 +59,13 @@ def detect_sentiment_text(post: CrawledData, language: str = 'it') -> Optional[S
         array = json_result["SentimentScore"]
         principal_sentiment = json_result["Sentiment"]
 
-        MULT_FACTOR = 100
+        mult_factor = 100
 
         # get score
-        negative = int(array["Negative"] * MULT_FACTOR)
-        neutral = int(array["Neutral"] * MULT_FACTOR)
-        positive = int(array["Positive"] * MULT_FACTOR)
-        mixed = int(array["Mixed"] * MULT_FACTOR)
+        negative = int(array["Negative"] * mult_factor)
+        neutral = int(array["Neutral"] * mult_factor)
+        positive = int(array["Positive"] * mult_factor)
+        mixed = int(array["Mixed"] * mult_factor)
 
         score = ScoreComprehend(negative, positive, neutral, mixed)
         score.set_sentiment(principal_sentiment)
@@ -214,7 +213,7 @@ class PostAnalyzer(Analyzer, ABC):
         print("\nHello from PostAnalyzer\n")
 
         # calcolo punteggio caption con comprehend
-        score = detect_sentiment_text(post)
+        score = detect_sentiment_text(post, detect_language_text(post.caption))
         post.set_comprehend_score(score)
         post.set_punt_testo()
 
