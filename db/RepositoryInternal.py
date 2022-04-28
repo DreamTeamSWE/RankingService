@@ -18,6 +18,7 @@ class RepositoryInternal:
         :param restaurant: Restaurant to refactor
         :return: list of parameters
         """
+
         id_ristorante_param = {"name": "id_ristorante", "value": {"longValue": restaurant.id_rist}}
         nome_param = {"name": "nome_ristorante", "value": {"stringValue": restaurant.nome}}
         indirizzo_param = {"name": "indirizzo", "value": {"stringValue": restaurant.indirizzo}}

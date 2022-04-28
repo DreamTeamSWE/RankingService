@@ -1,6 +1,12 @@
 {
-  "Languages": {
-    "LanguageCode": "it",
-    "Score": 0.9983088374137878
-  }
+  "Languages": [
+    {
+      "LanguageCode": "en",
+      "Score": 0.5177110433578491
+    },
+    {
+      "LanguageCode": "de",
+      "Score": 0.16721957921981812
+    }
+  ]
 }

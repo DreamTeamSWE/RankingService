@@ -1,5 +1,4 @@
 from typing import Optional
-
 import boto3
 from abc import ABC
 
@@ -28,9 +27,12 @@ def detect_language_text(text: str) -> str:
     comprehend = boto3.client(service_name='comprehend', region_name=__AWS_REGION)
     # result of comprehend
     json_result = comprehend.detect_dominant_language(Text=text)
-    languages = json_result['Languages']
+    json = json_result.loads(json_result)
 
-    # get language
+    # get first language
+    languages = json['Languages']
+
+    # get language code
     language = languages['LanguageCode']
 
     return language
