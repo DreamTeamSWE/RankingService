@@ -51,11 +51,11 @@ functions:
         Resource: '*'
       - Effect: Allow
         Action:
-          - s3:*
+          - 's3:getObject'
         Resource: "arn:aws:s3:::dream-team-img-test/*"
       - Effect: Allow
         Action:
-           - s3:*
+          - 's3:getObject'
         Resource: "arn:aws:s3:::sweet-emoji-sentiment-scores/*"
     events:
      - sqs:
