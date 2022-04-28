@@ -22,6 +22,8 @@ def get_ranking(event, context):
     repo_ext = RepositoryExternal()
     list_restaurants = repo_ext.get_ranking(int_position, int_size)
 
+
+
     response = {
         'statusCode': 200,
         'headers': {

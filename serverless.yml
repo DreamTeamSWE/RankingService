@@ -1,4 +1,4 @@
-service: ranking-service
+service: ranking-service-2
 
 frameworkVersion: '3'
 
@@ -46,10 +46,17 @@ functions:
         Action:
           - rekognition:*
           - comprehend:*
-          - s3:*
           - rds-data:*
           - secretsmanager:*
         Resource: '*'
+      - Effect: Allow
+        Action:
+          - s3:*
+        Resource: "arn:aws:s3:::dream-team-img-test/*"
+      - Effect: Allow
+        Action:
+           - s3:*
+        Resource: "arn:aws:s3:::sweet-emoji-sentiment-scores/*"
     events:
      - sqs:
           arn: arn:aws:sqs:eu-central-1:123446374287:coda-crawler.fifo
@@ -71,7 +78,6 @@ functions:
           method: POST
           cors: true
 
-
 package:
   patterns:
     - '!venv/**'
@@ -84,6 +90,7 @@ package:
 plugins:
   - serverless-iam-roles-per-function
   - serverless-python-requirements
+
 custom:
   pythonRequirements:
     dockerizePip: false

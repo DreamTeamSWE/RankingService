@@ -24,13 +24,17 @@ class RepositoryExternal:
         position_param = {"name": "position", "value": {"longValue": position}}
         size_param = {"name": "size", "value": {"longValue": size}}
 
-        query = "SELECT * FROM ristorante ORDER BY (punteggio_emoji+punteggio_foto+punteggio_testo) DESC LIMIT " \
-                ":position, :size"
+        query = "select r.*,i.id_immagine from ristorante as r" \
+                "join post p on r.id_ristorante=p.id_ristorante" \
+                "join immagine i on p.id_post=i.id_post" \
+                "group by r.id_ristorante" \
+                "order by (punteggio_emoji+punteggio_foto+punteggio_testo) desc " \
+                "limit :position, :size"
         response = self.database.do_read_query(query, [position_param, size_param])
 
         return response
 
-    def get_post_and_tag_by_restaurant(self, id_rist: int):
+    def get_post_and_tag_by_restaurant(self, id_rist: int) -> dict:
         """
         return post and tag of restaurant
 

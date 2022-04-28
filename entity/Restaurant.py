@@ -44,7 +44,7 @@ class Restaurant:
         return Restaurant(
             id_rist=json_restaurant['db_id'],
             nome=json_restaurant['location_name'],
-            indirizzo=json_restaurant['address'],
+            indirizzo="",  # indirizzo=json_restaurant['address'],
             telefono=json_restaurant['phone'],
             sito=json_restaurant['website'],
             lat=json_restaurant['lat'],
