@@ -1,14 +1,14 @@
-import json
-import boto3
 from abc import ABC
 from typing import Optional
 
-from entity import Image
-from entity import CrawledData
+import boto3
+
 from analyzer.Analyzer import Analyzer
 from analyzer.EmojiAnalyzer import EmojiAnalyzer
-from entity.ScoreComprehend import ScoreComprehend
 from db.RepositoryInternal import RepositoryInternal
+from entity import CrawledData
+from entity import Image
+from entity.ScoreComprehend import ScoreComprehend
 
 __AWS_REGION = 'eu-central-1'
 
@@ -53,9 +53,9 @@ def detect_sentiment_text(post: CrawledData, language: str = 'it') -> Optional[S
 
     comprehend = boto3.client(service_name='comprehend',
                               region_name=__AWS_REGION)
-    if post.caption:
+    if post.get_caption() is not None:
         # result of comprehend
-        json_result = comprehend.detect_sentiment(Text=post.caption, LanguageCode=language)
+        json_result = comprehend.detect_sentiment(Text=post.get_caption, LanguageCode=language)
 
         # get sentiment
         array = json_result["SentimentScore"]
@@ -215,21 +215,21 @@ class PostAnalyzer(Analyzer, ABC):
         print("\nHello from PostAnalyzer\n")
 
         # calcolo punteggio caption con comprehend
-        score = detect_sentiment_text(post, detect_language_text(post.caption))
+        score = detect_sentiment_text(post, detect_language_text(post.get_caption))
         post.set_comprehend_score(score)
         post.set_punt_testo()
 
         print("\ncomprehend score: " + str(score) if score else 'no text found' + "\n-------------------\n")
 
         # calcolo punteggio emoji
-        emoji_score = emoji_analyzer(post.caption)
+        emoji_score = emoji_analyzer(post.get_caption)
         post.set_punt_emoji(emoji_score)
 
         print('emoji score: ' + str(emoji_score) if emoji_score is not None else 'No emoji detected')
 
         # calcolo punteggio per ogni immagine e salvo
-        if post.list_images is not None:
-            for image in post.list_images:
+        if post.get_list_images() is not None:
+            for image in post.get_list_images():
                 print("image name " + image.image_name)
                 labels, emotions, emotions_confidence = image_analyzer(image.image_name)
 
@@ -241,6 +241,6 @@ class PostAnalyzer(Analyzer, ABC):
             print("\nNo image in post\n")
 
         post.calculate_and_set_punt_foto()
-        # repository = RepositoryInternal()
-        # repository.save_post(post)
-        # repository.update_restaurant_scores(post.restaurant)
+        repository = RepositoryInternal()
+        repository.save_post(post)
+        repository.update_restaurant_scores(post.restaurant)

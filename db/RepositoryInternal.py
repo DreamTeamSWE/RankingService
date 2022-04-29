@@ -11,61 +11,6 @@ class RepositoryInternal:
         self.database = DatabaseHandler(db_name)
 
     @staticmethod
-    def __set_param_restaurant(restaurant: Restaurant) -> list:
-        """
-        Return a list of parameters for rds query
-
-        :param restaurant: Restaurant to refactor
-        :return: list of parameters
-        """
-
-        id_ristorante_param = {"name": "id_ristorante", "value": {"longValue": restaurant.id_rist}}
-        nome_param = {"name": "nome_ristorante", "value": {"stringValue": restaurant.nome}}
-        indirizzo_param = {"name": "indirizzo", "value": {"stringValue": restaurant.indirizzo}}
-        telefono_param = {"name": "telefono", "value": {"stringValue": restaurant.telefono}}
-        sito_param = {"name": "sito_web", "value": {"stringValue": restaurant.sito}}
-        latitudine_param = {"name": "latitudine", "value": {"doubleValue": restaurant.lat}}
-        longitudine_param = {"name": "longitudine", "value": {"doubleValue": restaurant.lng}}
-        categoria_param = {"name": "categoria", "value": {"stringValue": restaurant.categoria}}
-        punteggio_emoji_param = {"name": "punteggio_emoji", "value": {"doubleValue": restaurant.punt_emoji}}
-        punteggio_foto_param = {"name": "punteggio_foto", "value": {"doubleValue": restaurant.punt_foto}}
-        punteggio_testo_param = {"name": "punteggio_testo", "value": {"doubleValue": restaurant.punt_testo}}
-
-        return [id_ristorante_param, nome_param, indirizzo_param, telefono_param, sito_param, latitudine_param,
-                longitudine_param, categoria_param, punteggio_emoji_param, punteggio_foto_param, punteggio_testo_param]
-
-    @staticmethod
-    def __set_param_crawled_data(post: CrawledData) -> list:
-        """
-        Return a list of parameters for rds query
-
-        :param post: Post if IG to refactor
-        :return: list of parameters
-        """
-
-        id_post_param = {"name": "id_post", "value": {"stringValue": post.id_post}}
-        post_utente_param = {"name": "post_utente", "value": {"stringValue": post.utente}}
-        data_post_param = {"name": "data_post", "value": {"stringValue": str(post.data_post)}, "typeHint": "DATE"}
-        restaurant_param = {"name": "id_ristorante", "value": {"longValue": post.restaurant.id_rist}}
-        caption_param = {"name": "testo", "value": {"stringValue": post.caption}}
-        emoji_param = {"name": "punteggio_emoji", "value": {"doubleValue": post.punt_emoji}}
-        punt_testo_param = {"name": "punteggio_testo", "value": {"doubleValue": post.punt_testo}}
-        punt_foto_param = {"name": "punteggio_foto", "value": {"doubleValue": post.punt_foto}}
-        param_list = [id_post_param, post_utente_param, data_post_param, restaurant_param, caption_param, emoji_param,
-                      punt_testo_param, punt_foto_param]
-
-        return param_list
-
-    @staticmethod
-    def __set_param_comprehend_score(score: ScoreComprehend, id_post: str):
-        post_id = {"name": "id_post", "value": {"stringValue": id_post}}
-        negative_param = {"name": "negative", "value": {"longValue": score.negative}}
-        positive_param = {"name": "positive", "value": {"longValue": score.positive}}
-        neutral_param = {"name": "neutral", "value": {"longValue": score.neutral}}
-        mixed_param = {"name": "mixed", "value": {"longValue": score.mixed}}
-        return [post_id, negative_param, positive_param, neutral_param, mixed_param]
-
-    @staticmethod
     def __set_param_emotions_confidence(emotion_confid: dict, id_img: int, num_pers: int):
         param_list = []
         names = ['happy', 'calm', 'sad', 'angry', 'surprised', 'confused', 'disgusted', 'fear']
@@ -104,8 +49,6 @@ class RepositoryInternal:
         param_list.append({"name": "qta", "value": {"longValue": qta}})
         return param_list
 
-    # check
-    # da testare
     @staticmethod
     def __set_param_label(label: str) -> list:
         """
@@ -116,16 +59,13 @@ class RepositoryInternal:
         """
         return [{"name": "nome_label", "value": {"stringValue": label}}]
 
-    # check
-    # da testare
     @staticmethod
     def __set_param_label_img(label: str, id_img: int, confidenza: float = None) -> list:
         param_list = RepositoryInternal.__set_param_label(label)
         param_list.append({"name": "id_immagine", "value": {"longValue": id_img}})
         return param_list
 
-    @staticmethod  # check
-    # da testare
+    @staticmethod
     def __set_param_img(id_img: int, id_post: str) -> list:
         """
         Return a list of parameters for rds query
@@ -137,8 +77,6 @@ class RepositoryInternal:
         param_id_post = {"name": "id_post", "value": {"stringValue": id_post}}
         return [param_id_img, param_id_post]
 
-    # check
-    # da testare
     def __save_labels(self, labels: dict, id_img: int) -> bool:
         """
         Save new labels in rds and save the relation between the image and labels
@@ -159,10 +97,12 @@ class RepositoryInternal:
 
         for label in labels:
             param = self.__set_param_label(label)
-            response = self.database.do_write_query(query_insert_label, param)['numberOfRecordsUpdated'] > 0 and response
+            response = self.database.do_write_query(query_insert_label, param)[
+                           'numberOfRecordsUpdated'] > 0 and response
 
             param = self.__set_param_label_img(label, id_img)
-            response = self.database.do_write_query(query_insert_label_img, param)['numberOfRecordsUpdated'] > 0 and response
+            response = self.database.do_write_query(query_insert_label_img, param)[
+                           'numberOfRecordsUpdated'] > 0 and response
 
         return response
 
@@ -180,8 +120,6 @@ class RepositoryInternal:
                 count += 1
             return response
 
-    # check
-    # da testare
     def __save_emotions(self, emotions: dict, id_img: int) -> bool:
         """
         Save new emotions in rds and save the relation between images and emotions
@@ -200,11 +138,10 @@ class RepositoryInternal:
         for emotion in emotions:
             print(emotion)
             param = self.__set_param_emotion_img(emotion=emotion, id_img=id_img, qta=emotions[emotion])
-            response = self.database.do_write_query(query_insert_emotion_img, param)['numberOfRecordsUpdated'] > 0 and response
+            response = self.database.do_write_query(query_insert_emotion_img, param)[
+                           'numberOfRecordsUpdated'] > 0 and response
         return response
 
-    # check
-    # da testare
     def __save_new_images(self, list_images: List[Image], id_post: str) -> bool:
         """
         Save a new images and its labels and emotions if presents in rds
@@ -218,17 +155,17 @@ class RepositoryInternal:
 
         for img in list_images:
             # remove extension from image name and convert to int
-            id_img = int(img.image_name.split('.')[0])
+            id_img = int(img.get_image_name().split('.')[0])
 
             param = self.__set_param_img(id_img, id_post)
             response1 = self.database.do_write_query(query, param)
             response = (response1['numberOfRecordsUpdated'] > 0) and response
-            print("saved image " + img.image_name + " in table immagine, response:", response)
-            if img.labels is not None and len(img.labels) > 0:
-                response = self.__save_labels(img.labels, id_img) and response
-            if img.emotions is not None and len(img.emotions) > 0:
-                response = self.__save_emotions(img.emotions, id_img) and response
-            response = self.__save_emotions_confidence(img.emotions_confidence, id_img) and response
+            print("saved image " + img.get_image_name() + " in table immagine, response:", response)
+            if img.get_labels is not None and len(img.get_labels()) > 0:
+                response = self.__save_labels(img.get_labels(), id_img) and response
+            if img.get_emotions() is not None and len(img.get_emotions()) > 0:
+                response = self.__save_emotions(img.get_emotions(), id_img) and response
+            response = self.__save_emotions_confidence(img.get_emotions_confidence(), id_img) and response
 
         return response
 
@@ -236,12 +173,10 @@ class RepositoryInternal:
         query = "INSERT INTO analisi_testo (id_post, negative_comprehend, positive_comprehend, neutral_comprehend," \
                 "mixed_comprehend) VALUES (:id_post, :negative, :positive,:neutral,:mixed)"
 
-        response = self.database.do_write_query(query, self.__set_param_comprehend_score(score, id_post))
+        response = self.database.do_write_query(query, score.set_param_for_query(id_post))
 
         return response['numberOfRecordsUpdated'] > 0
 
-    # check
-    # da testare
     def save_post(self, post: CrawledData) -> bool:
         """
         Save a new post in rds and save all the relations between images, emotions, labels and itself
@@ -254,21 +189,21 @@ class RepositoryInternal:
 
         response = True
 
-        self.insert_new_restaurant(post.restaurant)
+        self.insert_new_restaurant(post.get_restaurant())
 
         query = "INSERT INTO post (id_post,nome_utente, data_post, id_ristorante, testo, " \
                 "punteggio_emoji, punteggio_testo, punteggio_foto) VALUES " \
                 "(:id_post, :post_utente, :data_post, :id_ristorante, :testo, " \
                 ":punteggio_emoji, :punteggio_testo, :punteggio_foto)"
 
-        response = self.database.do_write_query(query,
-                                                self.__set_param_crawled_data(post))['numberOfRecordsUpdated'] > 0 and response
-        if post.comprehend_score:
-            response = self.__save_comprehend_score(post.comprehend_score, post.id_post) and response
+        response = self.database.do_write_query(query, post.set_param_for_query())[
+                       'numberOfRecordsUpdated'] > 0 and response
+        if post.get_comprehend_score() is not None:
+            response = self.__save_comprehend_score(post.get_comprehend_score(), post.get_id_post()) and response
 
         # salvo immagini solo se presenti
-        if post.list_images:
-            response = self.__save_new_images(post.list_images, post.id_post) and response
+        if post.get_list_images() is not None and len(post.get_list_images()) > 0:
+            response = self.__save_new_images(post.get_list_images(), post.get_id_post()) and response
 
         return response
 
@@ -286,7 +221,7 @@ class RepositoryInternal:
                 "punteggio_testo) VALUES (:id_ristorante, :nome_ristorante, :indirizzo, :telefono, :sito_web, " \
                 ":latitudine, :longitudine, :categoria, :punteggio_emoji, :punteggio_foto, :punteggio_testo)"
 
-        response = self.database.do_write_query(query, self.__set_param_restaurant(restaurant))
+        response = self.database.do_write_query(query, restaurant.set_param_for_query())
 
         return response['numberOfRecordsUpdated'] > 0
 
@@ -303,12 +238,14 @@ class RepositoryInternal:
         if not self._check_if_restaurant_already_exists(restaurant):
             response = self.__save_new_restaurant(restaurant)
             print('new restaurant inserted, response: ', response)
+            return True
         else:
             print('restaurant already exists')
+            return False
 
     def update_restaurant_scores(self, restaurant: Restaurant):
         if self._check_if_restaurant_already_exists(restaurant):
-            param_id = [{"name": "id", "value": {"longValue": restaurant.id_rist}}]
+            param_id = [{"name": "id", "value": {"longValue": restaurant.get_id_rist()}}]
             new_scores = self._recalculate_scores(param_id)
 
             query = "UPDATE ristorante SET " \
@@ -321,7 +258,7 @@ class RepositoryInternal:
             restaurant.set_punt_emoji(new_scores['punt_emoji'])
             restaurant.set_punt_testo(new_scores['punt_testo'])
 
-            response = self.database.do_write_query(query, self.__set_param_restaurant(restaurant))
+            response = self.database.do_write_query(query, restaurant.set_param_for_query())
             print(f"restaurant scores updated: emoji: {new_scores['punt_emoji']}, "
                   f"foto: {new_scores['punt_foto']}, testo:{new_scores['punt_testo']}")
 
@@ -393,7 +330,7 @@ class RepositoryInternal:
         return len(response) > 0
 
     def _check_if_restaurant_already_exists(self, restaurant):
-        param = [{"name": "id_rest", "value": {"longValue": restaurant.id_rist}}]
+        param = [{"name": "id_rest", "value": {"longValue": restaurant.get_id_rist()}}]
         query = 'SELECT * FROM ristorante WHERE id_ristorante = :id_rest'
         response = self.database.do_read_query(query, param)
         return len(response) > 0

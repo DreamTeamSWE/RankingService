@@ -10,47 +10,57 @@ class CrawledData:
     def __init__(self, id_post: str = None, utente: str = None,
                  data_post: str = datetime.today().strftime('%Y-%m-%d-%H:%M:%S'), caption: str = None,
                  restaurant: Restaurant = None, list_images: List[Image] = None) -> None:
-        self.id_post = id_post
-        self.utente = utente
-        self.data_post = data_post
-        self.caption = caption
-        self.restaurant = restaurant
-        self.list_images = list_images
-        self.punt_emoji = None
-        self.punt_foto = None
-        self.punt_testo = None
-        self.comprehend_score = None
+        self.__id_post = id_post
+        self.__utente = utente
+        self.__data_post = data_post
+        self.__caption = caption
+        self.__restaurant = restaurant
+        self.__list_images = list_images
+        self.__punt_emoji = None
+        self.__punt_foto = None
+        self.__punt_testo = None
+        self.__comprehend_score = None
 
     def set_punt_testo(self):
-        if self.comprehend_score:
-            self.punt_testo = self.comprehend_score.calculate_score()
+        if self.__comprehend_score:
+            self.__punt_testo = self.__comprehend_score.calculate_score()
 
     def calculate_and_set_punt_foto(self):
-        if self.list_images:
-            for image in self.list_images:
+        if self.__list_images:
+            for image in self.__list_images:
                 score = image.calculate_score()
                 if score is not None:
-                    self.punt_foto = (self.punt_foto + score) if self.punt_foto is not None else score
+                    self.__punt_foto = (self.__punt_foto + score) if self.__punt_foto is not None else score
 
     def set_punt_emoji(self, punt_emoji: float):
-        self.punt_emoji = punt_emoji
+        self.__punt_emoji = punt_emoji
 
     def set_comprehend_score(self, score: ScoreComprehend):
-        self.comprehend_score = score
+        self.__comprehend_score = score
 
-    def __str__(self):
-        return "id_post: " + str(self.id_post) + "\n" + \
-               "utente: " + str(self.utente) + "\n" + \
-               "data_post: " + str(self.data_post) + "\n" + \
-               "caption: " + str(self.caption) + "\n" + \
-               "list_image: " + str(self.list_images) + "\n" + \
-               "restaurant: " + str(self.restaurant) + "\n" + \
-               "punt_emoji: " + str(self.punt_emoji) + "\n" + \
-               "punt_foto: " + str(self.punt_foto) + "\n" + \
-               "punt_testo: " + str(self.punt_testo)
+    def get_id_post(self) -> str:
+        return self.__id_post
+
+    def get_utente(self) -> str:
+        return self.__utente
+
+    def get_data_post(self) -> str:
+        return self.__data_post
+
+    def get_caption(self) -> str:
+        return self.__caption
+
+    def get_list_images(self) -> List[Image]:
+        return self.__list_images
+
+    def get_restaurant(self) -> Restaurant:
+        return self.__restaurant
+
+    def get_comprehend_score(self) -> ScoreComprehend:
+        return self.__comprehend_score
 
     @staticmethod
-    def parse_post_from_sqs(item_body: dict):
+    def parse_post_from_sqs(item_body: dict) -> 'CrawledData':
         restaurant = Restaurant.parse_restaurant_from_sqs(item_body)
 
         # modifiche temporanee
@@ -84,3 +94,34 @@ class CrawledData:
                 caption=item_body['caption_text'],
                 restaurant=restaurant,
                 list_images=list_img)
+
+    def set_param_for_query(self) -> list:
+        """
+        Return a list of parameters for rds query
+
+        :return: list of parameters
+        """
+
+        id_post_param = {"name": "id_post", "value": {"stringValue": self.__id_post}}
+        post_utente_param = {"name": "post_utente", "value": {"stringValue": self.__utente}}
+        data_post_param = {"name": "data_post", "value": {"stringValue": str(self.__data_post)}, "typeHint": "DATE"}
+        restaurant_param = {"name": "id_ristorante", "value": {"longValue": self.__restaurant.get_id_rist()}}
+        caption_param = {"name": "testo", "value": {"stringValue": self.__caption}}
+        emoji_param = {"name": "punteggio_emoji", "value": {"doubleValue": self.__punt_emoji}}
+        punt_testo_param = {"name": "punteggio_testo", "value": {"doubleValue": self.__punt_testo}}
+        punt_foto_param = {"name": "punteggio_foto", "value": {"doubleValue": self.__punt_foto}}
+        param_list = [id_post_param, post_utente_param, data_post_param, restaurant_param, caption_param, emoji_param,
+                      punt_testo_param, punt_foto_param]
+
+        return param_list
+
+    def __str__(self):
+        return "id_post: " + str(self.__id_post) + "\n" + \
+               "utente: " + str(self.__utente) + "\n" + \
+               "data_post: " + str(self.__data_post) + "\n" + \
+               "caption: " + str(self.__caption) + "\n" + \
+               "list_image: " + str(self.__list_images) + "\n" + \
+               "restaurant: " + str(self.__restaurant) + "\n" + \
+               "punt_emoji: " + str(self.__punt_emoji) + "\n" + \
+               "punt_foto: " + str(self.__punt_foto) + "\n" + \
+               "punt_testo: " + str(self.__punt_testo)
