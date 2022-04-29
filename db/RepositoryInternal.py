@@ -177,6 +177,24 @@ class RepositoryInternal:
 
         return response['numberOfRecordsUpdated'] > 0
 
+    def __save_new_restaurant(self, restaurant: Restaurant) -> bool:
+        """
+        Save a new restaurant in rds
+        :param restaurant: Restaurant to save
+        :return: boolean if the restaurant is saved
+        """
+
+        print("saving restaurant in table ristorante")
+
+        query = "INSERT INTO ristorante (id_ristorante, nome_ristorante, indirizzo, telefono, sito_web, " \
+                "latitudine, longitudine, categoria, punteggio_emoji, punteggio_foto, " \
+                "punteggio_testo) VALUES (:id_ristorante, :nome_ristorante, :indirizzo, :telefono, :sito_web, " \
+                ":latitudine, :longitudine, :categoria, :punteggio_emoji, :punteggio_foto, :punteggio_testo)"
+
+        response = self.database.do_write_query(query, restaurant.set_param_for_query())
+
+        return response['numberOfRecordsUpdated'] > 0
+
     def save_post(self, post: CrawledData) -> bool:
         """
         Save a new post in rds and save all the relations between images, emotions, labels and itself
@@ -207,24 +225,6 @@ class RepositoryInternal:
 
         return response
 
-    def __save_new_restaurant(self, restaurant: Restaurant) -> bool:
-        """
-        Save a new restaurant in rds
-        :param restaurant: Restaurant to save
-        :return: boolean if the restaurant is saved
-        """
-
-        print("saving restaurant in table ristorante")
-
-        query = "INSERT INTO ristorante (id_ristorante, nome_ristorante, indirizzo, telefono, sito_web, " \
-                "latitudine, longitudine, categoria, punteggio_emoji, punteggio_foto, " \
-                "punteggio_testo) VALUES (:id_ristorante, :nome_ristorante, :indirizzo, :telefono, :sito_web, " \
-                ":latitudine, :longitudine, :categoria, :punteggio_emoji, :punteggio_foto, :punteggio_testo)"
-
-        response = self.database.do_write_query(query, restaurant.set_param_for_query())
-
-        return response['numberOfRecordsUpdated'] > 0
-
     def insert_new_restaurant(self, restaurant: Restaurant) -> bool:
         """
         Update restaurant info in rds, if restaurant is not present in rds it will be inserted
@@ -245,7 +245,7 @@ class RepositoryInternal:
 
     def update_restaurant_scores(self, restaurant: Restaurant) -> bool:
         if self.__check_if_restaurant_already_exists(restaurant):
-            param_id = [{"name": "id", "value": {"longValue": restaurant.get_id_rist()}}]
+            param_id = [{"name": "id", "value": {"longValue": restaurant.get_id()}}]
             new_scores = self.__recalculate_scores(param_id)
 
             query = "UPDATE ristorante SET " \
@@ -254,9 +254,9 @@ class RepositoryInternal:
                     "punteggio_testo=:punteggio_testo " \
                     "WHERE id_ristorante =:id_ristorante"
 
-            restaurant.set_punt_foto(new_scores['punt_foto'])
-            restaurant.set_punt_emoji(new_scores['punt_emoji'])
-            restaurant.set_punt_testo(new_scores['punt_testo'])
+            restaurant.set_image_score(new_scores['punt_foto'])
+            restaurant.set_emoji_score(new_scores['punt_emoji'])
+            restaurant.set_text_score(new_scores['punt_testo'])
 
             response = self.database.do_write_query(query, restaurant.set_param_for_query())
             print(f"restaurant scores updated: emoji: {new_scores['punt_emoji']}, "
@@ -307,7 +307,7 @@ class RepositoryInternal:
         return len(response) > 0
 
     def __check_if_restaurant_already_exists(self, restaurant: Restaurant) -> bool:
-        param = [{"name": "id_rest", "value": {"longValue": restaurant.get_id_rist()}}]
+        param = [{"name": "id_rest", "value": {"longValue": restaurant.get_id()}}]
         query = 'SELECT * FROM ristorante WHERE id_ristorante = :id_rest'
         response = self.database.do_read_query(query, param)
         return len(response) > 0
