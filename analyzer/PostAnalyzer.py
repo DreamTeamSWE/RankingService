@@ -28,10 +28,9 @@ def detect_language_text(text: str) -> str:
     comprehend = boto3.client(service_name='comprehend', region_name=__AWS_REGION)
     # result of comprehend
     json_result = comprehend.detect_dominant_language(Text=text)
-    json_parsed = json.loads(json_result)
 
     # get first language
-    languages = json_parsed['Languages']
+    languages = json_result['Languages'][0]
 
     # get language code
     language = languages['LanguageCode']
@@ -242,6 +241,6 @@ class PostAnalyzer(Analyzer, ABC):
             print("\nNo image in post\n")
 
         post.calculate_and_set_punt_foto()
-        repository = RepositoryInternal()
-        repository.save_post(post)
-        repository.update_restaurant_scores(post.restaurant)
+        # repository = RepositoryInternal()
+        # repository.save_post(post)
+        # repository.update_restaurant_scores(post.restaurant)
