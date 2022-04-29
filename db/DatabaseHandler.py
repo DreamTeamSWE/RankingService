@@ -1,3 +1,5 @@
+import base64
+import json
 import time
 import boto3
 import logging
@@ -5,15 +7,45 @@ from botocore.exceptions import ClientError
 
 
 class DatabaseHandler:
-    AWS_REGION = 'eu-central-1'
+    __AWS_REGION = 'eu-central-1'
 
     def __init__(self, database: str) -> None:
-        self.__rdsData = boto3.client('rds-data', region_name=self.AWS_REGION)
-        self.__cluster_arn = 'arn:aws:rds:eu-central-1:123446374287:cluster:sweeat'
-        self.__secret_arn = 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:rds-db-credentials/cluster' \
-                            '-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei'
-        self.__database = database
-        self.__wait_for_db_on()
+        print('Initializing database handler')
+        self.__rdsData = boto3.client('rds-data', region_name=self.__AWS_REGION)
+
+        secret_name = "SecreteRDS"
+
+        # Create a Secrets Manager client
+        session = boto3.session.Session()
+        client = session.client(
+            service_name='secretsmanager',
+            region_name=self.__AWS_REGION
+        )
+
+        try:
+            get_secret_value_response = client.get_secret_value(
+                SecretId=secret_name
+            )
+        except ClientError as e:
+            print("ERROR getting secret: " + e.response['Error']['Code'] + ': ' + e.response['Error']['Message'])
+
+        else:
+            # Decrypts secret using the associated KMS key.
+            # Depending on whether the secret is a string or binary, one of these fields will be populated.
+            if 'SecretString' in get_secret_value_response:
+                secret = get_secret_value_response['SecretString']
+            else:
+                secret = base64.b64decode(get_secret_value_response['SecretBinary'])
+
+            json_secret = json.loads(secret)
+            secret_value = json_secret['cluster_arn']
+
+            self.__cluster_arn = secret_value
+            self.__secret_arn = 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:rds-db-credentials/cluster' \
+                                '-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei'
+            self.__database = database
+            self.__wait_for_db_on()
+        print('END Initializing database handler')
 
     # check if db is turned on
     def __is_db_on(self, delay) -> bool:

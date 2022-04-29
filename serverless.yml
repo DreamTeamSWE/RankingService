@@ -6,6 +6,37 @@ provider:
   name: aws
   runtime: python3.9
   region: eu-central-1
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - 'rds-data:ExecuteStatement'
+          Resource: 'sweeat.cluster-cwbklrn3c9pb.eu-central-1.rds.amazonaws.com'
+        - Effect: Allow
+          Action:
+            - 'secretsmanager:GetSecretValue'
+          Resource: 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:SecreteRDS-RxX4ZE'
+        - Effect: Allow
+          Action:
+            - 'secretsmanager:GetSecretValue'
+          Resource: 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei'
+
+package:
+  individually: true
+  exclude:
+    - node_modules/**
+    - venv/**
+    - query_db/**
+    - main.py
+    - test_sqs.json.py
+    - remove_files.py
+    - .git/**
+    - .gitignore
+    - refresh_ranking.mdj
+    - test.py
+    - test_sqs.json
+    - requirements_eliminati.txt
 
 functions:
   getRanking:
@@ -13,22 +44,13 @@ functions:
     timeout: 30
     package:
       exclude:
-        - '!refreshRanking.py'
-        - '!searchByName.py'
-        - '!getLabelAndPost.py'
-        - '!db/RepositoryInternal.py'
-        - '!db/RepositoryFavorites.py'
-        - '!entity/**'
-        - '!analyzer/**'
-    iamRoleStatements:
-      - Effect: Allow
-        Action:
-          - 'rds-data:ExecuteStatement'
-        Resource: '*'
-      - Effect: Allow
-        Action:
-          - 'secretsmanager:GetSecretValue'
-        Resource: 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei'
+        - 'refreshRanking.py'
+        - 'searchByName.py'
+        - 'getLabelAndPost.py'
+        - 'db/RepositoryInternal.py'
+        - 'db/RepositoryFavorites.py'
+        - 'entity/**'
+        - 'analyzer/**'
     events:
       - http:
           path: getRanking
@@ -40,22 +62,13 @@ functions:
     timeout: 30
     package:
       exclude:
-        - '!refreshRanking.py'
-        - '!searchByName.py'
-        - '!getRanking.py'
-        - '!db/RepositoryInternal.py'
-        - '!db/RepositoryFavorites.py'
-        - '!entity/**'
-        - '!analyzer/**'
-    iamRoleStatements:
-      - Effect: Allow
-        Action:
-          - 'rds-data:ExecuteStatement'
-        Resource: '*'
-      - Effect: Allow
-        Action:
-          - 'secretsmanager:GetSecretValue'
-        Resource: 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei'
+        - 'refreshRanking.py'
+        - 'searchByName.py'
+        - 'getRanking.py'
+        - 'db/RepositoryInternal.py'
+        - 'db/RepositoryFavorites.py'
+        - 'entity/**'
+        - 'analyzer/**'
     events:
       - http:
           path: getLabelAndPost
@@ -67,10 +80,10 @@ functions:
     timeout: 900
     package:
       exclude:
-        - '!searchByName.py'
-        - '!getLabelAndPost.py'
-        - '!getRanking.py'
-        - '!db/RepositoryExternal.py'
+        - 'searchByName.py'
+        - 'getLabelAndPost.py'
+        - 'getRanking.py'
+        - 'db/RepositoryExternal.py'
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -83,10 +96,6 @@ functions:
           - 'rds-data:CommitTransaction'
           - 'rds-data:BatchExecuteStatement'
         Resource: '*'
-      - Effect: Allow
-        Action:
-          - 'secretsmanager:GetSecretValue'
-        Resource: 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei'
       - Effect: Allow
         Action:
           - 's3:getObject'
@@ -106,43 +115,18 @@ functions:
     timeout: 30
     package:
       exclude:
-        - '!refreshRanking.py'
-        - '!getLabelAndPost.py'
-        - '!getRanking.py'
-        - '!db/RepositoryInternal.py'
-        - '!db/RepositoryFavorites.py'
-        - '!entity/**'
-        - '!analyzer/**'
-    iamRoleStatements:
-      - Effect: Allow
-        Action:
-          - 'rds-data:ExecuteStatement'
-        Resource: '*'
-      - Effect: Allow
-        Action:
-          - 'secretsmanager:GetSecretValue'
-        Resource: 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei'
+        - 'refreshRanking.py'
+        - 'getLabelAndPost.py'
+        - 'getRanking.py'
+        - 'db/RepositoryInternal.py'
+        - 'db/RepositoryFavorites.py'
+        - 'entity/**'
+        - 'analyzer/**'
     events:
       - http:
           path: searchByName
           method: POST
           cors: true
-
-package:
-  individually: true
-  exclude:
-    - node_modules/**
-    - venv/**
-    - query_db/**
-    - main.py
-    - test_sqs.json.py
-    - remove_files.py
-    - .git/**
-    - .gitignore
-    - refresh_ranking.mdj
-    - test.py
-    - test_sqs.json
-    - requirements_eliminati.txt
 
 plugins:
   - serverless-iam-roles-per-function
