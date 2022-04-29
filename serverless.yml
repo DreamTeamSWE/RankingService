@@ -11,6 +11,15 @@ functions:
   getRanking:
     handler: getRanking.get_ranking
     timeout: 30
+    package:
+      exclude:
+        - '!refreshRanking.py'
+        - '!searchByName.py'
+        - '!getLabelAndPost.py'
+        - '!db/RepositoryInternal.py'
+        - '!db/RepositoryFavorites.py'
+        - '!entity/**'
+        - '!analyzer/**'
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -29,6 +38,15 @@ functions:
   getLabelAndPost:
     handler: getLabelAndPost.get_label_and_post
     timeout: 30
+    package:
+      exclude:
+        - '!refreshRanking.py'
+        - '!searchByName.py'
+        - '!getRanking.py'
+        - '!db/RepositoryInternal.py'
+        - '!db/RepositoryFavorites.py'
+        - '!entity/**'
+        - '!analyzer/**'
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -47,6 +65,12 @@ functions:
   refreshRanking:
     handler: refreshRanking.refresh_ranking
     timeout: 900
+    package:
+      exclude:
+        - '!searchByName.py'
+        - '!getLabelAndPost.py'
+        - '!getRanking.py'
+        - '!db/RepositoryExternal.py'
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -80,6 +104,15 @@ functions:
   searchByName:
     handler: searchByName.search_by_name
     timeout: 30
+    package:
+      exclude:
+        - '!refreshRanking.py'
+        - '!getLabelAndPost.py'
+        - '!getRanking.py'
+        - '!db/RepositoryInternal.py'
+        - '!db/RepositoryFavorites.py'
+        - '!entity/**'
+        - '!analyzer/**'
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -96,13 +129,20 @@ functions:
           cors: true
 
 package:
-  patterns:
-    - '!venv/**'
-    - '!node_modules/**'
-    - '!quey_db/**'
-    - '!main.py'
-    - '!test_sqs.json.py'
-    - '!remove_files.py'
+  individually: true
+  exclude:
+    - node_modules/**
+    - venv/**
+    - query_db/**
+    - main.py
+    - test_sqs.json.py
+    - remove_files.py
+    - .git/**
+    - .gitignore
+    - refresh_ranking.mdj
+    - test.py
+    - test_sqs.json
+    - requirements_eliminati.txt
 
 plugins:
   - serverless-iam-roles-per-function

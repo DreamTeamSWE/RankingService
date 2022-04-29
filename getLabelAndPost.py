@@ -10,6 +10,8 @@ def get_label_and_post(event, context):
     body_json = json.loads(body)
     id_rist = int(body_json['id_rist'])
 
+    print("id_rist: " + str(id_rist))
+
     list_restaurant = repo_ext.get_post_and_tag_by_restaurant(id_rist)
 
     response = {

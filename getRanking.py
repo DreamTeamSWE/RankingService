@@ -4,7 +4,6 @@ from db.RepositoryExternal import RepositoryExternal
 
 
 def get_ranking(event, context):
-
     int_position = 0
     int_size = 10
     if 'queryStringParameters' in event and event['queryStringParameters'] is not None:
@@ -19,10 +18,10 @@ def get_ranking(event, context):
             size = query_string_parameters['size']
             int_size = int(size)
 
+    print("get_ranking: " + str(int_position) + " " + str(int_size))
+
     repo_ext = RepositoryExternal()
     list_restaurants = repo_ext.get_ranking(int_position, int_size)
-
-
 
     response = {
         'statusCode': 200,

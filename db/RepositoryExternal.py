@@ -24,12 +24,18 @@ class RepositoryExternal:
         position_param = {"name": "position", "value": {"longValue": position}}
         size_param = {"name": "size", "value": {"longValue": size}}
 
+        print("position_param: ", position_param)
+        print("size_param: ", size_param)
+
         query = "select r.*,i.id_immagine from ristorante as r " \
                 "join post p on r.id_ristorante=p.id_ristorante " \
                 "join immagine i on p.id_post=i.id_post " \
                 "group by r.id_ristorante " \
                 "order by (r.punteggio_emoji+r.punteggio_foto+r.punteggio_testo) desc " \
                 "limit :position, :size"
+
+        print("query: ", query)
+
         response = self.database.do_read_query(query, [position_param, size_param])
 
         return response
@@ -44,7 +50,11 @@ class RepositoryExternal:
         query = "select * from post p join immagine i on p.id_post = i.id_post join label_img l on l.id_immagine = " \
                 "i.id_immagine where p.id_ristorante = :id_ristorante group by p.id_ristorante"
 
+        print("query: ", query)
+
         param = [{"name": "id_ristorante", "value": {"longValue": id_rist}}]
+
+        print("param: ", param)
 
         return self.database.do_read_query(query, param)
 
