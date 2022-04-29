@@ -5,7 +5,7 @@ from entity.CrawledData import CrawledData
 from db.RepositoryInternal import RepositoryInternal
 
 
-def refresh_ranking(event, context):
+def refresh_ranking(event, context) -> json:
     array_json_sqs_response = event['Records']
 
     repository = RepositoryInternal()

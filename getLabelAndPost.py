@@ -3,7 +3,7 @@ import json
 from db.RepositoryExternal import RepositoryExternal
 
 
-def get_label_and_post(event, context):
+def get_label_and_post(event, context) -> json:
     repo_ext = RepositoryExternal()
 
     body = event['body']

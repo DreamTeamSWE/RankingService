@@ -11,7 +11,7 @@ class RepositoryInternal:
         self.database = DatabaseHandler(db_name)
 
     @staticmethod
-    def __set_param_emotions_confidence(emotion_confid: dict, id_img: int, num_pers: int):
+    def __set_param_emotions_confidence(emotion_confid: dict, id_img: int, num_pers: int) -> list:
         param_list = []
         names = ['happy', 'calm', 'sad', 'angry', 'surprised', 'confused', 'disgusted', 'fear']
 
@@ -60,7 +60,7 @@ class RepositoryInternal:
         return [{"name": "nome_label", "value": {"stringValue": label}}]
 
     @staticmethod
-    def __set_param_label_img(label: str, id_img: int, confidenza: float = None) -> list:
+    def __set_param_label_img(label: str, id_img: int) -> list:
         param_list = RepositoryInternal.__set_param_label(label)
         param_list.append({"name": "id_immagine", "value": {"longValue": id_img}})
         return param_list
@@ -106,7 +106,7 @@ class RepositoryInternal:
 
         return response
 
-    def __save_emotions_confidence(self, emotions_confid: List[dict], id_img: int):
+    def __save_emotions_confidence(self, emotions_confid: List[dict], id_img: int) -> bool:
         if emotions_confid:
             query = 'INSERT INTO confidenza_emozioni(happy, calm, sad, angry, surprised, confused, disgusted, fear,' \
                     'num_persona, id_immagine) VALUES (:happy, :calm, :sad, :angry, :surprised, ' \
@@ -235,7 +235,7 @@ class RepositoryInternal:
 
         print("checking if restaurant already exixts in table ristorante...")
 
-        if not self._check_if_restaurant_already_exists(restaurant):
+        if not self.__check_if_restaurant_already_exists(restaurant):
             response = self.__save_new_restaurant(restaurant)
             print('new restaurant inserted, response: ', response)
             return True
@@ -243,10 +243,10 @@ class RepositoryInternal:
             print('restaurant already exists')
             return False
 
-    def update_restaurant_scores(self, restaurant: Restaurant):
-        if self._check_if_restaurant_already_exists(restaurant):
+    def update_restaurant_scores(self, restaurant: Restaurant) -> bool:
+        if self.__check_if_restaurant_already_exists(restaurant):
             param_id = [{"name": "id", "value": {"longValue": restaurant.get_id_rist()}}]
-            new_scores = self._recalculate_scores(param_id)
+            new_scores = self.__recalculate_scores(param_id)
 
             query = "UPDATE ristorante SET " \
                     "punteggio_emoji=:punteggio_emoji, " \
@@ -284,30 +284,7 @@ class RepositoryInternal:
 
         return None
 
-    # !!! stesso codice di RepositoryExternal.py !!! #
-    def get_restaurant_info_by_id(self, id_restaurant: int) -> Optional[Restaurant]:
-        """
-        Get restaurant info from rds by id
-
-        :param id_restaurant: id of restaurant to get from rds
-        :return: Restaurant found or None
-        """
-
-        param = {"name": "id_restaurant", "value": {"longValue": id_restaurant}}
-
-        query = "SELECT * FROM ristorante WHERE id_ristorante = :id_restaurant"
-
-        response = self.database.do_read_query(query, param)
-        if response['numberOfRecordsUpdated'] > 0:
-            restaurant = Restaurant(id_rist=response[0], nome=response[1], indirizzo=response[2], telefono=response[3],
-                                    sito=response[4], lat=response[5], lng=response[6], categoria=response[7],
-                                    punt_emoji=response[8],
-                                    punt_foto=response[9], punt_testo=response[10])
-            return restaurant
-
-        return None
-
-    def _recalculate_scores(self, param_id: List):
+    def __recalculate_scores(self, param_id: List) -> dict:
         query = 'select sum(post.punteggio_emoji)/count(*) as "punt_emoji", ' \
                 'sum(post.punteggio_testo)/count(*) as "punt_testo", ' \
                 'sum(post.punteggio_foto)/count(*) as "punt_foto" ' \
@@ -329,7 +306,7 @@ class RepositoryInternal:
         response = self.database.do_read_query(query, param)
         return len(response) > 0
 
-    def _check_if_restaurant_already_exists(self, restaurant):
+    def __check_if_restaurant_already_exists(self, restaurant: Restaurant) -> bool:
         param = [{"name": "id_rest", "value": {"longValue": restaurant.get_id_rist()}}]
         query = 'SELECT * FROM ristorante WHERE id_ristorante = :id_rest'
         response = self.database.do_read_query(query, param)

@@ -33,7 +33,7 @@ package:
     - remove_files.py
     - .git/**
     - .gitignore
-    - refresh_ranking.mdj
+    - uml_diagram/**
     - test.py
     - test_sqs.json
     - requirements_eliminati.txt

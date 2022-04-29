@@ -3,7 +3,7 @@ import json
 from db.RepositoryExternal import RepositoryExternal
 
 
-def get_ranking(event, context):
+def get_ranking(event, context) -> json:
     int_position = 0
     int_size = 10
     if 'queryStringParameters' in event and event['queryStringParameters'] is not None:

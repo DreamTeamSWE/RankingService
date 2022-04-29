@@ -3,7 +3,7 @@ import json
 from db.RepositoryExternal import RepositoryExternal
 
 
-def search_by_name(event, context):
+def search_by_name(event, context) -> json:
 
     body = event['body']
     body_json = json.loads(body)
