@@ -1,7 +1,6 @@
+import boto3
 from abc import ABC
 from typing import Optional
-
-import boto3
 
 from analyzer.Analyzer import Analyzer
 from analyzer.EmojiAnalyzer import EmojiAnalyzer
@@ -199,7 +198,7 @@ def image_analyzer(name_image: str):
     return labels, emotions, emotions_confidence
 
 
-def emoji_analyzer(post_text: str):
+def emoji_analyzer(post_text: str) -> float:
     ea = EmojiAnalyzer()
     return ea.calculate_score(post_text)
 
