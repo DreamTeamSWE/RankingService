@@ -1,10 +1,14 @@
+from abc import ABC
 from typing import List, Dict, Optional
 
 import emoji
 import boto3
 
+from analyzer.Analyzer import Analyzer
+from entity.CrawledData import CrawledData
 
-class EmojiAnalyzer:
+
+class EmojiAnalyzer(Analyzer, ABC):
     def __init__(self):
         self.__emoji_scores = EmojiAnalyzer.__generate_emoji_scores('emoji_ranking.csv')
         self.weights = {
@@ -46,10 +50,10 @@ class EmojiAnalyzer:
             {'emoji': last_seen_emoji, 'count': last_seen_emoji_counter, 'last_pos': emoji_list[-1]['match_end']})
         return result
 
-    def calculate_score(self, post_text: str) -> Optional[float]:
+    def analyze(self, post: CrawledData) -> Optional[float]:
         score_x_weight_sum = 0.0
         weigh_sum = 0.0
-
+        post_text = post.get_caption()
         extracted_emoji_list = emoji.emoji_list(post_text)
         num_emoji_extracted = len(extracted_emoji_list)
         print(f'extracted {num_emoji_extracted} emoji')

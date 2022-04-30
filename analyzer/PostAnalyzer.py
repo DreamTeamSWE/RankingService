@@ -182,8 +182,8 @@ class PostAnalyzer(Analyzer, ABC):
         print("-------------------\n")
         return labels, emotions, emotions_confidence
 
-    def __analyze_emoji(self, post_text: str) -> float:
-        return self.__emoji_analyzer.calculate_score(post_text)
+    def __analyze_emoji(self, post: CrawledData) -> float:
+        return self.__emoji_analyzer.analyze(post)
 
     def analyze(self, post: CrawledData):
         """
@@ -202,7 +202,7 @@ class PostAnalyzer(Analyzer, ABC):
         print("\ncomprehend score: " + str(score) if score else 'no text found' + "\n-------------------\n")
 
         # calcolo punteggio emoji
-        emoji_score = self.__analyze_emoji(post.get_caption)
+        emoji_score = self.__analyze_emoji(post)
         post.set_emoji_score(emoji_score)
 
         print('emoji score: ' + str(emoji_score) if emoji_score is not None else 'No emoji detected')
