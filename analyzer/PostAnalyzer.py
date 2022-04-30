@@ -9,8 +9,6 @@ from entity import CrawledData
 from entity import Image
 from entity.ScoreComprehend import ScoreComprehend
 
-__AWS_REGION = 'eu-central-1'
-
 
 class PostAnalyzer(Analyzer, ABC):
     def __init__(self, aws_region='eu-central-1'):
