@@ -14,7 +14,6 @@ def refresh_ranking(event, context) -> json:
     for item in array_json_sqs_response:
         item_body = json.loads(item['body'])
         # item_body = item['body']
-
         post = CrawledData.parse_post_from_sqs(item_body)
 
         print("check if post " + post.get_id_post() + " is already in db")
