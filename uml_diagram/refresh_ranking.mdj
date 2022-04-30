@@ -418,7 +418,7 @@
 											"top": 823,
 											"width": 431,
 											"height": 13,
-											"text": "+__init__(db_name: string = 'ranking_test')",
+											"text": "+__init__(db_name: str = 'ranking_test')",
 											"horizontalAlignment": 0
 										},
 										{
@@ -456,7 +456,7 @@
 											"width": 513.4111328125,
 											"height": 13,
 											"underline": true,
-											"text": "-set_param_emotion(emotion: string): list",
+											"text": "-set_param_emotion(emotion: str): list",
 											"horizontalAlignment": 0
 										},
 										{
@@ -475,7 +475,7 @@
 											"width": 513.4111328125,
 											"height": 13,
 											"underline": true,
-											"text": "-set_param_emotion_img(emotion: string, id_img: int, qta: int): list",
+											"text": "-set_param_emotion_img(emotion: str, id_img: int, qta: int): list",
 											"horizontalAlignment": 0
 										},
 										{
@@ -494,7 +494,7 @@
 											"width": 513.4111328125,
 											"height": 13,
 											"underline": true,
-											"text": "-set_param_label(label: string): list",
+											"text": "-set_param_label(label: str): list",
 											"horizontalAlignment": 0
 										},
 										{
@@ -513,7 +513,7 @@
 											"width": 513.4111328125,
 											"height": 13,
 											"underline": true,
-											"text": "-set_param_label_img(label: string, id_img: int): string",
+											"text": "-set_param_label_img(label: str, id_img: int): str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -532,7 +532,7 @@
 											"width": 513.4111328125,
 											"height": 13,
 											"underline": true,
-											"text": "-set_param_img(id_img: int, id_post: string): list",
+											"text": "-set_param_img(id_img: int, id_post: str): list",
 											"horizontalAlignment": 0
 										},
 										{
@@ -600,7 +600,7 @@
 											"top": 883,
 											"width": 431,
 											"height": 13,
-											"text": "-save_new_images(list_image: list<Image>, id_post: string): bool",
+											"text": "-save_new_images(list_image: list<Image>, id_post: str): bool",
 											"horizontalAlignment": 0
 										},
 										{
@@ -736,7 +736,7 @@
 											"top": 1003,
 											"width": 431,
 											"height": 13,
-											"text": "+get_restaurant_info_by_name(name: string): Restaurant",
+											"text": "+get_restaurant_info_by_name(name: str): Restaurant",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1001,7 +1001,7 @@
 											"top": 539,
 											"width": 489.84228515625,
 											"height": 13,
-											"text": "+__init__(aws_region: string)",
+											"text": "+__init__(aws_region: str)",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1018,7 +1018,7 @@
 											"top": 554,
 											"width": 489.84228515625,
 											"height": 13,
-											"text": "-detect_language_text(text: string): string",
+											"text": "-detect_language_text(text: str): str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1035,7 +1035,7 @@
 											"top": 569,
 											"width": 489.84228515625,
 											"height": 13,
-											"text": "-detect_sentiment_text(post: CrawledData, language: string = 'it'): Scorecomprehend",
+											"text": "-detect_sentiment_text(post: CrawledData, language: str = 'it'): Scorecomprehend",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1052,7 +1052,7 @@
 											"top": 584,
 											"width": 489.84228515625,
 											"height": 13,
-											"text": "-detect_labels(photo: Image, bucket: string): dict, bool",
+											"text": "-detect_labels(photo: Image, bucket: str): dict, bool",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1069,7 +1069,7 @@
 											"top": 599,
 											"width": 489.84228515625,
 											"height": 13,
-											"text": "-detect_sentiment_person(name_image: string, bucket: str): dict, bool, dict",
+											"text": "-detect_sentiment_person(name_image: str, bucket: str): dict, bool, dict",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1086,7 +1086,7 @@
 											"top": 614,
 											"width": 489.84228515625,
 											"height": 13,
-											"text": "-analyze_image(name_image: string): dict, dict, dict",
+											"text": "-analyze_image(name_image: str): dict, dict, dict",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1103,7 +1103,7 @@
 											"top": 629,
 											"width": 489.84228515625,
 											"height": 13,
-											"text": "-analyze_emoji(post_text: string): float",
+											"text": "-analyze_emoji(post_text: str): float",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1300,7 +1300,7 @@
 											"top": 110,
 											"width": 367,
 											"height": 13,
-											"text": "-id_post: string",
+											"text": "-id_post: str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1317,7 +1317,7 @@
 											"top": 125,
 											"width": 367,
 											"height": 13,
-											"text": "-author: string",
+											"text": "-author: str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1334,7 +1334,7 @@
 											"top": 140,
 											"width": 367,
 											"height": 13,
-											"text": "-date_post: string",
+											"text": "-date_post: str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1351,7 +1351,7 @@
 											"top": 155,
 											"width": 367,
 											"height": 13,
-											"text": "-caption: string",
+											"text": "-caption: str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1505,7 +1505,7 @@
 											"top": 268,
 											"width": 367,
 											"height": 39,
-											"text": "+__init__(id_post: string, author: string, date_post: string, caption: string, restaurant: Restaurant, list_images: list<Image>)",
+											"text": "+__init__(id_post: str, author: str, date_post: str, caption: str, restaurant: Restaurant, list_images: list<Image>)",
 											"horizontalAlignment": 0,
 											"wordWrap": true
 										},
@@ -1575,7 +1575,7 @@
 											"top": 204,
 											"width": 311.060546875,
 											"height": 13,
-											"text": "+get_id_post(): string",
+											"text": "+get_id_post(): str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1593,7 +1593,7 @@
 											"top": 219,
 											"width": 311.060546875,
 											"height": 13,
-											"text": "+get_utente(): string",
+											"text": "+get_utente(): str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1611,7 +1611,7 @@
 											"top": 234,
 											"width": 311.060546875,
 											"height": 13,
-											"text": "+get_data_post(): string",
+											"text": "+get_data_post(): str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1629,7 +1629,7 @@
 											"top": 249,
 											"width": 311.060546875,
 											"height": 13,
-											"text": "+get_caption(): string",
+											"text": "+get_caption(): str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1752,7 +1752,7 @@
 											"top": 399,
 											"width": 367,
 											"height": 13,
-											"text": "+__str__(): string",
+											"text": "+__str__(): str",
 											"horizontalAlignment": 0
 										}
 									],
@@ -1949,7 +1949,7 @@
 											"top": 981,
 											"width": 482.3076171875,
 											"height": 13,
-											"text": "-cluster_arn: string",
+											"text": "-cluster_arn: str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1966,7 +1966,7 @@
 											"top": 996,
 											"width": 482.3076171875,
 											"height": 13,
-											"text": "-secret_arn: string",
+											"text": "-secret_arn: str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1983,7 +1983,7 @@
 											"top": 1011,
 											"width": 482.3076171875,
 											"height": 13,
-											"text": "-database: string",
+											"text": "-database: str",
 											"horizontalAlignment": 0
 										}
 									],
@@ -2017,7 +2017,7 @@
 											"top": 1034,
 											"width": 482.3076171875,
 											"height": 13,
-											"text": "+__init__(database: string)",
+											"text": "+__init__(database: str)",
 											"horizontalAlignment": 0
 										},
 										{
@@ -2034,7 +2034,7 @@
 											"top": 1049,
 											"width": 482.3076171875,
 											"height": 13,
-											"text": "+do_write_query(query: string, parm_set: list<dict>, transaction_id: string): list<dict>",
+											"text": "+do_write_query(query: str, parm_set: list<dict>, transaction_id: str): list<dict>",
 											"horizontalAlignment": 0
 										},
 										{
@@ -2051,7 +2051,7 @@
 											"top": 1064,
 											"width": 482.3076171875,
 											"height": 13,
-											"text": "+do_read_query(query: string, parm_set: list<dict>, transaction_id: string): list<dict>",
+											"text": "+do_read_query(query: str, parm_set: list<dict>, transaction_id: str): list<dict>",
 											"horizontalAlignment": 0
 										},
 										{
@@ -2317,7 +2317,7 @@
 											"top": 787,
 											"width": 314.31689453125,
 											"height": 13,
-											"text": "-generate_emoji_scores(filename: string): dict",
+											"text": "-generate_emoji_scores(filename: str): dict",
 											"horizontalAlignment": 0
 										},
 										{
@@ -2351,7 +2351,7 @@
 											"top": 817,
 											"width": 314.31689453125,
 											"height": 13,
-											"text": "+calculate_score(post_text: string): float|None",
+											"text": "+calculate_score(post_text: str): float|None",
 											"horizontalAlignment": 0
 										}
 									],
@@ -3655,7 +3655,7 @@
 											"top": 637,
 											"width": 399,
 											"height": 13,
-											"text": "-name: string",
+											"text": "-name: str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -3672,7 +3672,7 @@
 											"top": 652,
 											"width": 399,
 											"height": 13,
-											"text": "-address: string",
+											"text": "-address: str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -3689,7 +3689,7 @@
 											"top": 667,
 											"width": 399,
 											"height": 13,
-											"text": "-phone: string",
+											"text": "-phone: str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -3706,7 +3706,7 @@
 											"top": 682,
 											"width": 399,
 											"height": 13,
-											"text": "-website: string",
+											"text": "-website: str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -3757,7 +3757,7 @@
 											"top": 727,
 											"width": 399,
 											"height": 13,
-											"text": "-category: string",
+											"text": "-category: str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -3842,7 +3842,7 @@
 											"top": 795,
 											"width": 399,
 											"height": 26,
-											"text": "+__init__(id_rist: int, nome: string, indirizzo: string, telefono: string, sito: string, lat: float, lng: float, categoria: string)",
+											"text": "+__init__(id_rist: int, nome: str, indirizzo: str, telefono: str, sito: str, lat: float, lng: float, categoria: str)",
 											"horizontalAlignment": 0,
 											"wordWrap": true
 										},
@@ -3933,7 +3933,7 @@
 											"top": 711,
 											"width": 519,
 											"height": 13,
-											"text": "+get_nome(): string",
+											"text": "+get_nome(): str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -3951,7 +3951,7 @@
 											"top": 711,
 											"width": 519,
 											"height": 13,
-											"text": "+get_indirizzo(): string",
+											"text": "+get_indirizzo(): str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -3969,7 +3969,7 @@
 											"top": 711,
 											"width": 519,
 											"height": 13,
-											"text": "+get_telefono(): string",
+											"text": "+get_telefono(): str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -3987,7 +3987,7 @@
 											"top": 711,
 											"width": 519,
 											"height": 13,
-											"text": "+get_sito(): string",
+											"text": "+get_sito(): str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -4041,7 +4041,7 @@
 											"top": 711,
 											"width": 519,
 											"height": 13,
-											"text": "+get_categoria(): string",
+											"text": "+get_categoria(): str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -4147,7 +4147,7 @@
 											"top": 853,
 											"width": 399,
 											"height": 13,
-											"text": "+__str__(): string",
+											"text": "+__str__(): str",
 											"horizontalAlignment": 0
 										}
 									],
@@ -4446,7 +4446,7 @@
 											"top": 152,
 											"width": 378.294921875,
 											"height": 13,
-											"text": "+set_sentiment(sentiment: string)",
+											"text": "+set_sentiment(sentiment: str)",
 											"horizontalAlignment": 0
 										},
 										{
@@ -4480,7 +4480,7 @@
 											"top": 182,
 											"width": 378.294921875,
 											"height": 13,
-											"text": "+set_param_for_query(id_post: string): list",
+											"text": "+set_param_for_query(id_post: str): list",
 											"horizontalAlignment": 0
 										},
 										{
@@ -4497,7 +4497,7 @@
 											"top": 197,
 											"width": 378.294921875,
 											"height": 13,
-											"text": "+__str__(): string",
+											"text": "+__str__(): str",
 											"horizontalAlignment": 0
 										}
 									],
@@ -4677,7 +4677,7 @@
 											"top": 374,
 											"width": 231,
 											"height": 13,
-											"text": "-image_name: string",
+											"text": "-image_name: str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -4694,7 +4694,7 @@
 											"top": 389,
 											"width": 231,
 											"height": 13,
-											"text": "-labels: dict<string>",
+											"text": "-labels: dict<str>",
 											"horizontalAlignment": 0
 										},
 										{
@@ -4762,7 +4762,7 @@
 											"top": 442,
 											"width": 231,
 											"height": 13,
-											"text": "+__init__(image_name: string)",
+											"text": "+__init__(image_name: str)",
 											"horizontalAlignment": 0
 										},
 										{
@@ -4834,7 +4834,7 @@
 											"top": 457,
 											"width": 321.216796875,
 											"height": 13,
-											"text": "+get_image_name(): string",
+											"text": "+get_image_name(): str",
 											"horizontalAlignment": 0
 										},
 										{
@@ -7356,7 +7356,7 @@
 										"$ref": "AAAAAAGAdZjL/BWTWaI="
 									},
 									"name": "db_name",
-									"type": "string",
+									"type": "str",
 									"defaultValue": "'ranking_test'"
 								}
 							]
@@ -7426,7 +7426,7 @@
 										"$ref": "AAAAAAGAdZs0BFOC3iw="
 									},
 									"name": "emotion",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -7456,7 +7456,7 @@
 										"$ref": "AAAAAAGAdZuQRVfhz6I="
 									},
 									"name": "emotion",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -7504,7 +7504,7 @@
 										"$ref": "AAAAAAGAdZxn0HIBRH8="
 									},
 									"name": "label",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -7534,7 +7534,7 @@
 										"$ref": "AAAAAAGAdZypf3WIuvA="
 									},
 									"name": "label",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -7551,7 +7551,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGAdZypf3WIuvA="
 									},
-									"type": "string",
+									"type": "str",
 									"direction": "return"
 								}
 							]
@@ -7582,7 +7582,7 @@
 										"$ref": "AAAAAAGAdZ0o2nli1mU="
 									},
 									"name": "id_post",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -7734,7 +7734,7 @@
 										"$ref": "AAAAAAGAdZ6tzYLEtXI="
 									},
 									"name": "id_post",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -7983,7 +7983,7 @@
 										"$ref": "AAAAAAGAdaC9zIyjIfI="
 									},
 									"name": "name",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -8210,7 +8210,7 @@
 										"$ref": "AAAAAAGAecGeU1WvrUw="
 									},
 									"name": "aws_region",
-									"type": "string"
+									"type": "str"
 								}
 							]
 						},
@@ -8230,7 +8230,7 @@
 										"$ref": "AAAAAAGAdQvnl9KT0xc="
 									},
 									"name": "text",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -8238,7 +8238,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGAdQvnl9KT0xc="
 									},
-									"type": "string",
+									"type": "str",
 									"direction": "return"
 								}
 							]
@@ -8270,7 +8270,7 @@
 										"$ref": "AAAAAAGAdQwRSNUmHjE="
 									},
 									"name": "language",
-									"type": "string",
+									"type": "str",
 									"defaultValue": "'it'"
 								},
 								{
@@ -8311,7 +8311,7 @@
 										"$ref": "AAAAAAGAdQznGOYVVNE="
 									},
 									"name": "bucket",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -8340,7 +8340,7 @@
 										"$ref": "AAAAAAGAdRR2+e2hWbo="
 									},
 									"name": "name_image",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -8378,7 +8378,7 @@
 										"$ref": "AAAAAAGAdRT8p/CIRsc="
 									},
 									"name": "name_image",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -8407,7 +8407,7 @@
 										"$ref": "AAAAAAGAdRXsVPVUx9k="
 									},
 									"name": "post_text",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -8545,7 +8545,7 @@
 							},
 							"name": "id_post",
 							"visibility": "private",
-							"type": "string"
+							"type": "str"
 						},
 						{
 							"_type": "UMLAttribute",
@@ -8555,7 +8555,7 @@
 							},
 							"name": "author",
 							"visibility": "private",
-							"type": "string"
+							"type": "str"
 						},
 						{
 							"_type": "UMLAttribute",
@@ -8565,7 +8565,7 @@
 							},
 							"name": "date_post",
 							"visibility": "private",
-							"type": "string"
+							"type": "str"
 						},
 						{
 							"_type": "UMLAttribute",
@@ -8575,7 +8575,7 @@
 							},
 							"name": "caption",
 							"visibility": "private",
-							"type": "string"
+							"type": "str"
 						},
 						{
 							"_type": "UMLAttribute",
@@ -8667,7 +8667,7 @@
 										"$ref": "AAAAAAGAecJfXF3JAvc="
 									},
 									"name": "id_post",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -8676,7 +8676,7 @@
 										"$ref": "AAAAAAGAecJfXF3JAvc="
 									},
 									"name": "author",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -8685,7 +8685,7 @@
 										"$ref": "AAAAAAGAecJfXF3JAvc="
 									},
 									"name": "date_post",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -8694,7 +8694,7 @@
 										"$ref": "AAAAAAGAecJfXF3JAvc="
 									},
 									"name": "caption",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -8767,7 +8767,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGAdIamp1tWu3M="
 									},
-									"type": "string",
+									"type": "str",
 									"direction": "return"
 								}
 							]
@@ -8786,7 +8786,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGAdIbJWlyjbIo="
 									},
-									"type": "string",
+									"type": "str",
 									"direction": "return"
 								}
 							]
@@ -8805,7 +8805,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGAdIblCF3w7yM="
 									},
-									"type": "string",
+									"type": "str",
 									"direction": "return"
 								}
 							]
@@ -8824,7 +8824,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGAdIemGl89718="
 									},
-									"type": "string",
+									"type": "str",
 									"direction": "return"
 								}
 							]
@@ -8975,7 +8975,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGAdIjG+2kPi8A="
 									},
-									"type": "string",
+									"type": "str",
 									"direction": "return"
 								}
 							]
@@ -9016,7 +9016,7 @@
 							},
 							"name": "cluster_arn",
 							"visibility": "private",
-							"type": "string"
+							"type": "str"
 						},
 						{
 							"_type": "UMLAttribute",
@@ -9026,7 +9026,7 @@
 							},
 							"name": "secret_arn",
 							"visibility": "private",
-							"type": "string"
+							"type": "str"
 						},
 						{
 							"_type": "UMLAttribute",
@@ -9036,7 +9036,7 @@
 							},
 							"name": "database",
 							"visibility": "private",
-							"type": "string"
+							"type": "str"
 						}
 					],
 					"operations": [
@@ -9055,7 +9055,7 @@
 										"$ref": "AAAAAAGAea+j9ZEVXME="
 									},
 									"name": "database",
-									"type": "string"
+									"type": "str"
 								}
 							]
 						},
@@ -9074,7 +9074,7 @@
 										"$ref": "AAAAAAGAea/Ba5N8IOo="
 									},
 									"name": "query",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -9092,7 +9092,7 @@
 										"$ref": "AAAAAAGAea/Ba5N8IOo="
 									},
 									"name": "transaction_id",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -9120,7 +9120,7 @@
 										"$ref": "AAAAAAGAea/ES5Q/pSo="
 									},
 									"name": "query",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -9138,7 +9138,7 @@
 										"$ref": "AAAAAAGAea/ES5Q/pSo="
 									},
 									"name": "transaction_id",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -9264,7 +9264,7 @@
 										"$ref": "AAAAAAGAdzZH18TOcRs="
 									},
 									"name": "filename",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -9321,7 +9321,7 @@
 										"$ref": "AAAAAAGAdz8k2FcRyZw="
 									},
 									"name": "post_text",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -9394,7 +9394,7 @@
 							},
 							"name": "name",
 							"visibility": "private",
-							"type": "string"
+							"type": "str"
 						},
 						{
 							"_type": "UMLAttribute",
@@ -9404,7 +9404,7 @@
 							},
 							"name": "address",
 							"visibility": "private",
-							"type": "string"
+							"type": "str"
 						},
 						{
 							"_type": "UMLAttribute",
@@ -9414,7 +9414,7 @@
 							},
 							"name": "phone",
 							"visibility": "private",
-							"type": "string"
+							"type": "str"
 						},
 						{
 							"_type": "UMLAttribute",
@@ -9424,7 +9424,7 @@
 							},
 							"name": "website",
 							"visibility": "private",
-							"type": "string"
+							"type": "str"
 						},
 						{
 							"_type": "UMLAttribute",
@@ -9454,7 +9454,7 @@
 							},
 							"name": "category",
 							"visibility": "private",
-							"type": "string"
+							"type": "str"
 						},
 						{
 							"_type": "UMLAttribute",
@@ -9512,7 +9512,7 @@
 										"$ref": "AAAAAAGAdFSYaPpPrW0="
 									},
 									"name": "nome",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -9521,7 +9521,7 @@
 										"$ref": "AAAAAAGAdFSYaPpPrW0="
 									},
 									"name": "indirizzo",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -9530,7 +9530,7 @@
 										"$ref": "AAAAAAGAdFSYaPpPrW0="
 									},
 									"name": "telefono",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -9539,7 +9539,7 @@
 										"$ref": "AAAAAAGAdFSYaPpPrW0="
 									},
 									"name": "sito",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -9566,7 +9566,7 @@
 										"$ref": "AAAAAAGAdFSYaPpPrW0="
 									},
 									"name": "categoria",
-									"type": "string"
+									"type": "str"
 								}
 							]
 						},
@@ -9660,7 +9660,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGAdHoOWUVaDLk="
 									},
-									"type": "string",
+									"type": "str",
 									"direction": "return"
 								}
 							]
@@ -9679,7 +9679,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGAdHozLEaDJV4="
 									},
-									"type": "string",
+									"type": "str",
 									"direction": "return"
 								}
 							]
@@ -9698,7 +9698,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGAdHpRd0esBks="
 									},
-									"type": "string",
+									"type": "str",
 									"direction": "return"
 								}
 							]
@@ -9717,7 +9717,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGAdHp4WEjV3BQ="
 									},
-									"type": "string",
+									"type": "str",
 									"direction": "return"
 								}
 							]
@@ -9774,7 +9774,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGAdHsNlU9pDbs="
 									},
-									"type": "string",
+									"type": "str",
 									"direction": "return"
 								}
 							]
@@ -9900,7 +9900,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGAdHwbNVnYdhc="
 									},
-									"type": "string",
+									"type": "str",
 									"direction": "return"
 								}
 							]
@@ -10046,7 +10046,7 @@
 										"$ref": "AAAAAAGAdH8C+av1rXU="
 									},
 									"name": "sentiment",
-									"type": "string"
+									"type": "str"
 								}
 							]
 						},
@@ -10084,7 +10084,7 @@
 										"$ref": "AAAAAAGAdH9/NK6PeMI="
 									},
 									"name": "id_post",
-									"type": "string"
+									"type": "str"
 								},
 								{
 									"_type": "UMLParameter",
@@ -10111,7 +10111,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGAdH/Uiq/51ck="
 									},
-									"type": "string",
+									"type": "str",
 									"direction": "return"
 								}
 							]
@@ -10188,7 +10188,7 @@
 							},
 							"name": "image_name",
 							"visibility": "private",
-							"type": "string"
+							"type": "str"
 						},
 						{
 							"_type": "UMLAttribute",
@@ -10198,7 +10198,7 @@
 							},
 							"name": "labels",
 							"visibility": "private",
-							"type": "dict<string>"
+							"type": "dict<str>"
 						},
 						{
 							"_type": "UMLAttribute",
@@ -10237,7 +10237,7 @@
 										"$ref": "AAAAAAGAdFPjwu/Afm8="
 									},
 									"name": "image_name",
-									"type": "string"
+									"type": "str"
 								}
 							]
 						},
@@ -10312,7 +10312,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGAdHgB7R2ubAc="
 									},
-									"type": "string",
+									"type": "str",
 									"direction": "return"
 								}
 							]
