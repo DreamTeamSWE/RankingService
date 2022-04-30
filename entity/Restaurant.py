@@ -13,13 +13,13 @@ class Restaurant:
         self.__image_score = None
         self.__text_score = None
 
-    def set_emoji_score(self, punt_emoji: int) -> None:
+    def set_emoji_score(self, punt_emoji: float) -> None:
         self.__emoji_score = punt_emoji
 
-    def set_image_score(self, punt_foto: int) -> None:
+    def set_image_score(self, punt_foto: float) -> None:
         self.__image_score = punt_foto
 
-    def set_text_score(self, punt_testo: int) -> None:
+    def set_text_score(self, punt_testo: float) -> None:
         self.__text_score = punt_testo
 
     def get_id(self) -> int:

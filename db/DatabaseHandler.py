@@ -11,7 +11,7 @@ class DatabaseHandler:
 
     def __init__(self, database: str) -> None:
         print('Initializing database handler')
-        self.__rdsData = boto3.client('rds-data', region_name=self.__AWS_REGION)
+        self.__rds_data = boto3.client('rds-data', region_name=self.__AWS_REGION)
 
         secret_name = "SecreteRDS"
 
@@ -57,12 +57,12 @@ class DatabaseHandler:
         :return: boolean if db is on
         """
         try:
-            self.__rdsData.execute_statement(resourceArn=self.__cluster_arn,
-                                             secretArn=self.__secret_arn,
-                                             database=self.__database,
-                                             sql='SELECT 1',
-                                             parameters=[],
-                                             includeResultMetadata=True)
+            self.__rds_data.execute_statement(resourceArn=self.__cluster_arn,
+                                              secretArn=self.__secret_arn,
+                                              database=self.__database,
+                                              sql='SELECT 1',
+                                              parameters=[],
+                                              includeResultMetadata=True)
             return True
         except ClientError as ce:
             error_code = ce.response.get("Error").get('Code')
@@ -129,9 +129,9 @@ class DatabaseHandler:
 
         :return: transaction id
         """
-        response = self.__rdsData.begin_transaction(resourceArn=self.__cluster_arn,
-                                                    secretArn=self.__secret_arn,
-                                                    database=self.__database)
+        response = self.__rds_data.begin_transaction(resourceArn=self.__cluster_arn,
+                                                     secretArn=self.__secret_arn,
+                                                     database=self.__database)
         return response['transactionId']
 
     def commit_transaction(self, transaction_id):
@@ -141,9 +141,9 @@ class DatabaseHandler:
         :param transaction_id:
         :return: response of query
         """
-        response = self.__rdsData.commit_transaction(resourceArn=self.__cluster_arn,
-                                                     secretArn=self.__secret_arn,
-                                                     transactionId=transaction_id)
+        response = self.__rds_data.commit_transaction(resourceArn=self.__cluster_arn,
+                                                      secretArn=self.__secret_arn,
+                                                      transactionId=transaction_id)
         return response
 
     # param_set format: https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/rds-data.html
@@ -164,18 +164,18 @@ class DatabaseHandler:
 
         DatabaseHandler.__add_null_values(param_set)
         if transaction_id is not None:
-            response = self.__rdsData.execute_statement(resourceArn=self.__cluster_arn,
-                                                        secretArn=self.__secret_arn,
-                                                        database=self.__database,
-                                                        sql=query,
-                                                        parameters=param_set,
-                                                        transactionId=transaction_id)
+            response = self.__rds_data.execute_statement(resourceArn=self.__cluster_arn,
+                                                         secretArn=self.__secret_arn,
+                                                         database=self.__database,
+                                                         sql=query,
+                                                         parameters=param_set,
+                                                         transactionId=transaction_id)
         else:
-            response = self.__rdsData.execute_statement(resourceArn=self.__cluster_arn,
-                                                        secretArn=self.__secret_arn,
-                                                        database=self.__database,
-                                                        sql=query,
-                                                        parameters=param_set)
+            response = self.__rds_data.execute_statement(resourceArn=self.__cluster_arn,
+                                                         secretArn=self.__secret_arn,
+                                                         database=self.__database,
+                                                         sql=query,
+                                                         parameters=param_set)
         return response
 
     # param_set format: https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/rds-data.html
@@ -192,18 +192,18 @@ class DatabaseHandler:
         if param_set is None:
             param_set = []
         if transaction_id is not None:
-            response = self.__rdsData.execute_statement(resourceArn=self.__cluster_arn,
-                                                        secretArn=self.__secret_arn,
-                                                        database=self.__database,
-                                                        sql=query,
-                                                        parameters=param_set,
-                                                        includeResultMetadata=True,
-                                                        transactionId=transaction_id)
+            response = self.__rds_data.execute_statement(resourceArn=self.__cluster_arn,
+                                                         secretArn=self.__secret_arn,
+                                                         database=self.__database,
+                                                         sql=query,
+                                                         parameters=param_set,
+                                                         includeResultMetadata=True,
+                                                         transactionId=transaction_id)
         else:
-            response = self.__rdsData.execute_statement(resourceArn=self.__cluster_arn,
-                                                        secretArn=self.__secret_arn,
-                                                        database=self.__database,
-                                                        sql=query,
-                                                        parameters=param_set,
-                                                        includeResultMetadata=True)
+            response = self.__rds_data.execute_statement(resourceArn=self.__cluster_arn,
+                                                         secretArn=self.__secret_arn,
+                                                         database=self.__database,
+                                                         sql=query,
+                                                         parameters=param_set,
+                                                         includeResultMetadata=True)
         return self.__parse_result(response)
