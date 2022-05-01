@@ -45,6 +45,7 @@ class RepositoryExternal:
         query = "select r.*,i.id_immagine as url_image from ristorante as r " \
                 "join post p on r.id_ristorante=p.id_ristorante " \
                 "join immagine i on p.id_post=i.id_post " \
+                "where i.id_immagine not in (select e.id_immagine from emozione_img e) " \
                 "group by r.id_ristorante " \
                 "order by (r.punteggio_emoji+r.punteggio_foto+r.punteggio_testo) desc " \
                 "limit :position, :size"

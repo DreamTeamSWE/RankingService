@@ -37,8 +37,8 @@ functions:
         Action:
           - 'secretsmanager:GetSecretValue'
         Resource:
-          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:SecreteRDS-RxX4ZE'
-          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei'
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.secretRds}'
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.sercetCredentials}'
       - Effect: Allow
         Action:
           - 'rekognition:DetectFaces'
@@ -50,10 +50,10 @@ functions:
         Action:
           - 's3:getObject'
         Resource:
-          - "arn:aws:s3:::${self:custom.bucketName}"
-          - "arn:aws:s3:::${self:custom.bucketName}/*"
-          - "arn:aws:s3:::sweet-emoji-sentiment-scores"
-          - "arn:aws:s3:::sweet-emoji-sentiment-scores/*"
+          - "arn:aws:s3:::${self:custom.bucketNameImage}"
+          - "arn:aws:s3:::${self:custom.bucketNameImage}/*"
+          - "arn:aws:s3:::${self:custom.bucketNameEmoji}"
+          - "arn:aws:s3:::${self:custom.bucketNameEmoji}/*"
       - Effect: Allow
         Action:
           - 'rds-data:ExecuteStatement'
@@ -90,8 +90,8 @@ functions:
         Action:
           - 'secretsmanager:GetSecretValue'
         Resource:
-          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:SecreteRDS-RxX4ZE'
-          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei'
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.secretRds}'
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.sercetCredentials}'
       - Effect: Allow
         Action:
           - 'rds-data:ExecuteStatement'
@@ -104,8 +104,8 @@ functions:
           - "s3:ListObjects"
           - "s3:GetObject"
         Resource:
-          - "arn:aws:s3:::${self:custom.bucketName}"
-          - "arn:aws:s3:::${self:custom.bucketName}/*"
+          - "arn:aws:s3:::${self:custom.bucketNameImage}"
+          - "arn:aws:s3:::${self:custom.bucketNameImage}/*"
 
   getLabelAndPost:
     handler: getLabelAndPost.get_label_and_post
@@ -124,8 +124,8 @@ functions:
         Action:
           - 'secretsmanager:GetSecretValue'
         Resource:
-          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:SecreteRDS-RxX4ZE'
-          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei'
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.secretRds}'
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.sercetCredentials}'
       - Effect: Allow
         Action:
           - 'rds-data:ExecuteStatement'
@@ -138,8 +138,8 @@ functions:
           - "s3:ListObjects"
           - "s3:GetObject"
         Resource:
-          - "arn:aws:s3:::${self:custom.bucketName}"
-          - "arn:aws:s3:::${self:custom.bucketName}/*"
+          - "arn:aws:s3:::${self:custom.bucketNameImage}"
+          - "arn:aws:s3:::${self:custom.bucketNameImage}/*"
 
     events:
       - http:
@@ -164,8 +164,8 @@ functions:
         Action:
           - 'secretsmanager:GetSecretValue'
         Resource:
-          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:SecreteRDS-RxX4ZE'
-          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei'
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.secretRds}'
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.sercetCredentials}'
       - Effect: Allow
         Action:
           - 'rds-data:ExecuteStatement'
@@ -178,8 +178,8 @@ functions:
           - "s3:ListObjects"
           - "s3:GetObject"
         Resource:
-          - "arn:aws:s3:::${self:custom.bucketName}"
-          - "arn:aws:s3:::${self:custom.bucketName}/*"
+          - "arn:aws:s3:::${self:custom.bucketNameImage}"
+          - "arn:aws:s3:::${self:custom.bucketNameImage}/*"
     events:
       - http:
           path: searchByName
@@ -191,7 +191,10 @@ plugins:
   - serverless-python-requirements
 
 custom:
-  bucketName: dream-team-img-test
+  bucketNameImage: dream-team-img-test
+  bucketNameEmoji: sweet-emoji-sentiment-scores
+  secretRds: SecreteRDS-RxX4ZE
+  sercetCredentials: rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei
   pythonRequirements:
     dockerizePip: false
 
