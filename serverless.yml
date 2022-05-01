@@ -6,22 +6,6 @@ provider:
   name: aws
   runtime: python3.9
   region: eu-central-1
-  iam:
-    role:
-      statements:
-        - Effect: Allow
-          Action:
-            - 'rds-data:ExecuteStatement'
-          Resource: 'sweeat.cluster-cwbklrn3c9pb.eu-central-1.rds.amazonaws.com'
-        - Effect: Allow
-          Action:
-            - 'secretsmanager:GetSecretValue'
-          Resource: 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:SecreteRDS-RxX4ZE'
-        - Effect: Allow
-          Action:
-            - 'secretsmanager:GetSecretValue'
-          Resource: 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei'
-
 package:
   individually: true
   exclude:
@@ -39,6 +23,50 @@ package:
     - requirements_eliminati.txt
 
 functions:
+  refreshRanking:
+    handler: refreshRanking.refresh_ranking
+    timeout: 900
+    package:
+      exclude:
+        - 'searchByName.py'
+        - 'getLabelAndPost.py'
+        - 'getRanking.py'
+        - 'db/RepositoryExternal.py'
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - 'secretsmanager:GetSecretValue'
+        Resource:
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.secretRds}'
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.sercetCredentials}'
+      - Effect: Allow
+        Action:
+          - 'rekognition:DetectFaces'
+          - 'rekognition:DetectLabels'
+          - 'comprehend:DetectSentiment'
+          - 'comprehend:DetectDominantLanguage'
+        Resource: '*'
+      - Effect: Allow
+        Action:
+          - 's3:GetObject'
+        Resource:
+          - "arn:aws:s3:::${self:custom.bucketNameImage}"
+          - "arn:aws:s3:::${self:custom.bucketNameImage}/*"
+          - "arn:aws:s3:::${self:custom.bucketNameEmoji}"
+          - "arn:aws:s3:::${self:custom.bucketNameEmoji}/*"
+      - Effect: Allow
+        Action:
+          - 'rds-data:ExecuteStatement'
+          - 'rds-data:BeginTransaction'
+          - 'rds-data:CommitTransaction'
+          - 'rds-data:BatchExecuteStatement'
+        Resource: 'arn:aws:rds:eu-central-1:123446374287:cluster:${self:custom.clusterRds}'
+    events:
+      - sqs:
+          arn: arn:aws:sqs:eu-central-1:123446374287:coda-crawler.fifo
+          batchSize: 10
+          functionResponseType: ReportBatchItemFailures
+
   getRanking:
     handler: getRanking.get_ranking
     timeout: 30
@@ -56,6 +84,27 @@ functions:
           path: getRanking
           method: GET
           cors: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - 'secretsmanager:GetSecretValue'
+        Resource:
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.secretRds}'
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.sercetCredentials}'
+      - Effect: Allow
+        Action:
+          - 'rds-data:ExecuteStatement'
+          - 'rds-data:BeginTransaction'
+          - 'rds-data:CommitTransaction'
+          - 'rds-data:BatchExecuteStatement'
+        Resource: 'arn:aws:rds:eu-central-1:123446374287:cluster:${self:custom.clusterRds}'
+      - Effect: "Allow"
+        Action:
+          - "s3:ListObjects"
+          - "s3:GetObject"
+        Resource:
+          - "arn:aws:s3:::${self:custom.bucketNameImage}"
+          - "arn:aws:s3:::${self:custom.bucketNameImage}/*"
 
   getLabelAndPost:
     handler: getLabelAndPost.get_label_and_post
@@ -69,46 +118,33 @@ functions:
         - 'db/RepositoryFavorites.py'
         - 'entity/**'
         - 'analyzer/**'
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - 'secretsmanager:GetSecretValue'
+        Resource:
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.secretRds}'
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.sercetCredentials}'
+      - Effect: Allow
+        Action:
+          - 'rds-data:ExecuteStatement'
+          - 'rds-data:BeginTransaction'
+          - 'rds-data:CommitTransaction'
+          - 'rds-data:BatchExecuteStatement'
+        Resource: 'arn:aws:rds:eu-central-1:123446374287:cluster:${self:custom.clusterRds}'
+      - Effect: "Allow"
+        Action:
+          - "s3:ListObjects"
+          - "s3:GetObject"
+        Resource:
+          - "arn:aws:s3:::${self:custom.bucketNameImage}"
+          - "arn:aws:s3:::${self:custom.bucketNameImage}/*"
+
     events:
       - http:
           path: getLabelAndPost
           method: POST
           cors: true
-
-  refreshRanking:
-    handler: refreshRanking.refresh_ranking
-    timeout: 900
-    package:
-      exclude:
-        - 'searchByName.py'
-        - 'getLabelAndPost.py'
-        - 'getRanking.py'
-        - 'db/RepositoryExternal.py'
-    iamRoleStatements:
-      - Effect: Allow
-        Action:
-          - 'rekognition:DetectFaces'
-          - 'rekognition:DetectLabels'
-          - 'comprehend:DetectSentiment'
-          - 'comprehend:DetectDominantLanguage'
-          - 'rds-data:ExecuteStatement'
-          - 'rds-data:BeginTransaction'
-          - 'rds-data:CommitTransaction'
-          - 'rds-data:BatchExecuteStatement'
-        Resource: '*'
-      - Effect: Allow
-        Action:
-          - 's3:getObject'
-        Resource: "arn:aws:s3:::dream-team-img-test/*"
-      - Effect: Allow
-        Action:
-          - 's3:getObject'
-        Resource: "arn:aws:s3:::sweet-emoji-sentiment-scores/*"
-    events:
-      - sqs:
-          arn: arn:aws:sqs:eu-central-1:123446374287:coda-crawler.fifo
-          batchSize: 10
-          functionResponseType: ReportBatchItemFailures
 
   searchByName:
     handler: searchByName.search_by_name
@@ -122,6 +158,27 @@ functions:
         - 'db/RepositoryFavorites.py'
         - 'entity/**'
         - 'analyzer/**'
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - 'secretsmanager:GetSecretValue'
+        Resource:
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.secretRds}'
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.sercetCredentials}'
+      - Effect: Allow
+        Action:
+          - 'rds-data:ExecuteStatement'
+          - 'rds-data:BeginTransaction'
+          - 'rds-data:CommitTransaction'
+          - 'rds-data:BatchExecuteStatement'
+        Resource: 'arn:aws:rds:eu-central-1:123446374287:cluster:${self:custom.clusterRds}'
+      - Effect: "Allow"
+        Action:
+          - "s3:ListObjects"
+          - "s3:GetObject"
+        Resource:
+          - "arn:aws:s3:::${self:custom.bucketNameImage}"
+          - "arn:aws:s3:::${self:custom.bucketNameImage}/*"
     events:
       - http:
           path: searchByName
@@ -133,5 +190,13 @@ plugins:
   - serverless-python-requirements
 
 custom:
+  bucketNameImage: dream-team-img-test
+  bucketNameEmoji: sweet-emoji-sentiment-scores
+  secretRds: SecreteRDS-RxX4ZE
+  sercetCredentials: rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei
+  clusterRds: sweeat
   pythonRequirements:
     dockerizePip: false
+
+
+#          - "arn:aws:s3:::dream-team-img-test/*"

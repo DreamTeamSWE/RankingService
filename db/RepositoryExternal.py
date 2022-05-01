@@ -1,3 +1,5 @@
+import boto3
+
 from db.DatabaseHandler import DatabaseHandler
 
 
@@ -5,12 +7,25 @@ class RepositoryExternal:
     def __init__(self, db_name: str = 'ranking_test') -> None:
         self.database = DatabaseHandler(db_name)
 
-    """
-    - API che ritorna i tipi di cucina data una ricerca
-    - API che ritorna le zone
-    - API che ritorna dei locali alternativi, nel caso non ci fosse un risultato “perfetto”
-    - API per la gestione dei preferiti, nel caso l’utente sia loggato
-    """
+    def __create_presigned_url(self, object_name: str, bucket_name: str = 'dream-team-img-test', expiration=3600):
+        """Generate a presigned URL to share an S3 object
+
+        :param bucket_name: string
+        :param object_name: string
+        :param expiration: Time in seconds for the presigned URL to remain valid
+        :return: Presigned URL as string. If error, returns None.
+        """
+
+        # Generate a presigned URL for the S3 object
+        s3_client = boto3.client('s3', region_name='eu-central-1')
+        response = \
+            s3_client.generate_presigned_url('get_object',
+                                             Params={'Bucket': bucket_name,
+                                                     'Key': object_name},
+                                             ExpiresIn=expiration)
+
+        # The response contains the presigned URL
+        return response
 
     def get_ranking(self, position: int, size: int):
         """
@@ -27,16 +42,24 @@ class RepositoryExternal:
         print("position_param: ", position_param)
         print("size_param: ", size_param)
 
-        query = "select r.*,i.id_immagine from ristorante as r " \
+        query = "select r.*,i.id_immagine as url_image from ristorante as r " \
                 "join post p on r.id_ristorante=p.id_ristorante " \
                 "join immagine i on p.id_post=i.id_post " \
+                "where i.id_immagine not in (select e.id_immagine from emozione_img e) " \
                 "group by r.id_ristorante " \
                 "order by (r.punteggio_emoji+r.punteggio_foto+r.punteggio_testo) desc " \
                 "limit :position, :size"
 
+        response = self.database.do_read_query(query, [position_param, size_param])
         print("query: ", query)
 
-        response = self.database.do_read_query(query, [position_param, size_param])
+        # iterate over response
+        for r in response:
+            image_name = str(r["url_image"]) + ".jpg"
+            print("image_name: ", image_name)
+            url_image = self.__create_presigned_url(image_name)
+            print("url_image: ", url_image)
+            r["url_image"] = url_image
 
         return response
 
