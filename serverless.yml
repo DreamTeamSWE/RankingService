@@ -6,23 +6,6 @@ provider:
   name: aws
   runtime: python3.9
   region: eu-central-1
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - 'rds-data:ExecuteStatement'
-        - 'rds-data:BeginTransaction'
-        - 'rds-data:CommitTransaction'
-        - 'rds-data:BatchExecuteStatement'
-      Resource: 'arn:aws:rds:eu-central-1:123446374287:cluster:sweeat'
-    - Effect: Allow
-      Action:
-        - 'secretsmanager:GetSecretValue'
-      Resource: 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:SecreteRDS-RxX4ZE'
-    - Effect: Allow
-      Action:
-        - 'secretsmanager:GetSecretValue'
-      Resource: 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei'
-
 package:
   individually: true
   exclude:
@@ -52,6 +35,12 @@ functions:
     iamRoleStatements:
       - Effect: Allow
         Action:
+          - 'secretsmanager:GetSecretValue'
+        Resource:
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:SecreteRDS-RxX4ZE'
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei'
+      - Effect: Allow
+        Action:
           - 'rekognition:DetectFaces'
           - 'rekognition:DetectLabels'
           - 'comprehend:DetectSentiment'
@@ -65,12 +54,6 @@ functions:
           - "arn:aws:s3:::${self:custom.bucketName}/*"
           - "arn:aws:s3:::sweet-emoji-sentiment-scores"
           - "arn:aws:s3:::sweet-emoji-sentiment-scores/*"
-      - Effect: Allow
-        Action:
-          - 'secretsmanager:GetSecretValue'
-        Resource:
-          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:SecreteRDS-RxX4ZE'
-          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei'
       - Effect: Allow
         Action:
           - 'rds-data:ExecuteStatement'
@@ -103,6 +86,19 @@ functions:
           method: GET
           cors: true
     iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - 'secretsmanager:GetSecretValue'
+        Resource:
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:SecreteRDS-RxX4ZE'
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei'
+      - Effect: Allow
+        Action:
+          - 'rds-data:ExecuteStatement'
+          - 'rds-data:BeginTransaction'
+          - 'rds-data:CommitTransaction'
+          - 'rds-data:BatchExecuteStatement'
+        Resource: 'arn:aws:rds:eu-central-1:123446374287:cluster:sweeat'
       - Effect: "Allow"
         Action:
           - "s3:ListObjects"
@@ -123,6 +119,28 @@ functions:
         - 'db/RepositoryFavorites.py'
         - 'entity/**'
         - 'analyzer/**'
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - 'secretsmanager:GetSecretValue'
+        Resource:
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:SecreteRDS-RxX4ZE'
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei'
+      - Effect: Allow
+        Action:
+          - 'rds-data:ExecuteStatement'
+          - 'rds-data:BeginTransaction'
+          - 'rds-data:CommitTransaction'
+          - 'rds-data:BatchExecuteStatement'
+        Resource: 'arn:aws:rds:eu-central-1:123446374287:cluster:sweeat'
+      - Effect: "Allow"
+        Action:
+          - "s3:ListObjects"
+          - "s3:GetObject"
+        Resource:
+          - "arn:aws:s3:::${self:custom.bucketName}"
+          - "arn:aws:s3:::${self:custom.bucketName}/*"
+
     events:
       - http:
           path: getLabelAndPost
@@ -141,6 +159,27 @@ functions:
         - 'db/RepositoryFavorites.py'
         - 'entity/**'
         - 'analyzer/**'
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - 'secretsmanager:GetSecretValue'
+        Resource:
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:SecreteRDS-RxX4ZE'
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei'
+      - Effect: Allow
+        Action:
+          - 'rds-data:ExecuteStatement'
+          - 'rds-data:BeginTransaction'
+          - 'rds-data:CommitTransaction'
+          - 'rds-data:BatchExecuteStatement'
+        Resource: 'arn:aws:rds:eu-central-1:123446374287:cluster:sweeat'
+      - Effect: "Allow"
+        Action:
+          - "s3:ListObjects"
+          - "s3:GetObject"
+        Resource:
+          - "arn:aws:s3:::${self:custom.bucketName}"
+          - "arn:aws:s3:::${self:custom.bucketName}/*"
     events:
       - http:
           path: searchByName
@@ -155,13 +194,6 @@ custom:
   bucketName: dream-team-img-test
   pythonRequirements:
     dockerizePip: false
-
-#resources:
-#  Resources:
-#    AssetsBucket:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: ${self:custom.bucketName}
 
 
 #          - "arn:aws:s3:::dream-team-img-test/*"

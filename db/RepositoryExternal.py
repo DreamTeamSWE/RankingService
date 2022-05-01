@@ -53,11 +53,12 @@ class RepositoryExternal:
         print("query: ", query)
 
         # iterate over response
-        image_name = str(response[0]["url_image"]) + ".jpg"
-        print("image_name: ", image_name)
-        url_image = self.__create_presigned_url(image_name)
-        print("url_image: ", url_image)
-        response[0]["url_image"] = url_image
+        for r in response:
+            image_name = str(r["url_image"]) + ".jpg"
+            print("image_name: ", image_name)
+            url_image = self.__create_presigned_url(image_name)
+            print("url_image: ", url_image)
+            r["url_image"] = url_image
 
         return response
 
