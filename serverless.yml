@@ -48,7 +48,7 @@ functions:
         Resource: '*'
       - Effect: Allow
         Action:
-          - 's3:getObject'
+          - 's3:GetObject'
         Resource:
           - "arn:aws:s3:::${self:custom.bucketNameImage}"
           - "arn:aws:s3:::${self:custom.bucketNameImage}/*"
@@ -60,13 +60,12 @@ functions:
           - 'rds-data:BeginTransaction'
           - 'rds-data:CommitTransaction'
           - 'rds-data:BatchExecuteStatement'
-        Resource: 'arn:aws:rds:eu-central-1:123446374287:cluster:sweeat'
+        Resource: 'arn:aws:rds:eu-central-1:123446374287:cluster:${self:custom.clusterRds}'
     events:
       - sqs:
           arn: arn:aws:sqs:eu-central-1:123446374287:coda-crawler.fifo
           batchSize: 10
           functionResponseType: ReportBatchItemFailures
-
 
   getRanking:
     handler: getRanking.get_ranking
@@ -98,7 +97,7 @@ functions:
           - 'rds-data:BeginTransaction'
           - 'rds-data:CommitTransaction'
           - 'rds-data:BatchExecuteStatement'
-        Resource: 'arn:aws:rds:eu-central-1:123446374287:cluster:sweeat'
+        Resource: 'arn:aws:rds:eu-central-1:123446374287:cluster:${self:custom.clusterRds}'
       - Effect: "Allow"
         Action:
           - "s3:ListObjects"
@@ -132,7 +131,7 @@ functions:
           - 'rds-data:BeginTransaction'
           - 'rds-data:CommitTransaction'
           - 'rds-data:BatchExecuteStatement'
-        Resource: 'arn:aws:rds:eu-central-1:123446374287:cluster:sweeat'
+        Resource: 'arn:aws:rds:eu-central-1:123446374287:cluster:${self:custom.clusterRds}'
       - Effect: "Allow"
         Action:
           - "s3:ListObjects"
@@ -172,7 +171,7 @@ functions:
           - 'rds-data:BeginTransaction'
           - 'rds-data:CommitTransaction'
           - 'rds-data:BatchExecuteStatement'
-        Resource: 'arn:aws:rds:eu-central-1:123446374287:cluster:sweeat'
+        Resource: 'arn:aws:rds:eu-central-1:123446374287:cluster:${self:custom.clusterRds}'
       - Effect: "Allow"
         Action:
           - "s3:ListObjects"
@@ -195,6 +194,7 @@ custom:
   bucketNameEmoji: sweet-emoji-sentiment-scores
   secretRds: SecreteRDS-RxX4ZE
   sercetCredentials: rds-db-credentials/cluster-AQLMTHUP2LEAFVXYXDMZFEHDR4/admin-5WXjei
+  clusterRds: sweeat
   pythonRequirements:
     dockerizePip: false
 
