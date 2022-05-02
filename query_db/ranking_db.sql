@@ -54,7 +54,8 @@ create table ristorante(
     punteggio_emoji float null,
     punteggio_foto float null,
     punteggio_testo float null,
-    primary key (id_ristorante)
+    primary key (id_ristorante),
+    unique(nome_ristorante, latitudine, longitudine)
 );
 
 create table post(
