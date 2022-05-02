@@ -244,25 +244,25 @@ class RepositoryInternal:
             return False
 
     def update_restaurant_scores(self, restaurant: Restaurant) -> bool:
-        if self.__check_if_restaurant_already_exists(restaurant):
-            param_id = [{"name": "id", "value": {"longValue": restaurant.get_id()}}]
-            new_scores = self.__recalculate_scores(param_id)
+        # if self.__check_if_restaurant_already_exists(restaurant):
+        param_id = [{"name": "id", "value": {"longValue": restaurant.get_id()}}]
+        new_scores = self.__recalculate_scores(param_id)
 
-            query = "UPDATE ristorante SET " \
-                    "punteggio_emoji=:punteggio_emoji, " \
-                    "punteggio_foto=:punteggio_foto, " \
-                    "punteggio_testo=:punteggio_testo " \
-                    "WHERE id_ristorante =:id_ristorante"
+        query = "UPDATE ristorante SET " \
+                "punteggio_emoji=:punteggio_emoji, " \
+                "punteggio_foto=:punteggio_foto, " \
+                "punteggio_testo=:punteggio_testo " \
+                "WHERE id_ristorante =:id_ristorante"
 
-            restaurant.set_image_score(new_scores['punt_foto'])
-            restaurant.set_emoji_score(new_scores['punt_emoji'])
-            restaurant.set_text_score(new_scores['punt_testo'])
+        restaurant.set_image_score(new_scores['punt_foto'])
+        restaurant.set_emoji_score(new_scores['punt_emoji'])
+        restaurant.set_text_score(new_scores['punt_testo'])
 
-            response = self.database.do_write_query(query, restaurant.set_param_for_query())
-            print(f"restaurant scores updated: emoji: {new_scores['punt_emoji']}, "
-                  f"foto: {new_scores['punt_foto']}, testo:{new_scores['punt_testo']}")
+        response = self.database.do_write_query(query, restaurant.set_param_for_query())
+        print(f"restaurant scores updated: emoji: {new_scores['punt_emoji']}, "
+              f"foto: {new_scores['punt_foto']}, testo:{new_scores['punt_testo']}")
 
-            return response['numberOfRecordsUpdated'] > 0
+        return response['numberOfRecordsUpdated'] > 0
 
     def get_restaurant_info_by_name(self, name: str) -> Optional[Restaurant]:
         """
