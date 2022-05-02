@@ -1,8 +1,10 @@
 from analyzer.PostAnalyzer import PostAnalyzer
 
 from db.DatabaseHandler import DatabaseHandler
+from db.RepositoryFavorites import RepositoryFavorites
 from db.RepositoryInternal import RepositoryInternal
 import uuid
+import random
 
 from entity.CrawledData import CrawledData
 from analyzer.EmojiAnalyzer import EmojiAnalyzer
@@ -12,12 +14,23 @@ from analyzer.EmojiAnalyzer import EmojiAnalyzer
 
 
 def main():
+    ristoranti_disponibili = [8, 43, 57, 58, 59, 61, 62, 63, 64, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76]
+    for i in range(10):
+        idutente = str(uuid.uuid4())
+        random_len = random.randint(5, 18)
+        rist_pref = random.sample(ristoranti_disponibili, random_len)
+        rf = RepositoryFavorites()
+        print(idutente)
+        print(rist_pref)
+        print('-------------------------')
+        for rist in rist_pref:
+            rf.add_favorite(idutente, rist)
     # rint = RepositoryInternal()
     # a = PostAnalyzer()
     # post = CrawledData.parse_post_from_sqs(event)
     # a.analyze(post)
-    ea = EmojiAnalyzer()
-    print(ea.calculate_score('Espetacular a qualidade dos peixes 👏🏻👏🏻👏🏻 com uma gastronomia asiática maravilhosa RECOMENDO !!!@kazuoharada @kazuo.restaurante @estiloramy'))
+    #ea = EmojiAnalyzer()
+    #print(ea.calculate_score('Espetacular a qualidade dos peixes 👏🏻👏🏻👏🏻 com uma gastronomia asiática maravilhosa RECOMENDO !!!@kazuoharada @kazuo.restaurante @estiloramy'))
 
 
 if __name__ == '__main__':
