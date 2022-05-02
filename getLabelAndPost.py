@@ -8,7 +8,11 @@ def get_label_and_post(event, context) -> json:
 
     body = event['body']
     body_json = json.loads(body)
-    id_rist = int(body_json['id_rist'])
+    id_rist = body_json['id_rist']
+
+    print(type(id_rist))
+
+    id_rist = int(id_rist)
 
     print("id_rist: " + str(id_rist))
 
