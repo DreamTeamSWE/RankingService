@@ -54,7 +54,7 @@ class PostAnalyzer(Analyzer, ABC):
 
         if post.get_caption() is not None:
             # result of comprehend
-            json_result = self.__comprehend.detect_sentiment(Text=post.get_caption, LanguageCode=language)
+            json_result = self.__comprehend.detect_sentiment(Text=post.get_caption(), LanguageCode=language)
 
             # get sentiment
             array = json_result["SentimentScore"]
@@ -208,10 +208,11 @@ class PostAnalyzer(Analyzer, ABC):
         print('emoji score: ' + str(emoji_score) if emoji_score is not None else 'No emoji detected')
 
         # calcolo punteggio per ogni immagine e salvo
-        if post.get_list_images() is not None:
+        if not post.get_list_images():
             for image in post.get_list_images():
-                print("image name " + image.image_name)
-                labels, emotions, emotions_confidence = self.__analyze_image(image.image_name)
+                image_name = image.get_image_name()
+                print("image name " + image_name)
+                labels, emotions, emotions_confidence = self.__analyze_image(image_name)
 
                 image.set_labels(labels)
                 image.set_emotions(emotions)

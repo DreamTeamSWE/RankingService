@@ -161,7 +161,7 @@ class RepositoryInternal:
             response1 = self.database.do_write_query(query, param)
             response = (response1['numberOfRecordsUpdated'] > 0) and response
             print("saved image " + img.get_image_name() + " in table immagine, response:", response)
-            if img.get_labels is not None and len(img.get_labels()) > 0:
+            if img.get_labels() is not None and len(img.get_labels()) > 0:
                 response = self.__save_labels(img.get_labels(), id_img) and response
             if img.get_emotions() is not None and len(img.get_emotions()) > 0:
                 response = self.__save_emotions(img.get_emotions(), id_img) and response

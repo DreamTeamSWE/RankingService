@@ -91,8 +91,9 @@ class RepositoryExternal:
 
             list_img = self.database.do_read_query(query, param)
             print("list_img: ", list_img)
-            r["id_immagine"] = list_img
-            r["nome_label"] = []
+            for img in list_img:
+                r["url_immagine"] = self.__create_presigned_url(str(img['id_immagine']) + ".jpg")
+                r["nome_label"] = []
 
             for img_name in list_img:
                 param = [{"name": "id_immagine", "value": {"longValue": img_name["id_immagine"]}}]
