@@ -70,8 +70,10 @@ class RepositoryExternal:
         :param id_rist: id of restaurant
         :return: post and tag of restaurant
         """
-        query = "select * from post p join immagine i on p.id_post = i.id_post join label_img l on l.id_immagine = " \
-                "i.id_immagine where p.id_ristorante = :id_ristorante group by p.id_ristorante"
+        # query = "select * from post p join immagine i on p.id_post = i.id_post join label_img l on " \
+        #         "l.id_immagine = i.id_immagine where p.id_ristorante = :id_ristorante group by p.id_ristorante"
+
+        query = "select * from post p where p.id_ristorante = :id_ristorante"
 
         print("query: ", query)
 
@@ -79,7 +81,26 @@ class RepositoryExternal:
 
         print("param: ", param)
 
-        return self.database.do_read_query(query, param)
+        response = self.database.do_read_query(query, param)
+
+        for r in response:
+            id_post = r["id_post"]
+            param = [{"name": "id_post", "value": {"stringValue": id_post}}]
+            query = "select i.id_immagine from immagine i where i.id_post = :id_post"
+
+            list_img = self.database.do_read_query(query, param)
+            print("list_img: ", list_img)
+            r["id_immagine"] = list_img
+            r["nome_label"] = []
+
+            for img_name in list_img:
+                param = [{"name": "id_immagine", "value": {"longValue": img_name["id_immagine"]}}]
+                query = "select l.nome_label from label_img l where l.id_immagine = :id_immagine"
+                list_label = self.database.do_read_query(query, param)
+                print("list_label: ", list_label)
+                r["nome_label"].append(list_label)
+
+        return response
 
     def search_restaurants_by_name(self, name: str) -> dict:
         """
