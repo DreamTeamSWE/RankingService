@@ -1,6 +1,8 @@
 import base64
 import json
 import time
+from typing import List
+
 import boto3
 import logging
 from botocore.exceptions import ClientError
@@ -88,7 +90,7 @@ class DatabaseHandler:
             logging.info('cannot connect to DB')
 
     @staticmethod
-    def __parse_result(results):
+    def __parse_result(results) -> List:
         """
         Parse result from RDS Data API.
 

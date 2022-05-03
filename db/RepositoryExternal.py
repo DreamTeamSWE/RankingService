@@ -7,7 +7,8 @@ class RepositoryExternal:
     def __init__(self, db_name: str = 'ranking_test') -> None:
         self.database = DatabaseHandler(db_name)
 
-    def __create_presigned_url(self, object_name: str, bucket_name: str = 'dream-team-img-test', expiration=3600):
+    def __create_presigned_url(self, object_name: str, bucket_name: str = 'dream-team-img-test',
+                               expiration=3600) -> str:
         """Generate a presigned URL to share an S3 object
 
         :param bucket_name: string
@@ -27,7 +28,7 @@ class RepositoryExternal:
         # The response contains the presigned URL
         return response
 
-    def get_ranking(self, position: int, size: int):
+    def get_ranking(self, position: int, size: int) -> dict:
         """
         return restaurants ranking, ordered by sum of punteggio_emoji, punteggio_foto ,punteggio_testo
 
