@@ -195,7 +195,7 @@ class PostAnalyzer(Analyzer, ABC):
         print("\nHello from PostAnalyzer\n")
 
         # calcolo punteggio caption con comprehend
-        score = self.__detect_sentiment_text(post, self.__detect_language_text(post.get_caption))
+        score = self.__detect_sentiment_text(post, self.__detect_language_text(post.get_caption()))
         post.set_comprehend_score(score)
         post.calculate_and_set_text_score()
 
