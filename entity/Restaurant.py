@@ -100,15 +100,15 @@ class Restaurant:
         )
 
     def __str__(self) -> str:
-        return "Restaurant: " + str(
-            self.__id) + " \n" + \
-               self.__name + " \n" + \
-               self.__address + " \n" + \
-               self.__phone + " \n" + \
-               self.__website + "\n" + \
+        return "Restaurant: " + \
+               str(self.__id) + " \n" + \
+               str(self.__name) + " \n" + \
+               str(self.__address) + " \n" + \
+               str(self.__phone) + " \n" + \
+               str(self.__website) + "\n" + \
                str(self.__lat) + " \n" + \
                str(self.__lng) + " \n" + \
-               self.__category + " \n" + \
+               str(self.__category) + " \n" + \
                str(self.__emoji_score) + " \n" + \
                str(self.__image_score) + " \n" + \
                str(self.__text_score)

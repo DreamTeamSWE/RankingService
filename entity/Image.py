@@ -51,4 +51,4 @@ class Image:
 
     # to string
     def __str__(self) -> str:
-        return "image name: " + self.__image_name
+        return "image name: " + str(self.__image_name)
