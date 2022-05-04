@@ -18,7 +18,7 @@ class Image:
         self.__image_name = image_name
         self.__labels = {}
         self.__emotions = {}
-        self.__emotions_confidence = [{}]
+        self.__emotions_confidence = []
 
     def set_labels(self, labels: dict):
         self.__labels = labels

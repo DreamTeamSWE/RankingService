@@ -36,7 +36,7 @@ class PostAnalyzer(Analyzer, ABC):
 
         # get language code
         language = languages['LanguageCode']
-
+        print(language)
         return language
 
     def __detect_sentiment_text(self, post: CrawledData, language: str = 'it') -> Optional[ScoreComprehend]:
@@ -52,7 +52,8 @@ class PostAnalyzer(Analyzer, ABC):
         print("\n-------------------")
         print('detect_sentiment_text')
 
-        if post.get_caption() is not None:
+        if post.get_caption() and \
+                language in ['ar', 'hi', 'ko', 'zh-TW', 'ja', 'zh', 'de', 'pt', 'en', 'it', 'fr', 'es']:
             # result of comprehend
             json_result = self.__comprehend.detect_sentiment(Text=post.get_caption(), LanguageCode=language)
 
@@ -224,4 +225,4 @@ class PostAnalyzer(Analyzer, ABC):
         post.calculate_and_set_image_score()
         repository = RepositoryInternal()
         repository.save_post(post)
-        repository.update_restaurant_scores(post.restaurant)
+        repository.update_restaurant_scores(post.get_restaurant())
