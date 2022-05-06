@@ -113,7 +113,7 @@ class RepositoryExternal:
         :param name: name to search
         :return: list of restaurants
         """
-        query = "SELECT * FROM ristorante WHERE nome_ristorante LIKE :nome_ristorante"
+        query = "SELECT * FROM ristorante WHERE nome_ristorante LIKE :nome_ristorante LIMIT 10;"
         param = [{"name": "nome_ristorante", "value": {"stringValue": "%" + name + "%"}}]
         response = self.database.do_read_query(query, param)
         print(response)
