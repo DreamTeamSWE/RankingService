@@ -31,6 +31,7 @@ functions:
         - 'searchByName.py'
         - 'getLabelAndPost.py'
         - 'getRanking.py'
+        - 'favoritesManager.py'
         - 'db/RepositoryExternal.py'
     iamRoleStatements:
       - Effect: Allow
@@ -74,6 +75,7 @@ functions:
       exclude:
         - 'refreshRanking.py'
         - 'searchByName.py'
+        - 'favoritesManager.py'
         - 'getLabelAndPost.py'
         - 'db/RepositoryInternal.py'
         - 'db/RepositoryFavorites.py'
@@ -113,6 +115,7 @@ functions:
       exclude:
         - 'refreshRanking.py'
         - 'searchByName.py'
+        - 'favoritesManager.py'
         - 'getRanking.py'
         - 'db/RepositoryInternal.py'
         - 'db/RepositoryFavorites.py'
@@ -152,6 +155,7 @@ functions:
     package:
       exclude:
         - 'refreshRanking.py'
+        - 'favoritesManager.py'
         - 'getLabelAndPost.py'
         - 'getRanking.py'
         - 'db/RepositoryInternal.py'
@@ -185,6 +189,39 @@ functions:
           method: POST
           cors: true
 
+  favorites:
+    handler: favoritesManager.favorites_handler
+    timeout: 30
+    package:
+      exclude:
+        - 'refreshRanking.py'
+        - 'searchByName.py'
+        - 'getLabelAndPost.py'
+        - 'getRanking.py'
+        - 'db/RepositoryInternal.py'
+        - 'db/RepositoryExternal.py'
+        - 'entity/**'
+        - 'analyzer/**'
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - 'secretsmanager:GetSecretValue'
+        Resource:
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.secretRds}'
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.sercetCredentials}'
+      - Effect: Allow
+        Action:
+          - 'rds-data:ExecuteStatement'
+          - 'rds-data:BeginTransaction'
+          - 'rds-data:CommitTransaction'
+          - 'rds-data:BatchExecuteStatement'
+        Resource: 'arn:aws:rds:eu-central-1:123446374287:cluster:${self:custom.clusterRds}'
+    events:
+      - http:
+          path: favorites
+          method: GET
+          cors: true
+
 plugins:
   - serverless-iam-roles-per-function
   - serverless-python-requirements
@@ -197,6 +234,5 @@ custom:
   clusterRds: sweeat
   pythonRequirements:
     dockerizePip: false
-
 
 #          - "arn:aws:s3:::dream-team-img-test/*"

@@ -91,7 +91,10 @@ class RepositoryExternal:
 
             list_img = self.database.do_read_query(query, param)
             print("list_img: ", list_img)
-            r["id_immagine"] = list_img
+            list_url_img = []
+            for img in list_img:
+                list_url_img.append(self.__create_presigned_url(str(img['id_immagine']) + ".jpg"))
+            r["url_immagine"] = list_url_img
             r["nome_label"] = []
 
             for img_name in list_img:
@@ -130,5 +133,31 @@ class RepositoryExternal:
                 query += " LIMIT 10;"
                 print(query)
                 response = self.database.do_read_query(query, param)
+                for rist in response:
+                    param = [{"name": "id_rist", "value": {"longValue": rist["id_ristorante"]}}]
+                    print(param)
+                    query = "select immagine.id_immagine from post join ristorante on post.id_ristorante = " \
+                            "ristorante.id_ristorante join immagine on immagine.id_post = post.id_post where " \
+                            "ristorante.id_ristorante = :id_rist"
+
+                    list_img = self.database.do_read_query(query, param)
+                    print("list_img: ", list_img)
+                    list_url_img = []
+                    for img in list_img:
+                        list_url_img.append(self.__create_presigned_url(str(img['id_immagine']) + ".jpg"))
+                    rist["url_immagine"] = list_url_img
+        else:
+            param = [{"name": "id_rist", "value": {"longValue": response[0]["id_ristorante"]}}]
+            print(param)
+            query = "select immagine.id_immagine from post join ristorante on post.id_ristorante = " \
+                    "ristorante.id_ristorante join immagine on immagine.id_post = post.id_post where " \
+                    "ristorante.id_ristorante = :id_rist"
+
+            list_img = self.database.do_read_query(query, param)
+            print("list_img: ", list_img)
+            list_url_img = []
+            for img in list_img:
+                list_url_img.append(self.__create_presigned_url(str(img['id_immagine']) + ".jpg"))
+            response[0]["url_immagine"] = list_url_img
 
         return response

@@ -161,7 +161,7 @@ class RepositoryInternal:
             response1 = self.database.do_write_query(query, param)
             response = (response1['numberOfRecordsUpdated'] > 0) and response
             print("saved image " + img.get_image_name() + " in table immagine, response:", response)
-            if img.get_labels is not None and len(img.get_labels()) > 0:
+            if img.get_labels() is not None and len(img.get_labels()) > 0:
                 response = self.__save_labels(img.get_labels(), id_img) and response
             if img.get_emotions() is not None and len(img.get_emotions()) > 0:
                 response = self.__save_emotions(img.get_emotions(), id_img) and response
@@ -277,9 +277,10 @@ class RepositoryInternal:
         response = self.database.do_read_query(query, param)
         if response['numberOfRecordsUpdated'] > 0:
             restaurant = Restaurant(id_rist=response[0], nome=response[1], indirizzo=response[2], telefono=response[3],
-                                    sito=response[4], lat=response[5], lng=response[6], categoria=response[7],
-                                    punt_emoji=response[8],
-                                    punt_foto=response[9], punt_testo=response[10])
+                                    sito=response[4], lat=response[5], lng=response[6], categoria=response[7])
+            restaurant.set_emoji_score(response[8])
+            restaurant.set_image_score(response[9])
+            restaurant.set_text_score(response[10])
             return restaurant
 
         return None

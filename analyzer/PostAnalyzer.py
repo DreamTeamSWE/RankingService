@@ -36,7 +36,7 @@ class PostAnalyzer(Analyzer, ABC):
 
         # get language code
         language = languages['LanguageCode']
-
+        print(language)
         return language
 
     def __detect_sentiment_text(self, post: CrawledData, language: str = 'it') -> Optional[ScoreComprehend]:
@@ -52,9 +52,10 @@ class PostAnalyzer(Analyzer, ABC):
         print("\n-------------------")
         print('detect_sentiment_text')
 
-        if post.get_caption() is not None:
+        if post.get_caption() and \
+                language in ['ar', 'hi', 'ko', 'zh-TW', 'ja', 'zh', 'de', 'pt', 'en', 'it', 'fr', 'es']:
             # result of comprehend
-            json_result = self.__comprehend.detect_sentiment(Text=post.get_caption, LanguageCode=language)
+            json_result = self.__comprehend.detect_sentiment(Text=post.get_caption(), LanguageCode=language)
 
             # get sentiment
             array = json_result["SentimentScore"]
@@ -195,7 +196,7 @@ class PostAnalyzer(Analyzer, ABC):
         print("\nHello from PostAnalyzer\n")
 
         # calcolo punteggio caption con comprehend
-        score = self.__detect_sentiment_text(post, self.__detect_language_text(post.get_caption))
+        score = self.__detect_sentiment_text(post, self.__detect_language_text(post.get_caption()))
         post.set_comprehend_score(score)
         post.calculate_and_set_text_score()
 
@@ -208,10 +209,11 @@ class PostAnalyzer(Analyzer, ABC):
         print('emoji score: ' + str(emoji_score) if emoji_score is not None else 'No emoji detected')
 
         # calcolo punteggio per ogni immagine e salvo
-        if post.get_list_images() is not None:
+        if not post.get_list_images():
             for image in post.get_list_images():
-                print("image name " + image.image_name)
-                labels, emotions, emotions_confidence = self.__analyze_image(image.image_name)
+                image_name = image.get_image_name()
+                print("image name " + image_name)
+                labels, emotions, emotions_confidence = self.__analyze_image(image_name)
 
                 image.set_labels(labels)
                 image.set_emotions(emotions)
@@ -223,4 +225,4 @@ class PostAnalyzer(Analyzer, ABC):
         post.calculate_and_set_image_score()
         repository = RepositoryInternal()
         repository.save_post(post)
-        repository.update_restaurant_scores(post.restaurant)
+        repository.update_restaurant_scores(post.get_restaurant())
