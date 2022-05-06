@@ -130,6 +130,7 @@ class RepositoryExternal:
                     i += 1
 
                 query = query[:-4]
+                query += " LIMIT 10;"
                 print(query)
                 response = self.database.do_read_query(query, param)
                 for rist in response:
