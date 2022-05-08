@@ -74,18 +74,13 @@ functions:
     package:
       exclude:
         - 'refreshRanking.py'
-        - 'searchByName.py'
         - 'favoritesManager.py'
         - 'getLabelAndPost.py'
+        - 'searchByName.py'
         - 'db/RepositoryInternal.py'
         - 'db/RepositoryFavorites.py'
         - 'entity/**'
         - 'analyzer/**'
-    events:
-      - http:
-          path: getRanking
-          method: GET
-          cors: true
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -107,6 +102,11 @@ functions:
         Resource:
           - "arn:aws:s3:::${self:custom.bucketNameImage}"
           - "arn:aws:s3:::${self:custom.bucketNameImage}/*"
+    events:
+      - http:
+          path: getRanking
+          method: GET
+          cors: true
 
   getLabelAndPost:
     handler: getLabelAndPost.get_label_and_post
