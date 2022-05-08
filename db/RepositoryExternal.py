@@ -106,6 +106,22 @@ class RepositoryExternal:
 
         return response
 
+    def __get_image_url_by_id_rist(self, id_rist: int) -> str:
+        param = [{"name": "id_rist", "value": {"longValue": id_rist}}]
+        print(param)
+
+        query = "select immagine.id_immagine from post join ristorante on post.id_ristorante = " \
+                "ristorante.id_ristorante join immagine on immagine.id_post = post.id_post where " \
+                "ristorante.id_ristorante = :id_rist LIMIT 1;"
+
+        list_img = self.database.do_read_query(query, param)
+        print("list_img: ", list_img)
+
+        image_name = str(list_img[0]["id_immagine"]) + ".jpg"
+        print("image_name: ", image_name)
+
+        return self.__create_presigned_url(image_name)
+
     def search_restaurants_by_name(self, name: str) -> dict:
         """
         get all restaurant which name LIKE :param name
@@ -133,33 +149,10 @@ class RepositoryExternal:
                 query += " LIMIT 10;"
                 print(query)
                 response = self.database.do_read_query(query, param)
-                for rist in response:
-                    param = [{"name": "id_rist", "value": {"longValue": rist["id_ristorante"]}}]
-                    print(param)
-                    query = "select immagine.id_immagine from post join ristorante on post.id_ristorante = " \
-                            "ristorante.id_ristorante join immagine on immagine.id_post = post.id_post where " \
-                            "ristorante.id_ristorante = :id_rist LIMIT 1;"
 
-                    list_img = self.database.do_read_query(query, param)
-                    print("list_img: ", list_img)
-                    # list_url_img = []
-                    # for img in list_img:
-                    #     list_url_img.append(self.__create_presigned_url(str(img['id_immagine']) + ".jpg"))
-                    # rist["url_immagine"] = list_url_img
-                    rist["url_immagine"] = self.__create_presigned_url(str(list_img) + ".jpg")
-        else:
-            param = [{"name": "id_rist", "value": {"longValue": response[0]["id_ristorante"]}}]
-            print(param)
-            query = "select immagine.id_immagine from post join ristorante on post.id_ristorante = " \
-                    "ristorante.id_ristorante join immagine on immagine.id_post = post.id_post where " \
-                    "ristorante.id_ristorante = :id_rist LIMIT 1;"
-
-            list_img = self.database.do_read_query(query, param)
-            print("list_img: ", list_img)
-            # list_url_img = []
-            # for img in list_img:
-            #     list_url_img.append(self.__create_presigned_url(str(img['id_immagine']) + ".jpg"))
-            # response[0]["url_immagine"] = list_url_img
-            response[0]["url_immagine"] = self.__create_presigned_url(str(list_img) + ".jpg")
+        for rist in response:
+            rist["url_immagine"] = self.__get_image_url_by_id_rist(rist["id_ristorante"])
+        # else:
+        #     response[0]["url_immagine"] = self.__get_image_url_by_id_rist(response[0]["id_ristorante"])
 
         return response
