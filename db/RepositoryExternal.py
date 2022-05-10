@@ -48,7 +48,7 @@ class RepositoryExternal:
                 "join immagine i on p.id_post=i.id_post " \
                 "where i.id_immagine not in (select e.id_immagine from emozione_img e) " \
                 "group by r.id_ristorante " \
-                "order by (r.punteggio_emoji+r.punteggio_foto+r.punteggio_testo) desc " \
+                "order by (avg(r.punteggio_emoji+r.punteggio_foto+r.punteggio_testo)) desc " \
                 "limit :position, :size"
 
         response = self.database.do_read_query(query, [position_param, size_param])
