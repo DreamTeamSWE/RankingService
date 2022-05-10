@@ -43,12 +43,21 @@ class RepositoryExternal:
         print("position_param: ", position_param)
         print("size_param: ", size_param)
 
-        query = "select r.*,i.id_immagine as url_image from ristorante as r " \
+        query = "select " \
+                "r.*, " \
+                "i.id_immagine as url_image " \
+                "from ristorante as r " \
                 "join post p on r.id_ristorante=p.id_ristorante " \
                 "join immagine i on p.id_post=i.id_post " \
                 "where i.id_immagine not in (select e.id_immagine from emozione_img e) " \
+                "and (r.punteggio_emoji is not null " \
+                "or r.punteggio_foto is not null " \
+                "or r.punteggio_testo is not null) " \
                 "group by r.id_ristorante " \
-                "order by (avg(r.punteggio_emoji+r.punteggio_foto+r.punteggio_testo)) desc " \
+                "order by (IFNULL(r.punteggio_emoji,0) + IFNULL(r.punteggio_foto,0) + IFNULL(r.punteggio_testo,0))/" \
+                "(case when r.punteggio_emoji is not null then 1 else 0 end + " \
+                "case when r.punteggio_foto is not null then 1 else 0 end + " \
+                "case when r.punteggio_testo is not null then 1 else 0 end) desc " \
                 "limit :position, :size"
 
         response = self.database.do_read_query(query, [position_param, size_param])
