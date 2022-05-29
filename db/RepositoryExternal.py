@@ -158,5 +158,4 @@ class RepositoryExternal:
             for img in list_img:
                 list_url_img.append(self.__create_presigned_url(str(img['id_immagine']) + ".jpg"))
             response[0]["url_immagine"] = list_url_img
-
         return response

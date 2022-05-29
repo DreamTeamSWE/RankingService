@@ -19,6 +19,7 @@ class ScoreComprehend:
     # set principal sentiment
 
     def set_sentiment(self, sentiment: str):
+        sentiment = sentiment.lower()
         if sentiment == "positive":
             self.__principal_sentiment = Sentiment.POSITIVE
         elif sentiment == "negative":

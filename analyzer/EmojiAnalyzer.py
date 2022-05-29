@@ -95,5 +95,5 @@ class EmojiAnalyzer(Analyzer, ABC):
                 return None  # trovato solo emoji non supportate
         else:
             print('found no emoji')
-            return None  # non so state trovat emoji
+            return None  # non so state trovato emoji
 

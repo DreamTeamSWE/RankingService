@@ -80,20 +80,20 @@ class CrawledData:
                 restaurant=restaurant,
                 list_images=list_img)
 
-        elif 'img_url' in item_body:
-            for img in item_body['img_url']:
-                img = str(img)
-                if not img.__contains__('.jpg'):
-                    img = str(img) + ".jpg"
-                list_img.append(Image(img))
-
-            return CrawledData(
-                id_post=item_body['post_id'],
-                author=item_body['username'],
-                date_post=item_body['date'][0:10],
-                caption=item_body['caption_text'],
-                restaurant=restaurant,
-                list_images=list_img)
+        # elif 'img_url' in item_body:
+        #     for img in item_body['img_url']:
+        #         img = str(img)
+        #         if not img.__contains__('.jpg'):
+        #             img = str(img) + ".jpg"
+        #         list_img.append(Image(img))
+        #
+        #     return CrawledData(
+        #         id_post=item_body['post_id'],
+        #         author=item_body['username'],
+        #         date_post=item_body['date'][0:10],
+        #         caption=item_body['caption_text'],
+        #         restaurant=restaurant,
+        #         list_images=list_img)
 
     def set_param_for_query(self) -> list:
         """

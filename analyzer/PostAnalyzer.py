@@ -183,8 +183,31 @@ class PostAnalyzer(Analyzer, ABC):
         print("-------------------\n")
         return labels, emotions, emotions_confidence
 
-    def __analyze_emoji(self, post: CrawledData) -> float:
-        return self.__emoji_analyzer.analyze(post)
+    def calculate_emoji_score(self, post: CrawledData) -> float:
+        emoji_score = self.__emoji_analyzer.analyze(post)
+        post.set_emoji_score(emoji_score)
+        return emoji_score
+
+    def calculate_text_score(self, post: CrawledData) -> float:
+        score = self.__detect_sentiment_text(post, self.__detect_language_text(post.get_caption()))
+        post.set_comprehend_score(score)
+        post.calculate_and_set_text_score()
+        return score
+
+    def calculate_image_score(self, post: CrawledData):
+        if not post.get_list_images():
+            for image in post.get_list_images():
+                image_name = image.get_image_name()
+                print("image name " + image_name)
+                labels, emotions, emotions_confidence = self.__analyze_image(image_name)
+
+                image.set_labels(labels)
+                image.set_emotions(emotions)
+                image.set_emotions_confidence(emotions_confidence)
+        else:
+            print("\nNo image in post\n")
+
+        post.calculate_and_set_image_score()
 
     def analyze(self, post: CrawledData):
         """
@@ -196,33 +219,19 @@ class PostAnalyzer(Analyzer, ABC):
         print("\nHello from PostAnalyzer\n")
 
         # calcolo punteggio caption con comprehend
-        score = self.__detect_sentiment_text(post, self.__detect_language_text(post.get_caption()))
-        post.set_comprehend_score(score)
-        post.calculate_and_set_text_score()
+
+        score = self.calculate_text_score(post)
 
         print("\ncomprehend score: " + str(score) if score else 'no text found' + "\n-------------------\n")
 
         # calcolo punteggio emoji
-        emoji_score = self.__analyze_emoji(post)
-        post.set_emoji_score(emoji_score)
+        emoji_score = self.calculate_emoji_score(post)
 
         print('emoji score: ' + str(emoji_score) if emoji_score is not None else 'No emoji detected')
 
         # calcolo punteggio per ogni immagine e salvo
-        if not post.get_list_images():
-            for image in post.get_list_images():
-                image_name = image.get_image_name()
-                print("image name " + image_name)
-                labels, emotions, emotions_confidence = self.__analyze_image(image_name)
+        self.calculate_image_score(post)
 
-                image.set_labels(labels)
-                image.set_emotions(emotions)
-                image.set_emotions_confidence(emotions_confidence)
-
-        else:
-            print("\nNo image in post\n")
-
-        post.calculate_and_set_image_score()
         repository = RepositoryInternal()
         repository.save_post(post)
         repository.update_restaurant_scores(post.get_restaurant())
