@@ -49,9 +49,15 @@ def filter_coordinate(event, context) -> json:
 
         repo_ext = RepositoryExternal()
         city_coordinate = repo_ext.get_coordinate_by_city_name(location)
+
+        lat = float(city_coordinate[0]['lat'])
+        lng = float(city_coordinate[0]['lng'])
+
+        print("get_ranking: " + str(lat) + " " + str(lng))
+
         list_restaurants = \
-            repo_ext.filter_by_coordinate(city_coordinate['lat'],
-                                          city_coordinate['lng'],
+            repo_ext.filter_by_coordinate(lat,
+                                          lng,
                                           int_radius_miles,
                                           int_position,
                                           int_size)

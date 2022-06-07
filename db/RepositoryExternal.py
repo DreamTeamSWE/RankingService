@@ -203,7 +203,7 @@ class RepositoryExternal:
 
         return response
 
-    def filter_by_coordinate(self, lat: float, lng: float, radius: int, position: int, size: int) -> dict:
+    def filter_by_coordinate(self, lat: float, lng: float, radius: float, position: int, size: int) -> dict:
         """
         return restaurants ranking, ordered by sum of punteggio_emoji, punteggio_foto ,punteggio_testo
 
@@ -215,9 +215,9 @@ class RepositoryExternal:
         :return: filtered restaurants
         """
 
-        lat_param = {"name": "lat", "value": {"doubleValue": lat}}
-        lng_param = {"name": "lng", "value": {"doubleValue": lng}}
-        radius_param = {"name": "radius", "value": {"longValue": radius}}
+        lat_param = {"name": "lat_param", "value": {"doubleValue": lat}}
+        lng_param = {"name": "lng_param", "value": {"doubleValue": lng}}
+        radius_param = {"name": "radius_param", "value": {"doubleValue": radius}}
 
         print("lat_param: ", lat_param)
         print("lng_param: ", lng_param)
