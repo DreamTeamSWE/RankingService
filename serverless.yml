@@ -109,7 +109,7 @@ functions:
           cors: true
 
   filterCoordinate:
-    handler: getRanking.get_ranking
+    handler: filterCoordinate.filter_coordinate
     timeout: 30
     package:
       exclude:

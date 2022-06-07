@@ -28,6 +28,103 @@ class RepositoryExternal:
         # The response contains the presigned URL
         return response
 
+    def get_coordinate_by_city_name(self, city_name: str) -> dict:
+        """
+        return coordinate of city
+
+        :param city_name: name of city
+        :return: coordinate of city
+        """
+        query = "select latitudine as lat, longitudine as lng from citta where nome = :city_name"
+
+        param = [{"name": "city_name", "value": {"stringValue": city_name}}]
+
+        response = self.database.do_read_query(query, param)
+
+        return response
+
+    def __iterate_over_response_ranking_restaurants(self, response: dict) -> dict:
+        # iterate over response
+        for r in response:
+            image_name = str(r["url_image"]) + ".jpg"
+            print("image_name: ", image_name)
+            url_image = self.__create_presigned_url(image_name)
+            print("url_image: ", url_image)
+            r["url_image"] = url_image
+
+        return response
+
+    def filter_by_coordinate(self, lat: float, lng: float, radius: int, position: int, size: int) -> dict:
+        """
+        return restaurants ranking, ordered by sum of punteggio_emoji, punteggio_foto ,punteggio_testo
+
+        :param lat: latitude of city
+        :param lng: longitude of city
+        :param radius: radius of search
+        :param position: position from where to start (possible numbers start from 0)
+        :param size: numbers of restaurants to return
+        :return: filtered restaurants
+        """
+
+        lat_param = {"name": "lat", "value": {"doubleValue": lat}}
+        lng_param = {"name": "lng", "value": {"doubleValue": lng}}
+        radius_param = {"name": "radius", "value": {"longValue": radius}}
+
+        print("lat_param: ", lat_param)
+        print("lng_param: ", lng_param)
+        print("radius_param: ", radius_param)
+
+        position_param = {"name": "position", "value": {"longValue": position}}
+        size_param = {"name": "size", "value": {"longValue": size}}
+
+        print("position_param: ", position_param)
+        print("size_param: ", size_param)
+
+        query = "select " \
+                "r.*, " \
+                "i.id_immagine as url_image " \
+                "from ristorante as r " \
+                "join post p on r.id_ristorante=p.id_ristorante " \
+                "join immagine i on p.id_post=i.id_post " \
+                "where i.id_immagine not in (select e.id_immagine from emozione_img e) " \
+                "and (r.punteggio_emoji is not null " \
+                "or r.punteggio_foto is not null " \
+                "or r.punteggio_testo is not null) " \
+                "and ( " \
+                " acos(sin(r.latitudine * 0.0175) * sin(:lat_param * 0.0175)  " \
+                "      + cos(r.latitudine * 0.0175) * cos(:lat_param * 0.0175) * " \
+                "        cos((:lng_param * 0.0175) - (r.longitudine * 0.0175)) " \
+                "     ) * 3959 <= :radius_param " \
+                ") " \
+                "group by r.id_ristorante " \
+                "order by (IFNULL(r.punteggio_emoji,0) + " \
+                "IFNULL(r.punteggio_foto,0) + " \
+                "IFNULL(r.punteggio_testo,0))/" \
+                "(case when r.punteggio_emoji is not null then 1 else 0 end + " \
+                "case when r.punteggio_foto is not null then 1 else 0 end + " \
+                "case when r.punteggio_testo is not null then 1 else 0 end) desc " \
+                "limit :position, :size"
+
+        response = self.database.do_read_query(query,
+                                               [lat_param,
+                                                lng_param,
+                                                radius_param,
+                                                position_param,
+                                                size_param])
+        print("query: ", query)
+
+        return self.__iterate_over_response_ranking_restaurants(response)
+
+        # # iterate over response
+        # for r in response:
+        #     image_name = str(r["url_image"]) + ".jpg"
+        #     print("image_name: ", image_name)
+        #     url_image = self.__create_presigned_url(image_name)
+        #     print("url_image: ", url_image)
+        #     r["url_image"] = url_image
+        #
+        # return response
+
     def get_ranking(self, position: int, size: int) -> dict:
         """
         return restaurants ranking, ordered by sum of punteggio_emoji, punteggio_foto ,punteggio_testo
@@ -63,15 +160,17 @@ class RepositoryExternal:
         response = self.database.do_read_query(query, [position_param, size_param])
         print("query: ", query)
 
-        # iterate over response
-        for r in response:
-            image_name = str(r["url_image"]) + ".jpg"
-            print("image_name: ", image_name)
-            url_image = self.__create_presigned_url(image_name)
-            print("url_image: ", url_image)
-            r["url_image"] = url_image
+        return self.__iterate_over_response_ranking_restaurants(response)
 
-        return response
+        # # iterate over response
+        # for r in response:
+        #     image_name = str(r["url_image"]) + ".jpg"
+        #     print("image_name: ", image_name)
+        #     url_image = self.__create_presigned_url(image_name)
+        #     print("url_image: ", url_image)
+        #     r["url_image"] = url_image
+        #
+        # return response
 
     def get_post_and_tag_by_restaurant(self, id_rist: int) -> dict:
         """
@@ -138,7 +237,7 @@ class RepositoryExternal:
         :param name: name to search
         :return: list of restaurants
         """
-        query = "SELECT * FROM ristorante WHERE nome_ristorante LIKE :nome_ristorante LIMIT 10;"
+        query = "select * from ristorante where nome_ristorante like :nome_ristorante LIMIT 10;"
         param = [{"name": "nome_ristorante", "value": {"stringValue": "%" + name + "%"}}]
         response = self.database.do_read_query(query, param)
         print(response)
@@ -146,16 +245,16 @@ class RepositoryExternal:
         if len(response) == 0:
             name_parts = name.split(" ")
             if name_parts.__sizeof__() > 0:
-                query = "SELECT * FROM ristorante WHERE "
+                query = "select * from ristorante where "
                 i = 0
                 param = []
                 for part in name_parts:
-                    query += "nome_ristorante LIKE :nome_ristorante" + str(i) + " OR "
+                    query += "nome_ristorante like :nome_ristorante" + str(i) + " OR "
                     param.append({"name": "nome_ristorante" + str(i), "value": {"stringValue": "%" + part + "%"}})
                     i += 1
 
                 query = query[:-4]
-                query += " LIMIT 10;"
+                query += " limit 10;"
                 print(query)
                 response = self.database.do_read_query(query, param)
 
