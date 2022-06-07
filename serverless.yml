@@ -108,6 +108,46 @@ functions:
           method: GET
           cors: true
 
+  getCities:
+    handler: getCities.get_cities
+    timeout: 30
+    package:
+      exclude:
+        - 'refreshRanking.py'
+        - 'favoritesManager.py'
+        - 'getLabelAndPost.py'
+        - 'searchByName.py'
+        - 'db/RepositoryInternal.py'
+        - 'db/RepositoryFavorites.py'
+        - 'entity/**'
+        - 'analyzer/**'
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - 'secretsmanager:GetSecretValue'
+        Resource:
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.secretRds}'
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.sercetCredentials}'
+      - Effect: Allow
+        Action:
+          - 'rds-data:ExecuteStatement'
+          - 'rds-data:BeginTransaction'
+          - 'rds-data:CommitTransaction'
+          - 'rds-data:BatchExecuteStatement'
+        Resource: 'arn:aws:rds:eu-central-1:123446374287:cluster:${self:custom.clusterRds}'
+      - Effect: "Allow"
+        Action:
+          - "s3:ListObjects"
+          - "s3:GetObject"
+        Resource:
+          - "arn:aws:s3:::${self:custom.bucketNameImage}"
+          - "arn:aws:s3:::${self:custom.bucketNameImage}/*"
+    events:
+      - http:
+          path: getCities
+          method: GET
+          cors: true
+
   filterCoordinate:
     handler: filterCoordinate.filter_coordinate
     timeout: 30
@@ -144,7 +184,7 @@ functions:
           - "arn:aws:s3:::${self:custom.bucketNameImage}/*"
     events:
       - http:
-          path: getRanking
+          path: filterCoordinate
           method: GET
           cors: true
 
@@ -274,5 +314,3 @@ custom:
   clusterRds: sweeat
   pythonRequirements:
     dockerizePip: false
-
-#          - "arn:aws:s3:::dream-team-img-test/*"
