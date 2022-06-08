@@ -342,6 +342,46 @@ functions:
           method: GET
           cors: true
 
+  filterCucina:
+    handler: filterCucina.filter_cucina
+    timeout: 30
+    package:
+      exclude:
+        - 'refreshRanking.py'
+        - 'favoritesManager.py'
+        - 'getLabelAndPost.py'
+        - 'searchByName.py'
+        - 'db/RepositoryInternal.py'
+        - 'db/RepositoryFavorites.py'
+        - 'entity/**'
+        - 'analyzer/**'
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - 'secretsmanager:GetSecretValue'
+        Resource:
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.secretRds}'
+          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.sercetCredentials}'
+      - Effect: Allow
+        Action:
+          - 'rds-data:ExecuteStatement'
+          - 'rds-data:BeginTransaction'
+          - 'rds-data:CommitTransaction'
+          - 'rds-data:BatchExecuteStatement'
+        Resource: 'arn:aws:rds:eu-central-1:123446374287:cluster:${self:custom.clusterRds}'
+      - Effect: "Allow"
+        Action:
+          - "s3:ListObjects"
+          - "s3:GetObject"
+        Resource:
+          - "arn:aws:s3:::${self:custom.bucketNameImage}"
+          - "arn:aws:s3:::${self:custom.bucketNameImage}/*"
+    events:
+      - http:
+          path: filterCucina
+          method: GET
+          cors: true
+
 
 plugins:
   - serverless-iam-roles-per-function

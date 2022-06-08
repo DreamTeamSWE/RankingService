@@ -205,7 +205,7 @@ class RepositoryExternal:
 
     def filter_by_coordinate(self, lat: float, lng: float, radius: float, position: int, size: int) -> dict:
         """
-        return restaurants ranking, ordered by sum of punteggio_emoji, punteggio_foto ,punteggio_testo
+        return restaurants ranking filter per coordinates and radius, ordered by sum of punteggio_emoji, punteggio_foto ,punteggio_testo
 
         :param lat: latitude of city
         :param lng: longitude of city
@@ -282,3 +282,47 @@ class RepositoryExternal:
         query = "select distinct categoria as categorie from ristorante;"
         response = self.database.do_read_query(query, [])
         return response
+
+    def filter_by_cucina(self, cucina: str, position: int, size: int) -> dict:
+        """
+        return restaurants ranking filter per cooking type, ordered by sum of punteggio_emoji, punteggio_foto ,
+        punteggio_testo
+
+        :param cucina: type of restaurant
+        :param position: position from where to start (possible numbers start from 0)
+        :param size: numbers of restaurants to return
+        :return: restaurant list
+        """
+        cucina_param = {"name": "cucina", "value": {"stringValue": cucina}}
+        position_param = {"name": "position", "value": {"longValue": position}}
+        size_param = {"name": "size", "value": {"longValue": size}}
+
+        query = "select " \
+                "r.*, " \
+                "i.id_immagine as url_image " \
+                "from ristorante as r " \
+                "join post p on r.id_ristorante=p.id_ristorante " \
+                "join immagine i on p.id_post=i.id_post " \
+                "where i.id_immagine not in (select e.id_immagine from emozione_img e) " \
+                "and (r.punteggio_emoji is not null " \
+                "or r.punteggio_foto is not null " \
+                "or r.punteggio_testo is not null) " \
+                "and r.categoria = :cucina " \
+                "group by r.id_ristorante " \
+                "order by (IFNULL(r.punteggio_emoji,0) + " \
+                "IFNULL(r.punteggio_foto,0) + " \
+                "IFNULL(r.punteggio_testo,0))/" \
+                "(case when r.punteggio_emoji is not null then 1 else 0 end + " \
+                "case when r.punteggio_foto is not null then 1 else 0 end + " \
+                "case when r.punteggio_testo is not null then 1 else 0 end) desc " \
+                "limit :position, :size"
+
+        response = self.database.do_read_query(query,
+                                               [cucina_param,
+                                                position_param,
+                                                size_param])
+
+        return self.__iterate_over_response_ranking_restaurants(response)
+
+
+
