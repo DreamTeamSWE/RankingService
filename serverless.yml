@@ -302,8 +302,8 @@ functions:
           method: GET
           cors: true
 
-  getLabelCucina:
-    handler: getLabelCucina.get_label_cucina
+  getLabelCategoria:
+    handler: getLabelCategoria.get_label_categoria
     timeout: 30
     package:
       exclude:
@@ -338,12 +338,12 @@ functions:
           - "arn:aws:s3:::${self:custom.bucketNameImage}/*"
     events:
       - http:
-          path: getLabelCucina
+          path: getLabelCategoria
           method: GET
           cors: true
 
-  filterCucina:
-    handler: filterCucina.filter_cucina
+  filterCategoria:
+    handler: filterCategoria.filter_categoria
     timeout: 30
     package:
       exclude:
@@ -378,7 +378,7 @@ functions:
           - "arn:aws:s3:::${self:custom.bucketNameImage}/*"
     events:
       - http:
-          path: filterCucina
+          path: filterCategoria
           method: GET
           cors: true
 

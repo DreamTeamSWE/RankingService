@@ -3,14 +3,14 @@ import json
 from db.RepositoryExternal import RepositoryExternal
 
 
-def filter_cucina(event, context) -> json:
+def filter_categoria(event, context) -> json:
     if 'queryStringParameters' in event and event['queryStringParameters'] is not None \
-            and 'cucina' in event['queryStringParameters']:
+            and 'categoria' in event['queryStringParameters']:
         query_string_parameters = event['queryStringParameters']
 
-        cucina = query_string_parameters['cucina']
+        categoria = query_string_parameters['categoria']
 
-        print("filter_cucina: " + cucina)
+        print("filter_categoria: " + categoria)
 
         if 'from' in query_string_parameters:
             position = query_string_parameters['from']
@@ -24,12 +24,12 @@ def filter_cucina(event, context) -> json:
         else:
             int_size = 10
 
-        print("filter_cucina: " + str(int_position) + " " + str(int_size))
+        print("filter_categoria: " + str(int_position) + " " + str(int_size))
 
         repo_ext = RepositoryExternal()
 
         list_restaurants = \
-            repo_ext.filter_by_cucina(cucina,
+            repo_ext.filter_categoria(categoria,
                                       int_position,
                                       int_size)
 
@@ -52,7 +52,7 @@ def filter_cucina(event, context) -> json:
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
             },
-            'body': json.dumps('cucina is missing')
+            'body': json.dumps('categoria is missing')
         }
 
     return response

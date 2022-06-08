@@ -274,7 +274,7 @@ class RepositoryExternal:
         #
         # return response
 
-    def get_label_cucina(self) -> dict:
+    def get_label_categoria(self) -> dict:
         """
         get label cucina
         :return: list of label cucina
@@ -283,7 +283,7 @@ class RepositoryExternal:
         response = self.database.do_read_query(query, [])
         return response
 
-    def filter_by_cucina(self, cucina: str, position: int, size: int) -> dict:
+    def filter_categoria(self, cucina: str, position: int, size: int) -> dict:
         """
         return restaurants ranking filter per cooking type, ordered by sum of punteggio_emoji, punteggio_foto ,
         punteggio_testo
