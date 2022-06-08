@@ -273,3 +273,12 @@ class RepositoryExternal:
         #     r["url_image"] = url_image
         #
         # return response
+
+    def get_label_cucina(self) -> dict:
+        """
+        get label cucina
+        :return: list of label cucina
+        """
+        query = "select distinct categoria as categorie from ristorante;"
+        response = self.database.do_read_query(query, [])
+        return response

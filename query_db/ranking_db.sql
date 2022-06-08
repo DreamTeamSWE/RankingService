@@ -1,4 +1,4 @@
-ALTER DATABASE ranking_test CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+alter database ranking_test character set = utf8mb4 collate = utf8mb4_unicode_ci;
 drop table if exists ristorante;
 drop table if exists post;
 drop table if exists utente;
