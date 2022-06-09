@@ -43,10 +43,13 @@ class Image:
 
     def calculate_score(self):
         if self.__emotions:
-            partial_sum = 0.0
+            value_sum = 0.0
+            sum_weights = 0.0
             for emotion, num in self.__emotions.items():
-                partial_sum += Emotions[emotion].value * num
-            return partial_sum
+                value_sum += Emotions[emotion].value * num
+                sum_weights += num
+            return 100 * value_sum / sum_weights
+
         return None
 
     # to string

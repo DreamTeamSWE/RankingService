@@ -27,10 +27,13 @@ class CrawledData:
 
     def calculate_and_set_image_score(self):
         if self.__list_images:
+            count = 0
             for image in self.__list_images:
                 score = image.calculate_score()
                 if score is not None:
+                    count += 1
                     self.__image_score = (self.__image_score + score) if self.__image_score is not None else score
+            self.__image_score = self.__image_score / count
 
     def set_emoji_score(self, punt_emoji: float):
         self.__emoji_score = punt_emoji

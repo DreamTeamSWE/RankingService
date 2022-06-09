@@ -286,9 +286,9 @@ class RepositoryInternal:
         return None
 
     def __recalculate_scores(self, param_id: List) -> dict:
-        query = 'select sum(post.punteggio_emoji)/count(*) as "punt_emoji", ' \
-                'sum(post.punteggio_testo)/count(*) as "punt_testo", ' \
-                'sum(post.punteggio_foto)/count(*) as "punt_foto" ' \
+        query = 'select avg(post.punteggio_emoji) as "punt_emoji", ' \
+                'avg(post.punteggio_testo) as "punt_testo", ' \
+                'avg(post.punteggio_foto) as "punt_foto" ' \
                 'from ristorante join post on ' \
                 'ristorante.id_ristorante = post.id_ristorante where ristorante.id_ristorante = :id '
 

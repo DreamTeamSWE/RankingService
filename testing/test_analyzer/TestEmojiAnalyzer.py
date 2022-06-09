@@ -8,7 +8,7 @@ from entity.CrawledData import CrawledData
 class TestEmojiAnalyzer(unittest.TestCase):
     def setUp(self):
         with patch('analyzer.EmojiAnalyzer.EmojiAnalyzer._EmojiAnalyzer__generate_emoji_scores') as mock_file:
-            mock_file.return_value = {'😂': 0.221, '❤': 0.746, '😅': 0.178}
+            mock_file.return_value = {'😂': 0.7105, '❤': 0.973, '😅': 0.689}
             self.emoji_analyzer = EmojiAnalyzer()
 
     def test_analyze_single_emoji(self):

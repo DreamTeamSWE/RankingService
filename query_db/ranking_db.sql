@@ -128,3 +128,10 @@ create table confidenza_emozioni(
     primary key (num_persona, id_immagine),
     foreign key (id_immagine) references immagine(id_immagine) on delete cascade on update cascade
 );
+
+create table citta(
+    nome varchar(100) not null,
+    latitudine decimal(7,4) not null,
+    longitudine decimal(7,4) not null,
+    primary key (nome, latitudine)
+);
