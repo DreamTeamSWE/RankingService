@@ -133,5 +133,7 @@ create table citta(
     nome varchar(100) not null,
     latitudine decimal(7,4) not null,
     longitudine decimal(7,4) not null,
-    primary key (nome, latitudine)
+    provincia varchar(50) not null,
+    regione varchar(50) not null,
+    primary key (nome, provincia, regione)
 );

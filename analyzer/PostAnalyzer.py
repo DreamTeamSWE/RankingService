@@ -197,7 +197,7 @@ class PostAnalyzer(Analyzer, ABC):
         return score
 
     def calculate_image_score(self, post: CrawledData):
-        if not post.get_list_images():
+        if post.get_list_images():
             for image in post.get_list_images():
                 image_name = image.get_image_name()
                 print("image name " + image_name)

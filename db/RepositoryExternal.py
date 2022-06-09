@@ -10,7 +10,6 @@ class RepositoryExternal:
     def __create_presigned_url(self, object_name: str, bucket_name: str = 'dream-team-img-test',
                                expiration=3600) -> str:
         """Generate a presigned URL to share an S3 object
-
         :param bucket_name: string
         :param object_name: string
         :param expiration: Time in seconds for the presigned URL to remain valid
@@ -42,7 +41,6 @@ class RepositoryExternal:
     def get_ranking(self, position: int, size: int) -> dict:
         """
         return restaurants ranking, ordered by sum of punteggio_emoji, punteggio_foto ,punteggio_testo
-
         :param position: position from where to start (possible numbers start from 0)
         :param size: numbers of restaurants to return
         :return: restaurants ranking
@@ -89,7 +87,6 @@ class RepositoryExternal:
     def get_post_and_tag_by_restaurant(self, id_rist: int) -> dict:
         """
         return post and tag of restaurant
-
         :param id_rist: id of restaurant
         :return: post and tag of restaurant
         """
@@ -147,7 +144,6 @@ class RepositoryExternal:
     def search_restaurants_by_name(self, name: str) -> dict:
         """
         get all restaurant which name LIKE :param name
-
         :param name: name to search
         :return: list of restaurants
         """
@@ -191,7 +187,6 @@ class RepositoryExternal:
     def get_coordinate_by_city_name(self, city_name: str) -> dict:
         """
         return coordinate of city
-
         :param city_name: name of city
         :return: coordinate of city
         """
@@ -206,7 +201,6 @@ class RepositoryExternal:
     def filter_by_coordinate(self, lat: float, lng: float, radius: float, position: int, size: int) -> dict:
         """
         return restaurants ranking filter per coordinates and radius, ordered by sum of punteggio_emoji, punteggio_foto ,punteggio_testo
-
         :param lat: latitude of city
         :param lng: longitude of city
         :param radius: radius of search
@@ -287,7 +281,6 @@ class RepositoryExternal:
         """
         return restaurants ranking filter per cooking type, ordered by sum of punteggio_emoji, punteggio_foto ,
         punteggio_testo
-
         :param cucina: type of restaurant
         :param position: position from where to start (possible numbers start from 0)
         :param size: numbers of restaurants to return
@@ -323,6 +316,5 @@ class RepositoryExternal:
                                                 size_param])
 
         return self.__iterate_over_response_ranking_restaurants(response)
-
 
 

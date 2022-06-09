@@ -49,8 +49,8 @@ class Image:
                 value_sum += Emotions[emotion].value * num
                 sum_weights += num
             return 100 * value_sum / sum_weights
-
-        return None
+        else:
+            return None
 
     # to string
     def __str__(self) -> str:

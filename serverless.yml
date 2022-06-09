@@ -22,6 +22,7 @@ package:
     - test_sqs.json
     - requirements_eliminati.txt
     - testing/**
+    - htmlcov/**
 
 functions:
   refreshRanking:
