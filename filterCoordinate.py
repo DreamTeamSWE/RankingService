@@ -5,10 +5,14 @@ from db.RepositoryExternal import RepositoryExternal
 
 def filter_coordinate(event, context) -> json:
     if 'queryStringParameters' in event and event['queryStringParameters'] is not None \
-            and 'location' in event['queryStringParameters']:
+            and 'comune' in event['queryStringParameters'] \
+            and 'provincia' in event['queryStringParameters'] \
+            and 'regione' in event['queryStringParameters']:
         query_string_parameters = event['queryStringParameters']
 
-        location = query_string_parameters['location']
+        city = query_string_parameters['comune']
+        province = query_string_parameters['provincia']
+        region = query_string_parameters['regione']
 
         if 'radius' in query_string_parameters:
             radius = query_string_parameters['radius']
@@ -17,7 +21,7 @@ def filter_coordinate(event, context) -> json:
         else:
             int_radius_miles = 10
 
-        print("filter_coordinate: " + location + " " + str(int_radius_miles))
+        print("filter_coordinate: " + city + " " + region + " " + str(int_radius_miles))
 
         query_string_parameters = event['queryStringParameters']
         if 'from' in query_string_parameters:
@@ -35,7 +39,7 @@ def filter_coordinate(event, context) -> json:
         print("filter_coordinate: " + str(int_position) + " " + str(int_size))
 
         repo_ext = RepositoryExternal()
-        city_coordinate = repo_ext.get_coordinate_by_city_name(location)
+        city_coordinate = repo_ext.get_coordinate_by_city_name(city, province, region)
 
         lat = float(city_coordinate[0]['lat'])
         lng = float(city_coordinate[0]['lng'])

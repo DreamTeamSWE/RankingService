@@ -5,7 +5,12 @@ from db.RepositoryExternal import RepositoryExternal
 
 def get_cities(event, context) -> json:
     repo_ext = RepositoryExternal()
-    list_cities = repo_ext.get_cities()
+    query_params = event['queryStringParameters']
+    result = []
+    if 'regione' in query_params and 'provincia' not in query_params:
+        result = repo_ext.get_provinces_by_region(query_params['regione'])
+    elif 'regione' in query_params and 'provincia' in query_params:
+        result = repo_ext.get_cities(query_params['provincia'], query_params['regione'])
 
     response = {
         'statusCode': 200,
@@ -15,7 +20,7 @@ def get_cities(event, context) -> json:
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
         },
-        "body": json.dumps(list_cities)
+        "body": json.dumps(result)
     }
 
     return response

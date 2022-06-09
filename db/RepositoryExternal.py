@@ -179,25 +179,43 @@ class RepositoryExternal:
 
         return response
 
-    def get_cities(self) -> dict:
+    def get_cities(self, province: str, region: str) -> dict:
         """
         get city list
         :return: list of cities
         """
-        query = "select * from citta;"
-        response = self.database.do_read_query(query, [])
+        query = "select nome from citta where regione = :regione and provincia = :provincia"
+        param = [{"name": "regione", "value": {"stringValue": region}},
+                 {"name": "provincia", "value": {"stringValue": province}}]
+        response = self.database.do_read_query(query, param)
         return response
 
-    def get_coordinate_by_city_name(self, city_name: str) -> dict:
+    def get_provinces_by_region(self, region: str) -> dict:
         """
-        return coordinate of city
+        get province list by region
+        :param region: region name
+        :return: list of provinces
+        """
+        query = "select provincia from citta where regione = :regione group by provincia"
+        param = [{"name": "regione", "value": {"stringValue": region}}]
+        response = self.database.do_read_query(query, param)
+        return response
 
-        :param city_name: name of city
+    def get_coordinate_by_city_name(self, city: str, provence: str, region: str) -> dict:
+        """
+        get coordinates by city, provence and region name
+        :param city: city name
+        :param provence: province name
+        :param region: region name
         :return: coordinate of city
         """
-        query = "select latitudine as lat, longitudine as lng from citta where nome = :city_name"
 
-        param = [{"name": "city_name", "value": {"stringValue": city_name}}]
+        query = "select latitudine as lat, longitudine as lng from citta where nome = :city " \
+                "and provincia = :provence and regione = :region"
+
+        param = [{"name": "city", "value": {"stringValue": city}},
+                 {"name": "provence", "value": {"stringValue": provence}},
+                 {"name": "region", "value": {"stringValue": region}}]
 
         response = self.database.do_read_query(query, param)
 
