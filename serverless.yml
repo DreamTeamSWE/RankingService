@@ -21,6 +21,7 @@ package:
     - test.py
     - test_sqs.json
     - requirements_eliminati.txt
+    - testing/**
 
 functions:
   refreshRanking:
