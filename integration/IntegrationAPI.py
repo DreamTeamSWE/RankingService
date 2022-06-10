@@ -71,6 +71,24 @@ class TestCrawledData(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.json())
 
+    def test_general_filter(self):
+        endpoint = 'https://cs0thtwbr7.execute-api.eu-central-1.amazonaws.com/dev/generalFilter'
+        params = {'radius': 1, 'location': 'Padova', 'size': 1000}
+        response = requests.get(endpoint, params=params)
+        print(response.json())
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('id_ristorante', response.json()[0])
+        self.assertIn('nome_ristorante', response.json()[0])
+        self.assertIn('indirizzo', response.json()[0])
+        self.assertIn('telefono', response.json()[0])
+        self.assertIn('sito_web', response.json()[0])
+        self.assertIn('latitudine', response.json()[0])
+        self.assertIn('longitudine', response.json()[0])
+        self.assertIn('punteggio_emoji', response.json()[0])
+        self.assertIn('punteggio_foto', response.json()[0])
+        self.assertIn('punteggio_testo', response.json()[0])
+
+
 
 if __name__ == '__main__':
     unittest.main()
