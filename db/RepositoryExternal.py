@@ -66,7 +66,7 @@ class RepositoryExternal:
                 "order by (IFNULL(r.punteggio_emoji,0) + IFNULL(r.punteggio_foto,0) + IFNULL(r.punteggio_testo,0))/" \
                 "(case when r.punteggio_emoji is not null then 1 else 0 end + " \
                 "case when r.punteggio_foto is not null then 1 else 0 end + " \
-                "case when r.punteggio_testo is not null then 1 else 0 end) desc " \
+                "case when r.punteggio_testo is not null then 1 else 0 end) desc, r.id_ristorante " \
                 "limit :position, :size"
 
         response = self.database.do_read_query(query, [position_param, size_param])
@@ -245,7 +245,7 @@ class RepositoryExternal:
                 "IFNULL(r.punteggio_testo,0))/" \
                 "(case when r.punteggio_emoji is not null then 1 else 0 end + " \
                 "case when r.punteggio_foto is not null then 1 else 0 end + " \
-                "case when r.punteggio_testo is not null then 1 else 0 end) desc " \
+                "case when r.punteggio_testo is not null then 1 else 0 end) desc, r.id_ristorante " \
                 "limit :position, :size"
 
         response = self.database.do_read_query(query,
@@ -307,7 +307,7 @@ class RepositoryExternal:
                 "IFNULL(r.punteggio_testo,0))/" \
                 "(case when r.punteggio_emoji is not null then 1 else 0 end + " \
                 "case when r.punteggio_foto is not null then 1 else 0 end + " \
-                "case when r.punteggio_testo is not null then 1 else 0 end) desc " \
+                "case when r.punteggio_testo is not null then 1 else 0 end) desc, r.id_ristorante " \
                 "limit :position, :size"
 
         response = self.database.do_read_query(query,
@@ -361,7 +361,7 @@ class RepositoryExternal:
                 "IFNULL(r.punteggio_testo,0))/" \
                 "(case when r.punteggio_emoji is not null then 1 else 0 end + " \
                 "case when r.punteggio_foto is not null then 1 else 0 end + " \
-                "case when r.punteggio_testo is not null then 1 else 0 end) desc " \
+                "case when r.punteggio_testo is not null then 1 else 0 end) desc, r.id_ristorante " \
                 "limit :position, :size"
 
 
