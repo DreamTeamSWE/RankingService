@@ -12,6 +12,7 @@ import botocore.session
 from botocore.stub import Stubber
 
 from entity.CrawledData import CrawledData
+from entity.Image import Image
 from entity.ScoreComprehend import ScoreComprehend
 
 
@@ -42,8 +43,10 @@ class TestPostAnalyzer(unittest.TestCase):
         #
         #     s3_stubber.add_response("get_object", response, {})
 
-        with patch('analyzer.EmojiAnalyzer.EmojiAnalyzer._EmojiAnalyzer__generate_emoji_scores') as mock_file:
-            mock_file.return_value = {'😂': 0.221, '❤': 0.746, '😅': 0.178}
+        with patch('analyzer.EmojiAnalyzer.EmojiAnalyzer._EmojiAnalyzer__generate_emoji_scores') as mock_file, \
+                patch('db.RepositoryInternal.RepositoryInternal.__init__') as mock_db_init:
+            mock_file.return_value = {'😂': 0.7105, '❤': 0.973, '😅': 0.689}
+            mock_db_init.return_value = None
             self.post_analyzer = PostAnalyzer()
             self.reko = self.post_analyzer._PostAnalyzer__rekognition
             self.comp = self.post_analyzer._PostAnalyzer__comprehend
@@ -83,10 +86,159 @@ class TestPostAnalyzer(unittest.TestCase):
 
             self.assertAlmostEqual(92.1, post._CrawledData__text_score, delta=0.01)
 
+    def test_calculate_text_score_with_unsupported_language(self):
+        with Stubber(self.comp) as comprehend_stubber:
+            detect_language_response = {
+                'Languages': [
+                    {
+                        'LanguageCode': 'pl',
+                    }
+                ]
+            }
+
+            comprehend_stubber.add_response("detect_dominant_language", detect_language_response,
+                                            {'Text': stub.ANY})
+
+            expected = None
+            post = CrawledData(caption="testo in polacco")
+
+            self.assertEqual(expected,
+                             self.post_analyzer.calculate_text_score(post))
+
     def test_calculate_emoji_score(self):
         post = CrawledData(caption="testoprova❤❤")
         self.post_analyzer.calculate_emoji_score(post)
-        self.assertAlmostEqual(74.60, post._CrawledData__emoji_score, delta=0.01)
+        self.assertAlmostEqual(100, post._CrawledData__emoji_score, delta=0.01)
+
+    def test_calculate_image_score(self):
+        with Stubber(self.reko) as rekogntion_stubber:
+            detect_faces_response = {
+                "FaceDetails": [
+                    {
+                        "Emotions": [
+                            {
+                                "Type": "HAPPY",
+                                "Confidence": 90.06643676757812
+                            },
+                            {
+                                "Type": "SURPRISED",
+                                "Confidence": 10.027836799621582
+                            },
+                            {
+                                "Type": "CALM",
+                                "Confidence": 0.5097336769104
+                            },
+                            {
+                                "Type": "ANGRY",
+                                "Confidence": 7.021594047546387
+                            },
+                            {
+                                "Type": "FEAR",
+                                "Confidence": 6.878425121307373
+                            },
+                            {
+                                "Type": "CONFUSED",
+                                "Confidence": 0.264672756195068
+                            },
+                            {
+                                "Type": "DISGUSTED",
+                                "Confidence": 3.5239059925079346
+                            },
+                            {
+                                "Type": "SAD",
+                                "Confidence": 2.461644411087036
+                            }
+                        ]},
+                    {
+                        "Emotions": [
+                            {
+                                "Type": "HAPPY",
+                                "Confidence": 91.06643676757812
+                            },
+                            {
+                                "Type": "SURPRISED",
+                                "Confidence": 20.027836799621582
+                            },
+                            {
+                                "Type": "CALM",
+                                "Confidence": 10.5097336769104
+                            },
+                            {
+                                "Type": "ANGRY",
+                                "Confidence": 7.021594047546387
+                            },
+                            {
+                                "Type": "FEAR",
+                                "Confidence": 6.878425121307373
+                            },
+                            {
+                                "Type": "CONFUSED",
+                                "Confidence": 0.264672756195068
+                            },
+                            {
+                                "Type": "DISGUSTED",
+                                "Confidence": 2.5239059925079346
+                            },
+                            {
+                                "Type": "SAD",
+                                "Confidence": 2.461644411087036
+                            }
+                        ]}
+                ]}
+            detect_labels_response = {
+                "Labels": [
+
+                    {
+                        "Name": "Meat",
+                        "Confidence": 98.876220703125,
+
+                        "Parents": [
+                            {
+                                "Name": "Food"
+                            }
+                        ]
+                    },
+
+                    {
+                        "Name": "Person",
+                        "Confidence": 98.37577819824219,
+                        "Instances": [
+                            {
+                                "BoundingBox": {
+                                    "Width": 0.19036127626895905,
+                                    "Height": 0.2723834812641144,
+                                    "Left": 0.43754449486732483,
+                                    "Top": 0.35202956199645996
+                                },
+                                "Confidence": 98.37577819824219
+                            },
+                            {
+                                "BoundingBox": {
+                                    "Width": 0.037608712911605835,
+                                    "Height": 0.06765095144510269,
+                                    "Left": 0.9162867665290833,
+                                    "Top": 0.50001460313797
+                                },
+                                "Confidence": 86.00642395019531
+                            }
+                        ],
+                        "Parents": []
+                    }]
+            }
+
+            rekogntion_stubber.add_response("detect_labels", detect_labels_response,
+                                            {'Image': {'S3Object': {'Bucket': 'dream-team-img-test',
+                                                                    'Name': '1.jpg'}}, 'MaxLabels': 10})
+
+            rekogntion_stubber.add_response("detect_faces", detect_faces_response,
+                                            {'Attributes': ['ALL'],
+                                             'Image': {'S3Object': {'Bucket': 'dream-team-img-test', 'Name': '1.jpg'}}})
+
+            img = Image("1.jpg")
+            post = CrawledData(caption="testo", list_images=[img])
+            self.post_analyzer.calculate_image_score(post)
+
+            self.assertEqual(100, post._CrawledData__image_score)
 
 
 
