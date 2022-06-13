@@ -410,8 +410,6 @@ class RepositoryExternal:
                 "case when r.punteggio_testo is not null then 1 else 0 end) desc, r.id_ristorante " \
                 "limit :position, :size"
 
-
-
         response = self.database.do_read_query(query,
                                                [lat_param,
                                                 lng_param,
@@ -419,5 +417,28 @@ class RepositoryExternal:
                                                 cucina_param,
                                                 position_param,
                                                 size_param])
+        query_count = "select count(*) as count " \
+                      "from ristorante as r " \
+                      "join post p on r.id_ristorante=p.id_ristorante " \
+                      "join immagine i on p.id_post=i.id_post " \
+                      "where i.id_immagine not in (select e.id_immagine from emozione_img e) " \
+                      "and (r.punteggio_emoji is not null " \
+                      "or r.punteggio_foto is not null " \
+                      "or r.punteggio_testo is not null) " \
+                      "and r.categoria = :cucina " \
+                      "and ( " \
+                      " acos(sin(r.latitudine * 0.0175) * sin(:lat_param * 0.0175)  " \
+                      "      + cos(r.latitudine * 0.0175) * cos(:lat_param * 0.0175) * " \
+                      "        cos((:lng_param * 0.0175) - (r.longitudine * 0.0175)) " \
+                      "     ) * 3959 <= :radius_param " \
+                      ") "
 
-        return self.__iterate_over_response_ranking_restaurants(response)
+        response_count = self.database.do_read_query(query_count,
+                                                     [lat_param,
+                                                      lng_param,
+                                                      radius_param,
+                                                      cucina_param])
+
+        response = self.__iterate_over_response_ranking_restaurants(response)
+
+        return self.__get_count_query(response_count, response)
