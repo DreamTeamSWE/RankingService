@@ -28,6 +28,22 @@ class RepositoryExternal:
         # The response contains the presigned URL
         return response
 
+    def __get_count_query(self, response_count: dict, response: dict) -> dict:
+        """
+        return count of rows in query
+        :param response_count: response of query, need to have count in select like "select count(*) as count"
+        :param response: dictionary where append count
+        :return: count of rows
+        """
+
+        count = response_count[0]["count"]
+
+        # add count to response
+
+        response.append({"count": count})
+
+        return response
+
     def __iterate_over_response_ranking_restaurants(self, response: dict) -> dict:
         # iterate over response
         for r in response:
@@ -74,17 +90,15 @@ class RepositoryExternal:
         response = self.database.do_read_query(query, [position_param, size_param])
         print("query: ", query)
 
-        return self.__iterate_over_response_ranking_restaurants(response)
+        query_count = "select " \
+                      "count(*) as count " \
+                      "from ristorante as r "
 
-        # # iterate over response
-        # for r in response:
-        #     image_name = str(r["url_image"]) + ".jpg"
-        #     print("image_name: ", image_name)
-        #     url_image = self.__create_presigned_url(image_name)
-        #     print("url_image: ", url_image)
-        #     r["url_image"] = url_image
-        #
-        # return response
+        response_count = self.database.do_read_query(query_count, [])
+
+        response = self.__iterate_over_response_ranking_restaurants(response)
+
+        return self.__get_count_query(response_count, response)
 
     def get_post_and_tag_by_restaurant(self, id_rist: int) -> dict:
         """
@@ -163,7 +177,7 @@ class RepositoryExternal:
                 i = 0
                 param = []
                 for part in name_parts:
-                    query += "nome_ristorante like :nome_ristorante" + str(i) + " OR "
+                    query += "nome_ristorante like :nome_ristorante" + str(i) + " or "
                     param.append({"name": "nome_ristorante" + str(i), "value": {"stringValue": "%" + part + "%"}})
                     i += 1
 
@@ -262,17 +276,29 @@ class RepositoryExternal:
                                                 size_param])
         print("query: ", query)
 
-        return self.__iterate_over_response_ranking_restaurants(response)
+        query_count = "select count(*) as count " \
+                      "from ristorante as r " \
+                      "join post p on r.id_ristorante=p.id_ristorante " \
+                      "join immagine i on p.id_post=i.id_post " \
+                      "where i.id_immagine not in (select e.id_immagine from emozione_img e) " \
+                      "and (r.punteggio_emoji is not null " \
+                      "or r.punteggio_foto is not null " \
+                      "or r.punteggio_testo is not null) " \
+                      "and ( " \
+                      " acos(sin(r.latitudine * 0.0175) * sin(:lat_param * 0.0175)  " \
+                      "      + cos(r.latitudine * 0.0175) * cos(:lat_param * 0.0175) * " \
+                      "        cos((:lng_param * 0.0175) - (r.longitudine * 0.0175)) " \
+                      "     ) * 3959 <= :radius_param " \
+                      ") "
 
-        # # iterate over response
-        # for r in response:
-        #     image_name = str(r["url_image"]) + ".jpg"
-        #     print("image_name: ", image_name)
-        #     url_image = self.__create_presigned_url(image_name)
-        #     print("url_image: ", url_image)
-        #     r["url_image"] = url_image
-        #
-        # return response
+        response_count = self.database.do_read_query(query_count,
+                                                     [lat_param,
+                                                      lng_param,
+                                                      radius_param])
+
+        response = self.__iterate_over_response_ranking_restaurants(response)
+
+        return self.__get_count_query(response_count, response)
 
     def get_label_categoria(self) -> dict:
         """
@@ -322,7 +348,18 @@ class RepositoryExternal:
                                                 position_param,
                                                 size_param])
 
-        return self.__iterate_over_response_ranking_restaurants(response)
+        query_count = "select count(*) as count " \
+                      "from ristorante as r " \
+                      "join post p on r.id_ristorante=p.id_ristorante " \
+                      "join immagine i on p.id_post=i.id_post " \
+                      "where i.id_immagine not in (select e.id_immagine from emozione_img e) " \
+                      "and (r.punteggio_emoji is not null " \
+                      "or r.punteggio_foto is not null " \
+                      "or r.punteggio_testo is not null) " \
+                      "and r.categoria = :cucina "
 
+        response_count = self.database.do_read_query(query_count, [cucina_param])
 
+        response = self.__iterate_over_response_ranking_restaurants(response)
 
+        return self.__get_count_query(response_count, response)

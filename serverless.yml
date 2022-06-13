@@ -19,6 +19,7 @@ package:
     - .gitignore
     - uml_diagram/**
     - test.py
+    - testing/**
     - test_sqs.json
     - requirements_eliminati.txt
 
