@@ -15,6 +15,7 @@ class PostAnalyzer(Analyzer, ABC):
         self.__rekognition = boto3.client(service_name='rekognition', region_name=aws_region)
         self.__comprehend = boto3.client(service_name='comprehend', region_name=aws_region)
         self.__emoji_analyzer = EmojiAnalyzer()
+        self.__repository = RepositoryInternal()
 
     def __detect_language_text(self, text: str) -> str:
         """
@@ -52,8 +53,7 @@ class PostAnalyzer(Analyzer, ABC):
         print("\n-------------------")
         print('detect_sentiment_text')
 
-        if post.get_caption() and \
-                language in ['ar', 'hi', 'ko', 'zh-TW', 'ja', 'zh', 'de', 'pt', 'en', 'it', 'fr', 'es']:
+        if language in ['ar', 'hi', 'ko', 'zh-TW', 'ja', 'zh', 'de', 'pt', 'en', 'it', 'fr', 'es']:
             # result of comprehend
             json_result = self.__comprehend.detect_sentiment(Text=post.get_caption(), LanguageCode=language)
 
@@ -74,7 +74,6 @@ class PostAnalyzer(Analyzer, ABC):
 
             return score
         else:
-            # no text
             return None
 
     def __detect_labels(self, photo: Image, bucket: str):
@@ -189,13 +188,16 @@ class PostAnalyzer(Analyzer, ABC):
         return emoji_score
 
     def calculate_text_score(self, post: CrawledData) -> float:
-        score = self.__detect_sentiment_text(post, self.__detect_language_text(post.get_caption()))
-        post.set_comprehend_score(score)
-        post.calculate_and_set_text_score()
+        score = None
+        if post.get_caption():
+            score = self.__detect_sentiment_text(post, self.__detect_language_text(post.get_caption()))
+            post.set_comprehend_score(score)
+            post.calculate_and_set_text_score()
+
         return score
 
     def calculate_image_score(self, post: CrawledData):
-        if not post.get_list_images():
+        if post.get_list_images():
             for image in post.get_list_images():
                 image_name = image.get_image_name()
                 print("image name " + image_name)
@@ -220,9 +222,9 @@ class PostAnalyzer(Analyzer, ABC):
 
         # calcolo punteggio caption con comprehend
 
-        score = self.calculate_text_score(post)
+        text_score = self.calculate_text_score(post)
 
-        print("\ncomprehend score: " + str(score) if score else 'no text found' + "\n-------------------\n")
+        print("\ncomprehend score: " + str(text_score) if text_score else 'no text found' + "\n-------------------\n")
 
         # calcolo punteggio emoji
         emoji_score = self.calculate_emoji_score(post)
@@ -231,7 +233,10 @@ class PostAnalyzer(Analyzer, ABC):
 
         # calcolo punteggio per ogni immagine e salvo
         self.calculate_image_score(post)
+        image_score = post.get_image_score()
 
-        repository = RepositoryInternal()
-        repository.save_post(post)
-        repository.update_restaurant_scores(post.get_restaurant())
+        if image_score is not None or text_score is not None:
+            self.__repository.save_post(post)
+            self.__repository.update_restaurant_scores(post.get_restaurant())
+        else:
+            print("Post not saved because no meaningful images or text has been found")

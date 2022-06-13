@@ -10,14 +10,14 @@ from entity.CrawledData import CrawledData
 
 class EmojiAnalyzer(Analyzer, ABC):
     def __init__(self):
-        self.__emoji_scores = EmojiAnalyzer.__generate_emoji_scores('emoji_ranking.csv')
+        self.__emoji_scores = EmojiAnalyzer.__generate_emoji_scores('emoji_ranking_normalized_1.csv')
         self.weights = {
             'SINGLE_EMOJI': 1,
             'DOUBLE_EMOJI': 2,
             'TRIPLE_EMOJI': 3,
             'MULTIPLE_EMOJI': 4,
-            'MULTIPLE_EMOJI_ENDING': 6,
-            'SINGLE_EMOJI_ENDING': 1.5
+            'MULTIPLE_EMOJI_ENDING': 1.3,
+            'SINGLE_EMOJI_ENDING': 1.2
         }
 
     @staticmethod
@@ -67,31 +67,32 @@ class EmojiAnalyzer(Analyzer, ABC):
                     if 'last_pos' in emoji_data \
                             and emoji_data['count'] >= 2 \
                             and len(post_text) == emoji_data['last_pos']:
-                        score_x_weight_sum += emoji_score * self.weights['MULTIPLE_EMOJI_ENDING']
-                        weigh_sum += self.weights['MULTIPLE_EMOJI_ENDING']
+                        mult_factor = emoji_data['count'] if emoji_data['count'] <= 4 else 4
+                        score_x_weight_sum += emoji_score * \
+                                              self.weights['MULTIPLE_EMOJI_ENDING'] * mult_factor
                     elif 'last_pos' in emoji_data \
                             and emoji_data['count'] == 1 \
                             and len(post_text) == emoji_data['last_pos']:
                         score_x_weight_sum += emoji_score * self.weights['SINGLE_EMOJI_ENDING']
-                        weigh_sum += self.weights['SINGLE_EMOJI_ENDING']
                     elif emoji_data['count'] == 1:
                         score_x_weight_sum += emoji_score * self.weights['SINGLE_EMOJI']
-                        weigh_sum += self.weights['SINGLE_EMOJI']
                     elif emoji_data['count'] == 2:
                         score_x_weight_sum += emoji_score * self.weights['DOUBLE_EMOJI']
-                        weigh_sum += self.weights['DOUBLE_EMOJI']
                     elif emoji_data['count'] == 3:
                         score_x_weight_sum += emoji_score * self.weights['TRIPLE_EMOJI']
-                        weigh_sum += self.weights['TRIPLE_EMOJI']
                     elif emoji_data['count'] >= 4:
                         score_x_weight_sum += emoji_score * self.weights['MULTIPLE_EMOJI']
-                        weigh_sum += self.weights['MULTIPLE_EMOJI']
+
+                    weigh_sum += emoji_data['count'] if emoji_data['count'] <= 4 else 4
                 else:
                     print('found unsupported emoji')
                     unsupported_emojis += 1
+
             if weigh_sum > 0.5:  # il minimo può essere 1, 0 significa che non ha trovato niente
-                return 100 * score_x_weight_sum / weigh_sum
+                final_score = 100 * score_x_weight_sum / weigh_sum
+                return final_score if final_score <= 100 else 100
             else:
+                print('found only unsupported emojis')
                 return None  # trovato solo emoji non supportate
         else:
             print('found no emoji')

@@ -27,10 +27,14 @@ class CrawledData:
 
     def calculate_and_set_image_score(self):
         if self.__list_images:
+            count = 0
             for image in self.__list_images:
                 score = image.calculate_score()
                 if score is not None:
+                    count += 1
                     self.__image_score = (self.__image_score + score) if self.__image_score is not None else score
+            if self.__image_score:
+                self.__image_score = self.__image_score / count
 
     def set_emoji_score(self, punt_emoji: float):
         self.__emoji_score = punt_emoji
@@ -59,11 +63,13 @@ class CrawledData:
     def get_comprehend_score(self) -> ScoreComprehend:
         return self.__comprehend_score
 
+    def get_image_score(self) -> float:
+        return self.__image_score
+
     @staticmethod
     def parse_post_from_sqs(item_body: dict) -> 'CrawledData':
         restaurant = Restaurant.parse_restaurant_from_sqs(item_body)
 
-        # modifiche temporanee
         list_img = []
         if 's3_id' in item_body:
             for img in item_body['s3_id']:

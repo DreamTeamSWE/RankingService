@@ -8,37 +8,37 @@ from entity.CrawledData import CrawledData
 class TestEmojiAnalyzer(unittest.TestCase):
     def setUp(self):
         with patch('analyzer.EmojiAnalyzer.EmojiAnalyzer._EmojiAnalyzer__generate_emoji_scores') as mock_file:
-            mock_file.return_value = {'😂': 0.221, '❤': 0.746, '😅': 0.178}
+            mock_file.return_value = {'😂': 0.7105, '❤': 0.973, '😅': 0.689}
             self.emoji_analyzer = EmojiAnalyzer()
 
     def test_analyze_single_emoji(self):
         post = CrawledData(caption='😂testo')
-        self.assertAlmostEqual(22.1, self.emoji_analyzer.analyze(post), delta=0.01)
+        self.assertAlmostEqual(71.05, self.emoji_analyzer.analyze(post), delta=0.01)
 
     def test_analyze_single_emoji_ending(self):
         post = CrawledData(caption='testo😅')
-        self.assertAlmostEqual(17.8, self.emoji_analyzer.analyze(post), delta=0.01)
+        self.assertAlmostEqual(82.679, self.emoji_analyzer.analyze(post), delta=0.01)
 
     def test_analyze_double_emoji(self):
         post = CrawledData(caption='❤❤testo')
-        self.assertAlmostEqual(74.6, self.emoji_analyzer.analyze(post), delta=0.01)
+        self.assertAlmostEqual(97.3, self.emoji_analyzer.analyze(post), delta=0.01)
 
     def test_analyze_triple_emoji(self):
         post = CrawledData(caption='❤❤❤testo')
         result = self.emoji_analyzer.analyze(post)
-        self.assertAlmostEqual(74.6, result, delta=0.01)
+        self.assertAlmostEqual(97.3, result, delta=0.01)
 
     def test_analyze_multiple_emoji(self):
         post = CrawledData(caption='❤❤❤❤testo')
-        self.assertAlmostEqual(74.6, self.emoji_analyzer.analyze(post), delta=0.01)
+        self.assertAlmostEqual(97.3, self.emoji_analyzer.analyze(post), delta=0.01)
 
     def test_analyze_multiple_different_emoji(self):
         post = CrawledData(caption='😅❤😅❤testo')
-        self.assertAlmostEqual(46.19, self.emoji_analyzer.analyze(post), delta=0.01)
+        self.assertAlmostEqual(83.1, self.emoji_analyzer.analyze(post), delta=0.01)
 
     def test_analyze_multiple_emoji_ending(self):
         post = CrawledData(caption='testo😂😂😂😂')
-        self.assertAlmostEqual(22.09, self.emoji_analyzer.analyze(post), delta=0.01)
+        self.assertAlmostEqual(92.365, self.emoji_analyzer.analyze(post), delta=0.01)
 
     def test_analyze_unsupported_emoji(self):
         post = CrawledData(caption='😍')
@@ -47,8 +47,6 @@ class TestEmojiAnalyzer(unittest.TestCase):
     def test_analyze_no_emoji(self):
         post = CrawledData(caption='testo')
         self.assertEqual(None, self.emoji_analyzer.analyze(post))
-
-
 
 
 if __name__ == '__main__':

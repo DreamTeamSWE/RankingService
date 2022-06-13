@@ -22,6 +22,8 @@ package:
     - testing/**
     - test_sqs.json
     - requirements_eliminati.txt
+    - testing/**
+    - htmlcov/**
 
 functions:
   refreshRanking:
@@ -263,8 +265,8 @@ functions:
           method: GET
           cors: true
 
-  filterCoordinate:
-    handler: filterCoordinate.filter_coordinate
+  generalFilter:
+    handler: generalFilter.filter_handler
     timeout: 30
     package:
       exclude:
@@ -299,7 +301,7 @@ functions:
           - "arn:aws:s3:::${self:custom.bucketNameImage}/*"
     events:
       - http:
-          path: filterCoordinate
+          path: generalFilter
           method: GET
           cors: true
 
@@ -340,46 +342,6 @@ functions:
     events:
       - http:
           path: getLabelCategoria
-          method: GET
-          cors: true
-
-  filterCategoria:
-    handler: filterCategoria.filter_categoria
-    timeout: 30
-    package:
-      exclude:
-        - 'refreshRanking.py'
-        - 'favoritesManager.py'
-        - 'getLabelAndPost.py'
-        - 'searchByName.py'
-        - 'db/RepositoryInternal.py'
-        - 'db/RepositoryFavorites.py'
-        - 'entity/**'
-        - 'analyzer/**'
-    iamRoleStatements:
-      - Effect: Allow
-        Action:
-          - 'secretsmanager:GetSecretValue'
-        Resource:
-          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.secretRds}'
-          - 'arn:aws:secretsmanager:eu-central-1:123446374287:secret:${self:custom.sercetCredentials}'
-      - Effect: Allow
-        Action:
-          - 'rds-data:ExecuteStatement'
-          - 'rds-data:BeginTransaction'
-          - 'rds-data:CommitTransaction'
-          - 'rds-data:BatchExecuteStatement'
-        Resource: 'arn:aws:rds:eu-central-1:123446374287:cluster:${self:custom.clusterRds}'
-      - Effect: "Allow"
-        Action:
-          - "s3:ListObjects"
-          - "s3:GetObject"
-        Resource:
-          - "arn:aws:s3:::${self:custom.bucketNameImage}"
-          - "arn:aws:s3:::${self:custom.bucketNameImage}/*"
-    events:
-      - http:
-          path: filterCategoria
           method: GET
           cors: true
 
